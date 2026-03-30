@@ -1,40 +1,19 @@
 ---
 name: Question
-about: Ask a question about Claude Code or this guide
-title: "[QUESTION] "
+about: 提问、求助或澄清某个文档点
+title: '[QUESTION] '
 labels: question
 assignees: ''
-
 ---
 
-## Question
-What would you like to know?
+## 你的问题
 
-## Context
-Provide some background or context for your question:
-- What are you trying to do?
-- What have you already tried?
-- What examples or guides have you looked at?
+请明确写出你想问什么。
 
-## Relevant Topic
-Which topic is this related to?
-- [ ] Slash Commands
-- [ ] Memory
-- [ ] Skills
-- [ ] Subagents
-- [ ] MCP Protocol
-- [ ] Hooks
-- [ ] Plugins
-- [ ] Checkpoints
-- [ ] Advanced Features
-- [ ] CLI Reference
-- [ ] Other
+## 你已经看过哪些文档
 
-## What You've Tried
-Have you already tried anything? What was the result?
+列出相关章节或文件，方便我们判断缺口。
 
-## Expected Outcome
-What would help you solve this?
+## 还有哪些上下文
 
-## Additional Resources
-Any links or resources that might be relevant?
+例如你的系统环境、项目类型、遇到的报错等。

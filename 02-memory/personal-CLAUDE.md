@@ -1,46 +1,53 @@
-# My Development Preferences
+# 我的开发偏好
 
 ## About Me
-- **Experience Level**: 8 years full-stack development
-- **Preferred Languages**: TypeScript, Python
-- **Communication Style**: Direct, with examples
-- **Learning Style**: Visual diagrams with code
+
+- **Experience Level**: 8 年全栈开发经验
+- **Preferred Languages**: TypeScript、Python
+- **Communication Style**: 直接、清晰、带例子
+- **Learning Style**: 喜欢图示和代码结合
 
 ## Code Preferences
 
 ### Error Handling
-I prefer explicit error handling with try-catch blocks and meaningful error messages.
-Avoid generic errors. Always log errors for debugging.
+
+偏好显式错误处理，尽量使用清晰的 `try-catch` 和有意义的错误信息。  
+避免过于泛化的错误；排查时尽量保留日志上下文。
 
 ### Comments
-Use comments for WHY, not WHAT. Code should be self-documenting.
-Comments should explain business logic or non-obvious decisions.
+
+注释优先解释 **WHY**，不要只是重复代码在做什么。  
+更适合解释业务逻辑或不明显的决策。
 
 ### Testing
-I prefer TDD (test-driven development).
-Write tests first, then implementation.
-Focus on behavior, not implementation details.
+
+偏好 TDD。  
+尽量先写测试，再实现。  
+测试关注行为，而不是实现细节。
 
 ### Architecture
-I prefer modular, loosely-coupled design.
-Use dependency injection for testability.
-Separate concerns (Controllers, Services, Repositories).
+
+偏好模块化、低耦合设计。  
+重视可测试性和职责分离。
 
 ## Debugging Preferences
-- Use console.log with prefix: `[DEBUG]`
-- Include context: function name, relevant variables
-- Use stack traces when available
-- Always include timestamps in logs
+
+- `console.log` 建议带 `[DEBUG]` 前缀
+- 日志包含函数名和关键变量
+- 能给 stack trace 时尽量给
+- 日志里尽量保留时间戳
 
 ## Communication
-- Explain complex concepts with diagrams
-- Show concrete examples before explaining theory
-- Include before/after code snippets
-- Summarize key points at the end
+
+- 复杂概念先给例子再讲理论
+- 需要时提供 before / after 代码片段
+- 长回答最后给一个简要总结
 
 ## Project Organization
-I organize my projects as:
-```
+
+我常用的项目结构：
+
+```text
 project/
   ├── src/
   │   ├── api/
@@ -53,8 +60,9 @@ project/
 ```
 
 ## Tooling
-- **IDE**: VS Code with vim keybindings
-- **Terminal**: Zsh with Oh-My-Zsh
-- **Format**: Prettier (100 char line length)
-- **Linter**: ESLint with airbnb config
-- **Test Framework**: Jest with React Testing Library
+
+- **IDE**: VS Code + vim keybindings
+- **Terminal**: Zsh + Oh-My-Zsh
+- **Format**: Prettier（100 字符换行）
+- **Linter**: ESLint + airbnb config
+- **Test Framework**: Jest + React Testing Library

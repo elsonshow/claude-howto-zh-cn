@@ -131,6 +131,24 @@ jobs:
               print("✅ All YAML frontmatter is valid")
           EOF
 
+  localization-guard:
+    name: Localization Guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Run localization validation
+        run: python3 scripts/validate_localization.py
+
   structure:
     name: Documentation Structure
     runs-on: ubuntu-latest

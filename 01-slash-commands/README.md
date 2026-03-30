@@ -3,550 +3,181 @@
   <img alt="Claude How To" src="../resources/logos/claude-howto-logo.svg">
 </picture>
 
-# Slash Commands
+# Slash Commands 指南
 
-## Overview
+slash commands 是你在 Claude Code 里最容易立即上手的能力。它们本质上是“用 `/command` 快速触发某个操作或工作流”。
 
-Slash commands are shortcuts that control Claude's behavior during an interactive session. They come in several types:
+对新手来说，先学会 slash commands，通常比先碰 hooks、MCP 或 plugins 更有回报，因为：
 
-- **Built-in commands**: Provided by Claude Code (`/help`, `/clear`, `/model`)
-- **Skills**: User-defined commands created as `SKILL.md` files (`/optimize`, `/pr`)
-- **Plugin commands**: Commands from installed plugins (`/frontend-design:frontend-design`)
-- **MCP prompts**: Commands from MCP servers (`/mcp__github__list_prs`)
+- 安装简单
+- 反馈快
+- 更容易理解 Claude Code 的工作方式
+- 很多常用工作流都能先用它起步
 
-> **Note**: Custom slash commands have been merged into skills. Files in `.claude/commands/` still work, but skills (`.claude/skills/`) are now the recommended approach. Both create `/command-name` shortcuts. See the [Skills Guide](../03-skills/) for the full reference.
+---
 
-## Built-in Commands Reference
+## 什么是 slash commands
 
-Built-in commands are shortcuts for common actions. There are **55+ built-in commands** and **5 bundled skills** available. Type `/` in Claude Code to see the full list, or type `/` followed by any letters to filter.
+Claude Code 里的 slash commands 大致分四类：
 
-| Command | Purpose |
-|---------|---------|
-| `/add-dir <path>` | Add working directory |
-| `/agents` | Manage agent configurations |
-| `/branch [name]` | Branch conversation into a new session (alias: `/fork`). Note: `/fork` renamed to `/branch` in v2.1.77 |
-| `/btw <question>` | Side question without adding to history |
-| `/chrome` | Configure Chrome browser integration |
-| `/clear` | Clear conversation (aliases: `/reset`, `/new`) |
-| `/color [color\|default]` | Set prompt bar color |
-| `/compact [instructions]` | Compact conversation with optional focus instructions |
-| `/config` | Open Settings (alias: `/settings`) |
-| `/context` | Visualize context usage as colored grid |
-| `/copy [N]` | Copy assistant response to clipboard; `w` writes to file |
-| `/cost` | Show token usage statistics |
-| `/desktop` | Continue in Desktop app (alias: `/app`) |
-| `/diff` | Interactive diff viewer for uncommitted changes |
-| `/doctor` | Diagnose installation health |
-| `/effort [low\|medium\|high\|max\|auto]` | Set effort level. `max` requires Opus 4.6 |
-| `/exit` | Exit the REPL (alias: `/quit`) |
-| `/export [filename]` | Export the current conversation to a file or clipboard |
-| `/extra-usage` | Configure extra usage for rate limits |
-| `/fast [on\|off]` | Toggle fast mode |
-| `/feedback` | Submit feedback (alias: `/bug`) |
-| `/help` | Show help |
-| `/hooks` | View hook configurations |
-| `/ide` | Manage IDE integrations |
-| `/init` | Initialize `CLAUDE.md`. Set `CLAUDE_CODE_NEW_INIT=true` for interactive flow |
-| `/insights` | Generate session analysis report |
-| `/install-github-app` | Set up GitHub Actions app |
-| `/install-slack-app` | Install Slack app |
-| `/keybindings` | Open keybindings configuration |
-| `/login` | Switch Anthropic accounts |
-| `/logout` | Sign out from your Anthropic account |
-| `/mcp` | Manage MCP servers and OAuth |
-| `/memory` | Edit `CLAUDE.md`, toggle auto-memory |
-| `/mobile` | QR code for mobile app (aliases: `/ios`, `/android`) |
-| `/model [model]` | Select model with left/right arrows for effort |
-| `/passes` | Share free week of Claude Code |
-| `/permissions` | View/update permissions (alias: `/allowed-tools`) |
-| `/plan [description]` | Enter plan mode |
-| `/plugin` | Manage plugins |
-| `/pr-comments [PR]` | Fetch GitHub PR comments |
-| `/privacy-settings` | Privacy settings (Pro/Max only) |
-| `/release-notes` | View changelog |
-| `/reload-plugins` | Reload active plugins |
-| `/remote-control` | Remote control from claude.ai (alias: `/rc`) |
-| `/remote-env` | Configure default remote environment |
-| `/rename [name]` | Rename session |
-| `/resume [session]` | Resume conversation (alias: `/continue`) |
-| `/review` | **Deprecated** — install the `code-review` plugin instead |
-| `/rewind` | Rewind conversation and/or code (alias: `/checkpoint`) |
-| `/sandbox` | Toggle sandbox mode |
-| `/schedule [description]` | Create/manage scheduled tasks |
-| `/security-review` | Analyze branch for security vulnerabilities |
-| `/skills` | List available skills |
-| `/stats` | Visualize daily usage, sessions, streaks |
-| `/status` | Show version, model, account |
-| `/statusline` | Configure status line |
-| `/tasks` | List/manage background tasks |
-| `/terminal-setup` | Configure terminal keybindings |
-| `/theme` | Change color theme |
-| `/vim` | Toggle Vim/Normal modes |
-| `/voice` | Toggle push-to-talk voice dictation |
+- **Built-in commands**：Claude Code 自带的命令，如 `/help`、`/clear`、`/model`
+- **Skills 形式的命令**：通过 `SKILL.md` 定义，仍然可以用 `/name` 调用
+- **Plugin commands**：安装 plugin 后带来的命令
+- **MCP prompts**：由 MCP server 暴露出来的命令
 
-### Bundled Skills
+> 现在更推荐用 `skills` 来承载自定义命令。`.claude/commands/` 依然能用，但新项目更建议看 [03-skills](../03-skills/)。
 
-These skills ship with Claude Code and are invoked like slash commands:
+---
 
-| Skill | Purpose |
-|-------|---------|
-| `/batch <instruction>` | Orchestrate large-scale parallel changes using worktrees |
-| `/claude-api` | Load Claude API reference for project language |
-| `/debug [description]` | Enable debug logging |
-| `/loop [interval] <prompt>` | Run prompt repeatedly on interval |
-| `/simplify [focus]` | Review changed files for code quality |
+## 先知道这几个高频命令
 
-### Deprecated Commands
+| 命令 | 用途 |
+|------|------|
+| `/help` | 查看帮助和命令列表 |
+| `/clear` | 清空当前会话 |
+| `/config` | 查看或编辑设置 |
+| `/context` | 看上下文使用情况 |
+| `/model` | 切换模型 |
+| `/agents` | 查看可用 agents |
+| `/skills` | 查看可用 skills |
+| `/hooks` | 查看 hooks |
+| `/mcp` | 管理 MCP |
+| `/plugin` | 管理 plugins |
+| `/plan` | 进入 planning mode |
+| `/rewind` | 回退到 checkpoint |
+| `/resume` | 恢复以前的 session |
 
-| Command | Status |
-|---------|--------|
-| `/review` | Deprecated — replaced by `code-review` plugin |
-| `/output-style` | Deprecated since v2.1.73 |
-| `/fork` | Renamed to `/branch` (alias still works, v2.1.77) |
+这些命令不用安装，开箱即用。
 
-### Recent Changes
+---
 
-- `/fork` renamed to `/branch` with `/fork` kept as alias (v2.1.77)
-- `/output-style` deprecated (v2.1.73)
-- `/review` deprecated in favor of the `code-review` plugin
-- `/effort` command added with `max` level requiring Opus 4.6
-- `/voice` command added for push-to-talk voice dictation
-- `/schedule` command added for creating/managing scheduled tasks
-- `/color` command added for prompt bar customization
-- `/model` picker now shows human-readable labels (e.g., "Sonnet 4.6") instead of raw model IDs
-- `/resume` supports `/continue` alias
-- MCP prompts are available as `/mcp__<server>__<prompt>` commands (see [MCP Prompts as Commands](#mcp-prompts-as-commands))
+## 本目录里的示例命令
 
-## Custom Commands (Now Skills)
+| 文件 | 触发方式 | 用途 |
+|------|----------|------|
+| `optimize.md` | `/optimize` | 分析性能与优化机会 |
+| `pr.md` | `/pr` | 提交 PR 前的整理与检查 |
+| `generate-api-docs.md` | `/generate-api-docs` | 生成 API 文档 |
+| `commit.md` | `/commit` | 生成提交说明 |
+| `push-all.md` | `/push-all` | stage + commit + push |
+| `doc-refactor.md` | `/doc-refactor` | 文档重构 |
+| `setup-ci-cd.md` | `/setup-ci-cd` | CI/CD 初始化 |
+| `unit-test-expand.md` | `/unit-test-expand` | 扩充测试覆盖 |
 
-Custom slash commands have been **merged into skills**. Both approaches create commands you can invoke with `/command-name`:
+---
 
-| Approach | Location | Status |
-|----------|----------|--------|
-| **Skills (Recommended)** | `.claude/skills/<name>/SKILL.md` | Current standard |
-| **Legacy Commands** | `.claude/commands/<name>.md` | Still works |
+## 怎么安装
 
-If a skill and a command share the same name, the **skill takes precedence**. For example, when both `.claude/commands/review.md` and `.claude/skills/review/SKILL.md` exist, the skill version is used.
-
-### Migration Path
-
-Your existing `.claude/commands/` files continue to work without changes. To migrate to skills:
-
-**Before (Command):**
-```
-.claude/commands/optimize.md
-```
-
-**After (Skill):**
-```
-.claude/skills/optimize/SKILL.md
-```
-
-### Why Skills?
-
-Skills offer additional features over legacy commands:
-
-- **Directory structure**: Bundle scripts, templates, and reference files
-- **Auto-invocation**: Claude can trigger skills automatically when relevant
-- **Invocation control**: Choose whether users, Claude, or both can invoke
-- **Subagent execution**: Run skills in isolated contexts with `context: fork`
-- **Progressive disclosure**: Load additional files only when needed
-
-### Creating a Custom Command as a Skill
-
-Create a directory with a `SKILL.md` file:
+### 安装全部示例命令
 
 ```bash
-mkdir -p .claude/skills/my-command
-```
-
-**File:** `.claude/skills/my-command/SKILL.md`
-
-```yaml
----
-name: my-command
-description: What this command does and when to use it
----
-
-# My Command
-
-Instructions for Claude to follow when this command is invoked.
-
-1. First step
-2. Second step
-3. Third step
-```
-
-### Frontmatter Reference
-
-| Field | Purpose | Default |
-|-------|---------|---------|
-| `name` | Command name (becomes `/name`) | Directory name |
-| `description` | Brief description (helps Claude know when to use it) | First paragraph |
-| `argument-hint` | Expected arguments for auto-completion | None |
-| `allowed-tools` | Tools the command can use without permission | Inherits |
-| `model` | Specific model to use | Inherits |
-| `disable-model-invocation` | If `true`, only user can invoke (not Claude) | `false` |
-| `user-invocable` | If `false`, hide from `/` menu | `true` |
-| `context` | Set to `fork` to run in isolated subagent | None |
-| `agent` | Agent type when using `context: fork` | `general-purpose` |
-| `hooks` | Skill-scoped hooks (PreToolUse, PostToolUse, Stop) | None |
-
-### Arguments
-
-Commands can receive arguments:
-
-**All arguments with `$ARGUMENTS`:**
-
-```yaml
----
-name: fix-issue
-description: Fix a GitHub issue by number
----
-
-Fix issue #$ARGUMENTS following our coding standards
-```
-
-Usage: `/fix-issue 123` → `$ARGUMENTS` becomes "123"
-
-**Individual arguments with `$0`, `$1`, etc.:**
-
-```yaml
----
-name: review-pr
-description: Review a PR with priority
----
-
-Review PR #$0 with priority $1
-```
-
-Usage: `/review-pr 456 high` → `$0`="456", `$1`="high"
-
-### Dynamic Context with Shell Commands
-
-Execute bash commands before the prompt using `!`command``:
-
-```yaml
----
-name: commit
-description: Create a git commit with context
-allowed-tools: Bash(git *)
----
-
-## Context
-
-- Current git status: !`git status`
-- Current git diff: !`git diff HEAD`
-- Current branch: !`git branch --show-current`
-- Recent commits: !`git log --oneline -5`
-
-## Your task
-
-Based on the above changes, create a single git commit.
-```
-
-### File References
-
-Include file contents using `@`:
-
-```markdown
-Review the implementation in @src/utils/helpers.js
-Compare @src/old-version.js with @src/new-version.js
-```
-
-## Plugin Commands
-
-Plugins can provide custom commands:
-
-```
-/plugin-name:command-name
-```
-
-Or simply `/command-name` when there are no naming conflicts.
-
-**Examples:**
-```bash
-/frontend-design:frontend-design
-/commit-commands:commit
-```
-
-## MCP Prompts as Commands
-
-MCP servers can expose prompts as slash commands:
-
-```
-/mcp__<server-name>__<prompt-name> [arguments]
-```
-
-**Examples:**
-```bash
-/mcp__github__list_prs
-/mcp__github__pr_review 456
-/mcp__jira__create_issue "Bug title" high
-```
-
-### MCP Permission Syntax
-
-Control MCP server access in permissions:
-
-- `mcp__github` - Access entire GitHub MCP server
-- `mcp__github__*` - Wildcard access to all tools
-- `mcp__github__get_issue` - Specific tool access
-
-## Command Architecture
-
-```mermaid
-graph TD
-    A["User Input: /command-name"] --> B{"Command Type?"}
-    B -->|Built-in| C["Execute Built-in"]
-    B -->|Skill| D["Load SKILL.md"]
-    B -->|Plugin| E["Load Plugin Command"]
-    B -->|MCP| F["Execute MCP Prompt"]
-
-    D --> G["Parse Frontmatter"]
-    G --> H["Substitute Variables"]
-    H --> I["Execute Shell Commands"]
-    I --> J["Send to Claude"]
-    J --> K["Return Results"]
-```
-
-## Command Lifecycle
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Claude as Claude Code
-    participant FS as File System
-    participant CLI as Shell/Bash
-
-    User->>Claude: Types /optimize
-    Claude->>FS: Searches .claude/skills/ and .claude/commands/
-    FS-->>Claude: Returns optimize/SKILL.md
-    Claude->>Claude: Parses frontmatter
-    Claude->>CLI: Executes !`command` substitutions
-    CLI-->>Claude: Command outputs
-    Claude->>Claude: Substitutes $ARGUMENTS
-    Claude->>User: Processes prompt
-    Claude->>User: Returns results
-```
-
-## Available Commands in This Folder
-
-These example commands can be installed as skills or legacy commands.
-
-### 1. `/optimize` - Code Optimization
-
-Analyzes code for performance issues, memory leaks, and optimization opportunities.
-
-**Usage:**
-```
-/optimize
-[Paste your code]
-```
-
-### 2. `/pr` - Pull Request Preparation
-
-Guides through PR preparation checklist including linting, testing, and commit formatting.
-
-**Usage:**
-```
-/pr
-```
-
-**Screenshot:**
-![/pr](pr-slash-command.png)
-
-### 3. `/generate-api-docs` - API Documentation Generator
-
-Generates comprehensive API documentation from source code.
-
-**Usage:**
-```
-/generate-api-docs
-```
-
-### 4. `/commit` - Git Commit with Context
-
-Creates a git commit with dynamic context from your repository.
-
-**Usage:**
-```
-/commit [optional message]
-```
-
-### 5. `/push-all` - Stage, Commit, and Push
-
-Stages all changes, creates a commit, and pushes to remote with safety checks.
-
-**Usage:**
-```
-/push-all
-```
-
-**Safety Checks:**
-- Secrets: `.env*`, `*.key`, `*.pem`, `credentials.json`
-- API Keys: Detects real keys vs. placeholders
-- Large files: `>10MB` without Git LFS
-- Build artifacts: `node_modules/`, `dist/`, `__pycache__/`
-
-### 6. `/doc-refactor` - Documentation Restructuring
-
-Restructures project documentation for clarity and accessibility.
-
-**Usage:**
-```
-/doc-refactor
-```
-
-### 7. `/setup-ci-cd` - CI/CD Pipeline Setup
-
-Implements pre-commit hooks and GitHub Actions for quality assurance.
-
-**Usage:**
-```
-/setup-ci-cd
-```
-
-### 8. `/unit-test-expand` - Test Coverage Expansion
-
-Increases test coverage by targeting untested branches and edge cases.
-
-**Usage:**
-```
-/unit-test-expand
-```
-
-## Installation
-
-### As Skills (Recommended)
-
-Copy to your skills directory:
-
-```bash
-# Create skills directory
-mkdir -p .claude/skills
-
-# For each command file, create a skill directory
-for cmd in optimize pr commit; do
-  mkdir -p .claude/skills/$cmd
-  cp 01-slash-commands/$cmd.md .claude/skills/$cmd/SKILL.md
-done
-```
-
-### As Legacy Commands
-
-Copy to your commands directory:
-
-```bash
-# Project-wide (team)
 mkdir -p .claude/commands
 cp 01-slash-commands/*.md .claude/commands/
-
-# Personal use
-mkdir -p ~/.claude/commands
-cp 01-slash-commands/*.md ~/.claude/commands/
 ```
 
-## Creating Your Own Commands
+### 安装单个命令
 
-### Skill Template (Recommended)
-
-Create `.claude/skills/my-command/SKILL.md`:
-
-```yaml
----
-name: my-command
-description: What this command does. Use when [trigger conditions].
-argument-hint: [optional-args]
-allowed-tools: Bash(npm *), Read, Grep
----
-
-# Command Title
-
-## Context
-
-- Current branch: !`git branch --show-current`
-- Related files: @package.json
-
-## Instructions
-
-1. First step
-2. Second step with argument: $ARGUMENTS
-3. Third step
-
-## Output Format
-
-- How to format the response
-- What to include
+```bash
+mkdir -p .claude/commands
+cp 01-slash-commands/optimize.md .claude/commands/
 ```
 
-### User-Only Command (No Auto-Invocation)
+然后在 Claude Code 中直接输入：
 
-For commands with side effects that Claude shouldn't trigger automatically:
-
-```yaml
----
-name: deploy
-description: Deploy to production
-disable-model-invocation: true
-allowed-tools: Bash(npm *), Bash(git *)
----
-
-Deploy the application to production:
-
-1. Run tests
-2. Build application
-3. Push to deployment target
-4. Verify deployment
+```text
+/optimize
 ```
 
-## Best Practices
+---
 
-| Do | Don't |
-|------|---------|
-| Use clear, action-oriented names | Create commands for one-time tasks |
-| Include `description` with trigger conditions | Build complex logic in commands |
-| Keep commands focused on single task | Hardcode sensitive information |
-| Use `disable-model-invocation` for side effects | Skip the description field |
-| Use `!` prefix for dynamic context | Assume Claude knows current state |
-| Organize related files in skill directories | Put everything in one file |
+## command 文件里哪些不能翻
 
-## Troubleshooting
+这一点非常重要。`*.md` 里的说明文字可以中文化，但这些内容不要翻：
 
-### Command Not Found
+- frontmatter key，例如 `description`、`allowed-tools`
+- 真实命令名，例如 `/optimize`
+- `Bash(...)` 权限约束
+- 代码块里的可执行命令
 
-**Solutions:**
-- Check file is in `.claude/skills/<name>/SKILL.md` or `.claude/commands/<name>.md`
-- Verify the `name` field in frontmatter matches expected command name
-- Restart Claude Code session
-- Run `/help` to see available commands
+例如 [`pr.md`](./pr.md) 里的这些行必须保留：
 
-### Command Not Executing as Expected
-
-**Solutions:**
-- Add more specific instructions
-- Include examples in the skill file
-- Check `allowed-tools` if using bash commands
-- Test with simple inputs first
-
-### Skill vs Command Conflict
-
-If both exist with the same name, the **skill takes precedence**. Remove one or rename it.
-
-## Related Guides
-
-- **[Skills](../03-skills/)** - Full reference for skills (auto-invoked capabilities)
-- **[Memory](../02-memory/)** - Persistent context with CLAUDE.md
-- **[Subagents](../04-subagents/)** - Delegated AI agents
-- **[Plugins](../07-plugins/)** - Bundled command collections
-- **[Hooks](../06-hooks/)** - Event-driven automation
-
-## Additional Resources
-
-- [Official Interactive Mode Documentation](https://code.claude.com/docs/en/interactive-mode) - Built-in commands reference
-- [Official Skills Documentation](https://code.claude.com/docs/en/skills) - Complete skills reference
-- [CLI Reference](https://code.claude.com/docs/en/cli-reference) - Command-line options
+- `allowed-tools:`
+- `Bash(git add:*)`
+- `Bash(git status:*)`
+- `Bash(git diff:*)`
 
 ---
 
-*Part of the [Claude How To](../) guide series*
+## 推荐你先用哪几个
+
+如果你是第一次认真用 Claude Code，优先试这几个：
+
+### `/optimize`
+
+适合你想让 Claude 帮你看性能问题、内存问题、算法改进时。
+
+### `/pr`
+
+适合你准备发 PR 前做一次结构化检查，顺手整理提交信息。
+
+### `/generate-api-docs`
+
+适合后端或接口项目，尤其是你已经有一些固定的接口风格想统一输出文档时。
+
+---
+
+## slash commands 和 skills 的关系
+
+很多人一开始会混：
+
+- slash commands：更像“我主动输入一个命令，触发一个固定动作”
+- skills：更像“Claude 在合适的时候自动调用的复用能力”
+
+简单理解：
+
+- 想自己明确触发：先用 slash commands
+- 想让 Claude 自动判断是否该启用：再考虑 skills
+
+---
+
+## 什么时候该升级成 skill
+
+如果你发现某个 slash command 出现这些情况，就可以考虑迁移到 skill：
+
+- 你在多个项目里都要重复用
+- 它不只是一个短 prompt，还依赖脚本、模板、参考文档
+- 你希望 Claude 在合适场景下自动调用，而不是每次手动输入
+
+下一步可以看 [03-skills](../03-skills/)。
+
+---
+
+## 常见坑
+
+### 1. 文件放对了，但命令不生效
+
+优先检查：
+
+- 路径是不是 `.claude/commands/`
+- 文件扩展名是不是 `.md`
+- frontmatter 格式是不是正确
+
+### 2. 翻译后命令坏了
+
+最常见是把这些东西翻译掉了：
+
+- `description`
+- `allowed-tools`
+- `/command-name`
+
+### 3. 以为 command 和 skill 是两套完全不同的东西
+
+不是。现在推荐实践是更偏向 skill，只是调用方式和使用时机不同。
+
+---
+
+## 推荐下一步
+
+- 刚会用 slash commands：去看 [02-memory](../02-memory/)
+- 想做自动触发工作流：去看 [03-skills](../03-skills/)
+- 想快速查命令：回到 [QUICK_REFERENCE.md](../QUICK_REFERENCE.md)

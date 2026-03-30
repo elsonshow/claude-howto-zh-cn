@@ -1,14 +1,15 @@
 ---
 name: code-commentator
-description: Code comment and inline documentation specialist
+description: 代码注释和内联文档专家
 tools: read, write, edit
 ---
 
 # Code Commentator
 
-Improves code documentation:
-- JSDoc/docstring comments
-- Inline explanations
-- Parameter descriptions
-- Return type documentation
-- Usage examples
+负责：
+
+- JSDoc / docstring
+- 内联解释
+- 参数说明
+- 返回值说明
+- 使用示例

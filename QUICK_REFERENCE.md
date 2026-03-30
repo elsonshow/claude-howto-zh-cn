@@ -3,504 +3,260 @@
   <img alt="Claude How To" src="resources/logos/claude-howto-logo.svg">
 </picture>
 
-# Claude Code Examples - Quick Reference Card
+# Claude Code 速查卡（Quick Reference）
 
-## 🚀 Installation Quick Commands
+这份速查卡适合两种场景：
+
+- 你已经知道大概原理，现在只想快速复制命令
+- 你正在本土化或二次改写仓库，想快速确认哪些路径和标识不能动
+
+---
+
+## 🚀 安装命令速查
 
 ### Slash Commands
+
 ```bash
-# Install all
+# 安装全部示例 slash commands
 cp 01-slash-commands/*.md .claude/commands/
 
-# Install specific
+# 安装单个命令
 cp 01-slash-commands/optimize.md .claude/commands/
 ```
 
 ### Memory
+
 ```bash
-# Project memory
+# 项目级 memory
 cp 02-memory/project-CLAUDE.md ./CLAUDE.md
 
-# Personal memory
+# 个人级 memory
 cp 02-memory/personal-CLAUDE.md ~/.claude/CLAUDE.md
 ```
 
 ### Skills
+
 ```bash
-# Personal skills
+# 个人 skills
 cp -r 03-skills/code-review ~/.claude/skills/
 
-# Project skills
+# 项目 skills
 cp -r 03-skills/code-review .claude/skills/
 ```
 
 ### Subagents
+
 ```bash
-# Install all
+# 安装全部 subagents
 cp 04-subagents/*.md .claude/agents/
 
-# Install specific
+# 安装单个 subagent
 cp 04-subagents/code-reviewer.md .claude/agents/
 ```
 
 ### MCP
+
 ```bash
-# Set credentials
+# 先准备凭证
 export GITHUB_TOKEN="your_token"
 export DATABASE_URL="postgresql://..."
 
-# Install config (project scope)
+# 项目级 MCP 配置
 cp 05-mcp/github-mcp.json .mcp.json
 
-# Or user scope: add to ~/.claude.json
+# 或者写进用户级配置 ~/.claude.json
 ```
 
 ### Hooks
+
 ```bash
-# Install hooks
 mkdir -p ~/.claude/hooks
 cp 06-hooks/*.sh ~/.claude/hooks/
 chmod +x ~/.claude/hooks/*.sh
-
-# Configure in settings (~/.claude/settings.json)
 ```
 
 ### Plugins
+
 ```bash
-# Install from examples (if published)
 /plugin install pr-review
 /plugin install devops-automation
 /plugin install documentation
 ```
 
 ### Checkpoints
-```bash
-# Checkpoints are created automatically with every user prompt
-# To rewind, press Esc twice or use:
-/rewind
 
-# Then choose: Restore code and conversation, Restore conversation,
-# Restore code, Summarize from here, or Never mind
+```bash
+# checkpoints 默认自动创建
+/rewind
 ```
 
 ### Advanced Features
-```bash
-# Configure in settings (.claude/settings.json)
-# See 09-advanced-features/config-examples.json
 
-# Planning mode
+```bash
+# 进入规划模式
 /plan Task description
 
-# Permission modes (use --permission-mode flag)
-# default        - Ask for approval on risky actions
-# acceptEdits    - Auto-accept file edits, ask for others
-# plan           - Read-only analysis, no modifications
-# dontAsk        - Accept all actions except risky ones
-# auto           - Background classifier decides permissions automatically
-# bypassPermissions - Accept all actions (requires --dangerously-skip-permissions)
+# 常见 permission mode
+claude --permission-mode default
+claude --permission-mode acceptEdits
+claude --permission-mode plan
+claude --permission-mode dontAsk
+claude --permission-mode bypassPermissions
 
-# Session management
-/resume                # Resume a previous conversation
-/rename "name"         # Name the current session
-/fork                  # Fork the current session
-claude -c              # Continue most recent conversation
-claude -r "session"    # Resume session by name/ID
+# session 常用命令
+/resume
+/rename "session-name"
+/branch                # 某些版本中 `/fork` 仍可作为兼容别名
+claude -c
+claude -r "session-name"
 ```
 
 ---
 
-## 📋 Feature Cheat Sheet
+## 📋 功能速查表
 
-| Feature | Install Path | Usage |
-|---------|-------------|-------|
-| **Slash Commands (55+)** | `.claude/commands/*.md` | `/command-name` |
-| **Memory** | `./CLAUDE.md` | Auto-loaded |
-| **Skills** | `.claude/skills/*/SKILL.md` | Auto-invoked |
-| **Subagents** | `.claude/agents/*.md` | Auto-delegated |
-| **MCP** | `.mcp.json` (project) or `~/.claude.json` (user) | `/mcp__server__action` |
-| **Hooks (25 events)** | `~/.claude/hooks/*.sh` | Event-triggered (4 types) |
-| **Plugins** | Via `/plugin install` | Bundles all |
-| **Checkpoints** | Built-in | `Esc+Esc` or `/rewind` |
-| **Planning Mode** | Built-in | `/plan <task>` |
-| **Permission Modes (6)** | Built-in | `--allowedTools`, `--permission-mode` |
-| **Sessions** | Built-in | `/session <command>` |
-| **Background Tasks** | Built-in | Run in background |
-| **Remote Control** | Built-in | WebSocket API |
-| **Web Sessions** | Built-in | `claude web` |
-| **Git Worktrees** | Built-in | `/worktree` |
-| **Auto Memory** | Built-in | Auto-saves to CLAUDE.md |
-| **Task List** | Built-in | `/task list` |
-| **Bundled Skills (5)** | Built-in | `/simplify`, `/loop`, `/claude-api`, `/voice`, `/browse` |
+| 能力 | 安装 / 所在位置 | 典型用法 | 备注 |
+|------|------------------|----------|------|
+| Slash Commands | `.claude/commands/*.md` | `/command-name` | 用户主动触发 |
+| Memory | `./CLAUDE.md` / `~/.claude/CLAUDE.md` | 自动加载 | 长期规则和偏好 |
+| Skills | `.claude/skills/*/SKILL.md` | 自动触发 | 可复用工作流 |
+| Subagents | `.claude/agents/*.md` | 自动委派 / 显式调用 | 分工执行 |
+| MCP | `.mcp.json` / `~/.claude.json` | `/mcp`、工具调用 | 实时外部能力 |
+| Hooks | `~/.claude/hooks/*.sh` 等 | 事件触发 | 自动检查和自动化 |
+| Plugins | `/plugin install` | 一次安装多能力 | 团队分发 |
+| Checkpoints | 内建 | `Esc+Esc`、`/rewind` | 安全试错 |
+| Planning Mode | 内建 | `/plan <task>` | 复杂任务规划 |
+| Print Mode | 内建 | `claude -p` | 脚本 / CI/CD |
 
 ---
 
-## 🎯 Common Use Cases
+## 🧠 哪些标识不能翻
 
-### Code Review
+这部分最容易踩坑，单独列出来：
+
+- `/optimize`、`/pr`、`/review-pr`
+- `skills`、`hooks`、`MCP`、`CLI`
+- `allowed-tools`、`tools`、`model`、`env`
+- `GITHUB_TOKEN`、`DATABASE_URL`
+- `.mcp.json`
+- `claude -p`
+
+想继续中文化仓库时，先看：
+
+- [LOCALIZATION-STYLE.md](LOCALIZATION-STYLE.md)
+- [UPSTREAM.md](UPSTREAM.md)
+
+---
+
+## 🎯 常见场景速查
+
+### 代码审查
+
 ```bash
-# Method 1: Slash command
+# 方法 1：slash command
 cp 01-slash-commands/optimize.md .claude/commands/
-# Use: /optimize
+# 使用：/optimize
 
-# Method 2: Subagent
+# 方法 2：subagent
 cp 04-subagents/code-reviewer.md .claude/agents/
-# Use: Auto-delegated
 
-# Method 3: Skill
+# 方法 3：skill
 cp -r 03-skills/code-review ~/.claude/skills/
-# Use: Auto-invoked
 
-# Method 4: Plugin (best)
+# 方法 4：plugin
 /plugin install pr-review
-# Use: /review-pr
 ```
 
-### Documentation
+### 文档生成
+
 ```bash
-# Slash command
 cp 01-slash-commands/generate-api-docs.md .claude/commands/
-
-# Subagent
 cp 04-subagents/documentation-writer.md .claude/agents/
-
-# Skill
 cp -r 03-skills/doc-generator ~/.claude/skills/
-
-# Plugin (complete solution)
 /plugin install documentation
 ```
 
 ### DevOps
+
 ```bash
-# Complete plugin
 /plugin install devops-automation
-
-# Commands: /deploy, /rollback, /status, /incident
+# 常见命令：/deploy /rollback /status /incident
 ```
 
-### Team Standards
+### 团队规范
+
 ```bash
-# Project memory
 cp 02-memory/project-CLAUDE.md ./CLAUDE.md
-
-# Edit for your team
-vim CLAUDE.md
 ```
 
-### Automation & Hooks
+### 自动化与 Hooks
+
 ```bash
-# Install hooks (25 events, 4 types: command, http, prompt, agent)
 mkdir -p ~/.claude/hooks
 cp 06-hooks/*.sh ~/.claude/hooks/
 chmod +x ~/.claude/hooks/*.sh
 
-# Examples:
-# - Pre-commit tests: pre-commit.sh
-# - Auto-format code: format-code.sh
-# - Security scanning: security-scan.sh
-
-# Auto Mode for fully autonomous workflows
-claude --enable-auto-mode -p "Refactor and test the auth module"
-# Or cycle modes interactively with Shift+Tab
+# 常见例子
+# - pre-commit.sh
+# - format-code.sh
+# - security-scan.sh
 ```
 
-### Safe Refactoring
+### 安全试错
+
 ```bash
-# Checkpoints are created automatically before each prompt
-# Try refactoring
-# If it works: continue
-# If it fails: press Esc+Esc or use /rewind to go back
+# 修改前后都记得 checkpoint 可回退
+/rewind
 ```
 
-### Complex Implementation
-```bash
-# Use planning mode
-/plan Implement user authentication system
+### CI/CD
 
-# Claude creates detailed plan
-# Review and approve
-# Claude implements systematically
-```
-
-### CI/CD Integration
 ```bash
-# Run in headless mode (non-interactive)
 claude -p "Run all tests and generate report"
-
-# With permission mode for CI
 claude -p "Run tests" --permission-mode dontAsk
-
-# With Auto Mode for fully autonomous CI tasks
-claude --enable-auto-mode -p "Run tests and fix failures"
-
-# With hooks for automation
-# See 09-advanced-features/README.md
-```
-
-### Learning & Experimentation
-```bash
-# Use plan mode for safe analysis
-claude --permission-mode plan
-
-# Experiment safely - checkpoints are created automatically
-# If you need to rewind: press Esc+Esc or use /rewind
-```
-
-### Agent Teams
-```bash
-# Enable agent teams
-export CLAUDE_AGENT_TEAMS=1
-
-# Or in settings.json
-{ "agentTeams": { "enabled": true } }
-
-# Start with: "Implement feature X using a team approach"
-```
-
-### Scheduled Tasks
-```bash
-# Run a command every 5 minutes
-/loop 5m /check-status
-
-# One-time reminder
-/loop 30m "remind me to check the deploy"
 ```
 
 ---
 
-## 📁 File Locations Reference
+## 🇨🇳 中国用户特别注意
 
-```
-Your Project/
-├── .claude/
-│   ├── commands/              # Slash commands go here
-│   ├── agents/                # Subagents go here
-│   ├── skills/                # Project skills go here
-│   └── settings.json          # Project settings (hooks, etc.)
-├── .mcp.json                  # MCP configuration (project scope)
-├── CLAUDE.md                  # Project memory
-└── src/
-    └── api/
-        └── CLAUDE.md          # Directory-specific memory
+### GitHub 访问和 Token
 
-User Home/
-├── .claude/
-│   ├── commands/              # Personal commands
-│   ├── agents/                # Personal agents
-│   ├── skills/                # Personal skills
-│   ├── hooks/                 # Hook scripts
-│   ├── settings.json          # User settings
-│   ├── managed-settings.d/    # Managed settings (enterprise/org)
-│   └── CLAUDE.md              # Personal memory
-└── .claude.json               # Personal MCP config (user scope)
-```
+- 很多 MCP 示例、plugin 示例默认依赖 GitHub。
+- 开始之前先确认你能访问 GitHub，并且 `GITHUB_TOKEN` 具备需要的 scope。
 
----
+### `npm` / `npx` / `uv`
 
-## 🔍 Finding Examples
+- 很多示例会用到 `npx` 安装 MCP server。
+- Python 相关脚本和测试通常依赖 `uv`。
+- 如果第一次安装很慢，优先检查网络、代理、包管理镜像和证书环境。
 
-### By Category
-- **Slash Commands**: `01-slash-commands/`
-- **Memory**: `02-memory/`
-- **Skills**: `03-skills/`
-- **Subagents**: `04-subagents/`
-- **MCP**: `05-mcp/`
-- **Hooks**: `06-hooks/`
-- **Plugins**: `07-plugins/`
-- **Checkpoints**: `08-checkpoints/`
-- **Advanced Features**: `09-advanced-features/`
-- **CLI**: `10-cli/`
+### Windows / WSL
 
-### By Use Case
-- **Performance**: `01-slash-commands/optimize.md`
-- **Security**: `04-subagents/secure-reviewer.md`
-- **Testing**: `04-subagents/test-engineer.md`
-- **Docs**: `03-skills/doc-generator/`
-- **DevOps**: `07-plugins/devops-automation/`
+- 如果你在 Windows 上，优先明确自己是在 PowerShell、Git Bash，还是 WSL 里操作。
+- 部分 shell 脚本和路径写法默认更偏 Unix / macOS / Linux 风格。
 
-### By Complexity
-- **Simple**: Slash commands
-- **Medium**: Subagents, Memory
-- **Advanced**: Skills, Hooks
-- **Complete**: Plugins
+### 翻译不要碰的地方
+
+- frontmatter 字段名
+- JSON key
+- shell 命令
+- 环境变量
+- slash command / skill / plugin / subagent 的名称
 
 ---
 
-## 🎓 Learning Path
+## 🔗 常用入口
 
-### Day 1
-```bash
-# Read overview
-cat README.md
-
-# Install a command
-cp 01-slash-commands/optimize.md .claude/commands/
-
-# Try it
-/optimize
-```
-
-### Day 2-3
-```bash
-# Set up memory
-cp 02-memory/project-CLAUDE.md ./CLAUDE.md
-vim CLAUDE.md
-
-# Install subagent
-cp 04-subagents/code-reviewer.md .claude/agents/
-```
-
-### Day 4-5
-```bash
-# Set up MCP
-export GITHUB_TOKEN="your_token"
-cp 05-mcp/github-mcp.json .mcp.json
-
-# Try MCP commands
-/mcp__github__list_prs
-```
-
-### Week 2
-```bash
-# Install skill
-cp -r 03-skills/code-review ~/.claude/skills/
-
-# Let it auto-invoke
-# Just say: "Review this code for issues"
-```
-
-### Week 3+
-```bash
-# Install complete plugin
-/plugin install pr-review
-
-# Use bundled features
-/review-pr
-/check-security
-/check-tests
-```
-
----
-
-## New Features (March 2026)
-
-| Feature | Description | Usage |
-|---------|-------------|-------|
-| **Auto Mode** | Fully autonomous operation with background classifier | `--enable-auto-mode` flag, `Shift+Tab` to cycle modes |
-| **Channels** | Discord and Telegram integration | `--channels` flag, Discord/Telegram bots |
-| **Voice Dictation** | Speak commands and context to Claude | `/voice` command |
-| **Hooks (25 events)** | Expanded hook system with 4 types | command, http, prompt, agent hook types |
-| **MCP Elicitation** | MCP servers can request user input at runtime | Auto-prompted when server needs clarification |
-| **WebSocket MCP** | WebSocket transport for MCP connections | Configure in `.mcp.json` with `ws://` URLs |
-| **Plugin LSP** | Language Server Protocol support for plugins | `userConfig`, `${CLAUDE_PLUGIN_DATA}` variable |
-| **Remote Control** | Control Claude Code via WebSocket API | `claude --remote` for external integrations |
-| **Web Sessions** | Browser-based Claude Code interface | `claude web` to launch |
-| **Desktop App** | Native desktop application | Download from claude.ai/download |
-| **Task List** | Manage background tasks | `/task list`, `/task status <id>` |
-| **Auto Memory** | Automatic memory saving from conversations | Claude auto-saves key context to CLAUDE.md |
-| **Git Worktrees** | Isolated workspaces for parallel development | `/worktree` to create isolated workspace |
-| **Model Selection** | Switch between Sonnet 4.6 and Opus 4.6 | `/model` or `--model` flag |
-| **Agent Teams** | Coordinate multiple agents on tasks | Enable with `CLAUDE_AGENT_TEAMS=1` env var |
-| **Scheduled Tasks** | Recurring tasks with `/loop` | `/loop 5m /command` or CronCreate tool |
-| **Chrome Integration** | Browser automation | `--chrome` flag or `/chrome` command |
-| **Keyboard Customization** | Custom keybindings | `/keybindings` command |
-
----
-
-## Tips & Tricks
-
-### Customization
-- Start with examples as-is
-- Modify to fit your needs
-- Test before sharing with team
-- Version control your configurations
-
-### Best Practices
-- Use memory for team standards
-- Use plugins for complete workflows
-- Use subagents for complex tasks
-- Use slash commands for quick tasks
-
-### Troubleshooting
-```bash
-# Check file locations
-ls -la .claude/commands/
-ls -la .claude/agents/
-
-# Verify YAML syntax
-head -20 .claude/agents/code-reviewer.md
-
-# Test MCP connection
-echo $GITHUB_TOKEN
-```
-
----
-
-## 📊 Feature Matrix
-
-| Need | Use This | Example |
-|------|----------|---------|
-| Quick shortcut | Slash Command (55+) | `01-slash-commands/optimize.md` |
-| Team standards | Memory | `02-memory/project-CLAUDE.md` |
-| Auto workflow | Skill | `03-skills/code-review/` |
-| Specialized task | Subagent | `04-subagents/code-reviewer.md` |
-| External data | MCP (+ Elicitation, WebSocket) | `05-mcp/github-mcp.json` |
-| Event automation | Hook (25 events, 4 types) | `06-hooks/pre-commit.sh` |
-| Complete solution | Plugin (+ LSP support) | `07-plugins/pr-review/` |
-| Safe experiment | Checkpoint | `08-checkpoints/checkpoint-examples.md` |
-| Fully autonomous | Auto Mode | `--enable-auto-mode` or `Shift+Tab` |
-| Chat integrations | Channels | `--channels` (Discord, Telegram) |
-| CI/CD pipeline | CLI | `10-cli/README.md` |
-
----
-
-## 🔗 Quick Links
-
-- **Main Guide**: `README.md`
-- **Complete Index**: `INDEX.md`
-- **Summary**: `EXAMPLES_SUMMARY.md`
-- **Original Guide**: `claude_concepts_guide.md`
-
----
-
-## 📞 Common Questions
-
-**Q: Which should I use?**
-A: Start with slash commands, add features as needed.
-
-**Q: Can I mix features?**
-A: Yes! They work together. Memory + Commands + MCP = powerful.
-
-**Q: How do I share with team?**
-A: Commit `.claude/` directory to git.
-
-**Q: What about secrets?**
-A: Use environment variables, never hardcode.
-
-**Q: Can I modify examples?**
-A: Absolutely! They're templates to customize.
-
----
-
-## ✅ Checklist
-
-Getting started checklist:
-
-- [ ] Read `README.md`
-- [ ] Install 1 slash command
-- [ ] Try the command
-- [ ] Create project `CLAUDE.md`
-- [ ] Install 1 subagent
-- [ ] Set up 1 MCP integration
-- [ ] Install 1 skill
-- [ ] Try a complete plugin
-- [ ] Customize for your needs
-- [ ] Share with team
-
----
-
-**Quick Start**: `cat README.md`
-
-**Full Index**: `cat INDEX.md`
-
-**This Card**: Keep it handy for quick reference!
+- [README.md](README.md)
+- [LEARNING-ROADMAP.md](LEARNING-ROADMAP.md)
+- [CATALOG.md](CATALOG.md)
+- [01-slash-commands/](01-slash-commands/)
+- [02-memory/](02-memory/)
+- [03-skills/](03-skills/)
+- [04-subagents/](04-subagents/)
+- [05-mcp/](05-mcp/)
+- [06-hooks/](06-hooks/)
+- [07-plugins/](07-plugins/)
+- [09-advanced-features/](09-advanced-features/)
+- [10-cli/](10-cli/)

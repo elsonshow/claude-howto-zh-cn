@@ -3,829 +3,357 @@
   <img alt="Claude How To" src="../resources/logos/claude-howto-logo.svg">
 </picture>
 
-# CLI Reference
+# CLI 指南
 
-## Overview
+Claude Code 的 CLI 是最核心的使用入口。  
+很多功能看起来像“对话式能力”，但真正要高效使用、做自动化、接入脚本或 CI/CD，最后都绕不开 CLI。
 
-The Claude Code CLI (Command Line Interface) is the primary way to interact with Claude Code. It provides powerful options for running queries, managing sessions, configuring models, and integrating Claude into your development workflows.
+---
 
-## Architecture
+## 最常用的命令
 
-```mermaid
-graph TD
-    A["User Terminal"] -->|"claude [options] [query]"| B["Claude Code CLI"]
-    B -->|Interactive| C["REPL Mode"]
-    B -->|"--print"| D["Print Mode (SDK)"]
-    B -->|"--resume"| E["Session Resume"]
-    C -->|Conversation| F["Claude API"]
-    D -->|Single Query| F
-    E -->|Load Context| F
-    F -->|Response| G["Output"]
-    G -->|text/json/stream-json| H["Terminal/Pipe"]
-```
+| 命令 | 用途 |
+|------|------|
+| `claude` | 打开交互模式 |
+| `claude "query"` | 带初始问题进入 REPL |
+| `claude -p "query"` | print mode，一次执行后退出 |
+| `claude -c` | 继续最近一次会话 |
+| `claude -r "session"` | 恢复指定 session |
+| `claude mcp` | 管理 MCP |
+| `claude agents` | 查看 agents |
+| `claude plugin` | 管理 plugins |
+| `claude remote-control` | 启动远程控制 |
+| `claude auth status` | 查看登录状态 |
 
-## CLI Commands
+如果你是新手，先熟悉 `claude`、`claude -p`、`claude -c`、`claude -r` 就已经很有价值。
 
-| Command | Description | Example |
-|---------|-------------|---------|
-| `claude` | Start interactive REPL | `claude` |
-| `claude "query"` | Start REPL with initial prompt | `claude "explain this project"` |
-| `claude -p "query"` | Print mode - query then exit | `claude -p "explain this function"` |
-| `cat file \| claude -p "query"` | Process piped content | `cat logs.txt \| claude -p "explain"` |
-| `claude -c` | Continue most recent conversation | `claude -c` |
-| `claude -c -p "query"` | Continue in print mode | `claude -c -p "check for type errors"` |
-| `claude -r "<session>" "query"` | Resume session by ID or name | `claude -r "auth-refactor" "finish this PR"` |
-| `claude update` | Update to latest version | `claude update` |
-| `claude mcp` | Configure MCP servers | See [MCP documentation](../05-mcp/) |
-| `claude mcp serve` | Run Claude Code as an MCP server | `claude mcp serve` |
-| `claude agents` | List all configured subagents | `claude agents` |
-| `claude auto-mode defaults` | Print auto mode default rules as JSON | `claude auto-mode defaults` |
-| `claude remote-control` | Start Remote Control server | `claude remote-control` |
-| `claude plugin` | Manage plugins (install, enable, disable) | `claude plugin install my-plugin` |
-| `claude auth login` | Log in (supports `--email`, `--sso`) | `claude auth login --email user@example.com` |
-| `claude auth logout` | Log out of current account | `claude auth logout` |
-| `claude auth status` | Check auth status (exit 0 if logged in, 1 if not) | `claude auth status` |
+---
 
-## Core Flags
+## 交互模式 vs print mode
 
-| Flag | Description | Example |
-|------|-------------|---------|
-| `-p, --print` | Print response without interactive mode | `claude -p "query"` |
-| `-c, --continue` | Load most recent conversation | `claude --continue` |
-| `-r, --resume` | Resume specific session by ID or name | `claude --resume auth-refactor` |
-| `-v, --version` | Output version number | `claude -v` |
-| `-w, --worktree` | Start in isolated git worktree | `claude -w` |
-| `-n, --name` | Session display name | `claude -n "auth-refactor"` |
-| `--from-pr <number>` | Resume sessions linked to GitHub PR | `claude --from-pr 42` |
-| `--remote "task"` | Create web session on claude.ai | `claude --remote "implement API"` |
-| `--remote-control, --rc` | Interactive session with Remote Control | `claude --rc` |
-| `--teleport` | Resume web session locally | `claude --teleport` |
-| `--teammate-mode` | Agent team display mode | `claude --teammate-mode tmux` |
-| `--bare` | Minimal mode (skip hooks, skills, plugins, MCP, auto memory, CLAUDE.md) | `claude --bare` |
-| `--enable-auto-mode` | Unlock auto permission mode | `claude --enable-auto-mode` |
-| `--channels` | Subscribe to MCP channel plugins | `claude --channels discord,telegram` |
-| `--chrome` / `--no-chrome` | Enable/disable Chrome browser integration | `claude --chrome` |
-| `--effort` | Set thinking effort level | `claude --effort high` |
-| `--init` / `--init-only` | Run initialization hooks | `claude --init` |
-| `--maintenance` | Run maintenance hooks and exit | `claude --maintenance` |
-| `--disable-slash-commands` | Disable all skills and slash commands | `claude --disable-slash-commands` |
-| `--no-session-persistence` | Disable session saving (print mode) | `claude -p --no-session-persistence "query"` |
+### 交互模式
 
-### Interactive vs Print Mode
+适合：
 
-```mermaid
-graph LR
-    A["claude"] -->|Default| B["Interactive REPL"]
-    A -->|"-p flag"| C["Print Mode"]
-    B -->|Features| D["Multi-turn conversation<br>Tab completion<br>History<br>Slash commands"]
-    C -->|Features| E["Single query<br>Scriptable<br>Pipeable<br>JSON output"]
-```
+- 连续问答
+- 多轮上下文
+- 现场探索
+- 需要边改边聊
 
-**Interactive Mode** (default):
 ```bash
-# Start interactive session
 claude
-
-# Start with initial prompt
-claude "explain the authentication flow"
+claude "explain this project"
 ```
 
-**Print Mode** (non-interactive):
+### print mode
+
+适合：
+
+- 一次性任务
+- shell 脚本
+- CI/CD
+- 通过 pipe 处理输入
+- 结构化输出
+
 ```bash
-# Single query, then exit
 claude -p "what does this function do?"
-
-# Process file content
 cat error.log | claude -p "explain this error"
-
-# Chain with other tools
-claude -p "list todos" | grep "URGENT"
 ```
 
-## Model & Configuration
+### 一个实用判断标准
 
-| Flag | Description | Example |
-|------|-------------|---------|
-| `--model` | Set model (sonnet, opus, haiku, or full name) | `claude --model opus` |
-| `--fallback-model` | Automatic model fallback when overloaded | `claude -p --fallback-model sonnet "query"` |
-| `--agent` | Specify agent for session | `claude --agent my-custom-agent` |
-| `--agents` | Define custom subagents via JSON | See [Agents Configuration](#agents-configuration) |
-| `--effort` | Set effort level (low, medium, high, max) | `claude --effort high` |
+- 你要连续来回对话：交互模式
+- 你要“给一条明确任务，然后退出”：print mode
 
-### Model Selection Examples
+---
+
+## 新手最该掌握的 flags
+
+| flag | 用途 |
+|------|------|
+| `-p, --print` | 进入 print mode |
+| `-c, --continue` | 继续最近一次会话 |
+| `-r, --resume` | 恢复指定 session |
+| `-n, --name` | 给 session 起名 |
+| `-w, --worktree` | 在 worktree 中启动 |
+| `--model` | 指定模型 |
+| `--effort` | 指定思考强度 |
+| `--permission-mode` | 指定权限模式 |
+| `--bare` | 以最小模式启动 |
+| `--add-dir` | 加额外目录到工作上下文 |
+
+---
+
+## 一些真正常用的例子
+
+### 查看项目
 
 ```bash
-# Use Opus 4.6 for complex tasks
+claude "explain this project"
+```
+
+### 处理日志
+
+```bash
+cat error.log | claude -p "explain this error"
+```
+
+### 继续最近一次工作
+
+```bash
+claude -c
+```
+
+### 恢复命名会话
+
+```bash
+claude -r "auth-refactor" "finish this task"
+```
+
+### 用于自动化
+
+```bash
+claude -p "Run tests and summarize failures" --permission-mode dontAsk
+```
+
+---
+
+## 模型与配置
+
+CLI 常见会和这些配置一起使用：
+
+- `--model`
+- `--fallback-model`
+- `--effort`
+- `--settings`
+- `--append-system-prompt`
+
+示例：
+
+```bash
 claude --model opus "design a caching strategy"
-
-# Use Haiku 4.5 for quick tasks
-claude --model haiku -p "format this JSON"
-
-# Full model name
-claude --model claude-sonnet-4-6-20250929 "review this code"
-
-# With fallback for reliability
-claude -p --model opus --fallback-model sonnet "analyze architecture"
-
-# Use opusplan (Opus plans, Sonnet executes)
-claude --model opusplan "design and implement the caching layer"
+claude -p --fallback-model sonnet "summarize this diff"
+claude --append-system-prompt "Always explain tradeoffs" "review this plan"
 ```
 
-## System Prompt Customization
+如果你要长期使用 Claude Code，把模型、权限、输出格式这些参数理解清楚，会直接影响效率和成本。
 
-| Flag | Description | Example |
-|------|-------------|---------|
-| `--system-prompt` | Replace entire default prompt | `claude --system-prompt "You are a Python expert"` |
-| `--system-prompt-file` | Load prompt from file (print mode) | `claude -p --system-prompt-file ./prompt.txt "query"` |
-| `--append-system-prompt` | Append to default prompt | `claude --append-system-prompt "Always use TypeScript"` |
+---
 
-### System Prompt Examples
+## 工具与权限相关 flags
 
-```bash
-# Complete custom persona
-claude --system-prompt "You are a senior security engineer. Focus on vulnerabilities."
+下面这些参数非常重要，但也是最容易被误用的一组：
 
-# Append specific instructions
-claude --append-system-prompt "Always include unit tests with code examples"
+- `--permission-mode`
+- `--dangerously-skip-permissions`
+- `--allowedTools`
+- `--disallowedTools`
+- `--tools`
 
-# Load complex prompt from file
-claude -p --system-prompt-file ./prompts/code-reviewer.txt "review main.py"
-```
-
-### System Prompt Flags Comparison
-
-| Flag | Behavior | Interactive | Print |
-|------|----------|-------------|-------|
-| `--system-prompt` | Replaces entire default system prompt | ✅ | ✅ |
-| `--system-prompt-file` | Replaces with prompt from file | ❌ | ✅ |
-| `--append-system-prompt` | Appends to default system prompt | ✅ | ✅ |
-
-**Use `--system-prompt-file` only in print mode. For interactive mode, use `--system-prompt` or `--append-system-prompt`.**
-
-## Tool & Permission Management
-
-| Flag | Description | Example |
-|------|-------------|---------|
-| `--tools` | Restrict available built-in tools | `claude -p --tools "Bash,Edit,Read" "query"` |
-| `--allowedTools` | Tools that execute without prompting | `"Bash(git log:*)" "Read"` |
-| `--disallowedTools` | Tools removed from context | `"Bash(rm:*)" "Edit"` |
-| `--dangerously-skip-permissions` | Skip all permission prompts | `claude --dangerously-skip-permissions` |
-| `--permission-mode` | Begin in specified permission mode | `claude --permission-mode auto` |
-| `--permission-prompt-tool` | MCP tool for permission handling | `claude -p --permission-prompt-tool mcp_auth "query"` |
-| `--enable-auto-mode` | Unlock auto permission mode | `claude --enable-auto-mode` |
-
-### Permission Examples
+### 实用例子
 
 ```bash
-# Read-only mode for code review
+# 只做只读分析
 claude --permission-mode plan "review this codebase"
 
-# Restrict to safe tools only
-claude --tools "Read,Grep,Glob" -p "find all TODO comments"
+# 非交互测试摘要
+claude -p "Run tests" --permission-mode dontAsk
 
-# Allow specific git commands without prompts
-claude --allowedTools "Bash(git status:*)" "Bash(git log:*)"
-
-# Block dangerous operations
-claude --disallowedTools "Bash(rm -rf:*)" "Bash(git push --force:*)"
+# 限制工具范围
+claude -p --tools "Read,Grep,Glob" "find all TODO comments"
 ```
 
-## Output & Format
+---
 
-| Flag | Description | Options | Example |
-|------|-------------|---------|---------|
-| `--output-format` | Specify output format (print mode) | `text`, `json`, `stream-json` | `claude -p --output-format json "query"` |
-| `--input-format` | Specify input format (print mode) | `text`, `stream-json` | `claude -p --input-format stream-json` |
-| `--verbose` | Enable verbose logging | | `claude --verbose` |
-| `--include-partial-messages` | Include streaming events | Requires `stream-json` | `claude -p --output-format stream-json --include-partial-messages "query"` |
-| `--json-schema` | Get validated JSON matching schema | | `claude -p --json-schema '{"type":"object"}' "query"` |
-| `--max-budget-usd` | Maximum spend for print mode | | `claude -p --max-budget-usd 5.00 "query"` |
+## 输出与格式
 
-### Output Format Examples
+如果你要把 Claude Code 接进脚本或程序，最值得关注的是：
+
+- `--output-format`
+- `--json-schema`
+- `--include-partial-messages`
+
+### 常见使用方式
 
 ```bash
-# Plain text (default)
+# 默认文本输出
 claude -p "explain this code"
 
-# JSON for programmatic use
+# JSON 输出
 claude -p --output-format json "list all functions in main.py"
 
-# Streaming JSON for real-time processing
-claude -p --output-format stream-json "generate a long report"
-
-# Structured output with schema validation
-claude -p --json-schema '{"type":"object","properties":{"bugs":{"type":"array"}}}' \
-  "find bugs in this code and return as JSON"
+# 用 schema 约束结构
+claude -p --json-schema '{"type":"object"}' "return structured analysis"
 ```
 
-## Workspace & Directory
+如果你的下游还要接 `jq`、Python、Node 或 CI job，结构化输出会非常有用。
 
-| Flag | Description | Example |
-|------|-------------|---------|
-| `--add-dir` | Add additional working directories | `claude --add-dir ../apps ../lib` |
-| `--setting-sources` | Comma-separated setting sources | `claude --setting-sources user,project` |
-| `--settings` | Load settings from file or JSON | `claude --settings ./settings.json` |
-| `--plugin-dir` | Load plugins from directory (repeatable) | `claude --plugin-dir ./my-plugin` |
+---
 
-### Multi-Directory Example
+## workspace 与多目录
+
+如果你需要让 Claude 同时看多个目录，可以用：
 
 ```bash
-# Work across multiple project directories
 claude --add-dir ../frontend ../backend ../shared "find all API endpoints"
-
-# Load custom settings
-claude --settings '{"model":"opus","verbose":true}' "complex task"
 ```
 
-## MCP Configuration
-
-| Flag | Description | Example |
-|------|-------------|---------|
-| `--mcp-config` | Load MCP servers from JSON | `claude --mcp-config ./mcp.json` |
-| `--strict-mcp-config` | Only use specified MCP config | `claude --strict-mcp-config --mcp-config ./mcp.json` |
-| `--channels` | Subscribe to MCP channel plugins | `claude --channels discord,telegram` |
-
-### MCP Examples
-
-```bash
-# Load GitHub MCP server
-claude --mcp-config ./github-mcp.json "list open PRs"
-
-# Strict mode - only specified servers
-claude --strict-mcp-config --mcp-config ./production-mcp.json "deploy to staging"
-```
-
-## Session Management
-
-| Flag | Description | Example |
-|------|-------------|---------|
-| `--session-id` | Use specific session ID (UUID) | `claude --session-id "550e8400-..."` |
-| `--fork-session` | Create new session when resuming | `claude --resume abc123 --fork-session` |
-
-### Session Examples
-
-```bash
-# Continue last conversation
-claude -c
-
-# Resume named session
-claude -r "feature-auth" "continue implementing login"
-
-# Fork session for experimentation
-claude --resume feature-auth --fork-session "try alternative approach"
-
-# Use specific session ID
-claude --session-id "550e8400-e29b-41d4-a716-446655440000" "continue"
-```
-
-### Session Fork
-
-Create a branch from an existing session for experimentation:
-
-```bash
-# Fork a session to try a different approach
-claude --resume abc123 --fork-session "try alternative implementation"
-
-# Fork with a custom message
-claude -r "feature-auth" --fork-session "test with different architecture"
-```
-
-**Use Cases:**
-- Try alternative implementations without losing the original session
-- Experiment with different approaches in parallel
-- Create branches from successful work for variations
-- Test breaking changes without affecting the main session
-
-The original session remains unchanged, and the fork becomes a new independent session.
-
-## Advanced Features
-
-| Flag | Description | Example |
-|------|-------------|---------|
-| `--chrome` | Enable Chrome browser integration | `claude --chrome` |
-| `--no-chrome` | Disable Chrome browser integration | `claude --no-chrome` |
-| `--ide` | Auto-connect to IDE if available | `claude --ide` |
-| `--max-turns` | Limit agentic turns (non-interactive) | `claude -p --max-turns 3 "query"` |
-| `--debug` | Enable debug mode with filtering | `claude --debug "api,mcp"` |
-| `--enable-lsp-logging` | Enable verbose LSP logging | `claude --enable-lsp-logging` |
-| `--betas` | Beta headers for API requests | `claude --betas interleaved-thinking` |
-| `--plugin-dir` | Load plugins from directory (repeatable) | `claude --plugin-dir ./my-plugin` |
-| `--enable-auto-mode` | Unlock auto permission mode | `claude --enable-auto-mode` |
-| `--effort` | Set thinking effort level | `claude --effort high` |
-| `--bare` | Minimal mode (skip hooks, skills, plugins, MCP, auto memory, CLAUDE.md) | `claude --bare` |
-| `--channels` | Subscribe to MCP channel plugins | `claude --channels discord` |
-| `--fork-session` | Create new session ID when resuming | `claude --resume abc --fork-session` |
-| `--max-budget-usd` | Maximum spend (print mode) | `claude -p --max-budget-usd 5.00 "query"` |
-| `--json-schema` | Validated JSON output | `claude -p --json-schema '{"type":"object"}' "q"` |
-
-### Advanced Examples
-
-```bash
-# Limit autonomous actions
-claude -p --max-turns 5 "refactor this module"
-
-# Debug API calls
-claude --debug "api" "test query"
-
-# Enable IDE integration
-claude --ide "help me with this file"
-```
-
-## Agents Configuration
-
-The `--agents` flag accepts a JSON object defining custom subagents for a session.
-
-### Agents JSON Format
-
-```json
-{
-  "agent-name": {
-    "description": "Required: when to invoke this agent",
-    "prompt": "Required: system prompt for the agent",
-    "tools": ["Optional", "array", "of", "tools"],
-    "model": "optional: sonnet|opus|haiku"
-  }
-}
-```
-
-**Required Fields:**
-- `description` - Natural language description of when to use this agent
-- `prompt` - System prompt that defines the agent's role and behavior
-
-**Optional Fields:**
-- `tools` - Array of available tools (inherits all if omitted)
-  - Format: `["Read", "Grep", "Glob", "Bash"]`
-- `model` - Model to use: `sonnet`, `opus`, or `haiku`
-
-### Complete Agents Example
-
-```json
-{
-  "code-reviewer": {
-    "description": "Expert code reviewer. Use proactively after code changes.",
-    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
-    "tools": ["Read", "Grep", "Glob", "Bash"],
-    "model": "sonnet"
-  },
-  "debugger": {
-    "description": "Debugging specialist for errors and test failures.",
-    "prompt": "You are an expert debugger. Analyze errors, identify root causes, and provide fixes.",
-    "tools": ["Read", "Edit", "Bash", "Grep"],
-    "model": "opus"
-  },
-  "documenter": {
-    "description": "Documentation specialist for generating guides.",
-    "prompt": "You are a technical writer. Create clear, comprehensive documentation.",
-    "tools": ["Read", "Write"],
-    "model": "haiku"
-  }
-}
-```
-
-### Agents Command Examples
-
-```bash
-# Define custom agents inline
-claude --agents '{
-  "security-auditor": {
-    "description": "Security specialist for vulnerability analysis",
-    "prompt": "You are a security expert. Find vulnerabilities and suggest fixes.",
-    "tools": ["Read", "Grep", "Glob"],
-    "model": "opus"
-  }
-}' "audit this codebase for security issues"
-
-# Load agents from file
-claude --agents "$(cat ~/.claude/agents.json)" "review the auth module"
-
-# Combine with other flags
-claude -p --agents "$(cat agents.json)" --model sonnet "analyze performance"
-```
-
-### Agent Priority
-
-When multiple agent definitions exist, they are loaded in this priority order:
-1. **CLI-defined** (`--agents` flag) - Session-specific
-2. **User-level** (`~/.claude/agents/`) - All projects
-3. **Project-level** (`.claude/agents/`) - Current project
-
-CLI-defined agents override both user and project agents for the session.
+这对 monorepo、前后端分仓或跨目录排查问题特别有帮助。
 
 ---
 
-## High-Value Use Cases
+## MCP 与 plugin 相关 CLI
 
-### 1. CI/CD Integration
+你不只会在文档里看到：
 
-Use Claude Code in your CI/CD pipelines for automated code review, testing, and documentation.
+- `claude mcp`
+- `claude mcp serve`
+- `claude plugin`
 
-**GitHub Actions Example:**
+你实际使用中也经常会碰到它们。
 
-```yaml
-name: AI Code Review
-
-on: [pull_request]
-
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Run Code Review
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          claude -p --output-format json \
-            --max-turns 1 \
-            "Review the changes in this PR for:
-            - Security vulnerabilities
-            - Performance issues
-            - Code quality
-            Output as JSON with 'issues' array" > review.json
-
-      - name: Post Review Comment
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const review = JSON.parse(fs.readFileSync('review.json', 'utf8'));
-            // Process and post review comments
-```
-
-**Jenkins Pipeline:**
-
-```groovy
-pipeline {
-    agent any
-    stages {
-        stage('AI Review') {
-            steps {
-                sh '''
-                    claude -p --output-format json \
-                      --max-turns 3 \
-                      "Analyze test coverage and suggest missing tests" \
-                      > coverage-analysis.json
-                '''
-            }
-        }
-    }
-}
-```
-
-### 2. Script Piping
-
-Process files, logs, and data through Claude for analysis.
-
-**Log Analysis:**
+### 典型场景
 
 ```bash
-# Analyze error logs
-tail -1000 /var/log/app/error.log | claude -p "summarize these errors and suggest fixes"
-
-# Find patterns in access logs
-cat access.log | claude -p "identify suspicious access patterns"
-
-# Analyze git history
-git log --oneline -50 | claude -p "summarize recent development activity"
+claude mcp
+claude mcp serve
+claude plugin install my-plugin
 ```
 
-**Code Processing:**
-
-```bash
-# Review a specific file
-cat src/auth.ts | claude -p "review this authentication code for security issues"
-
-# Generate documentation
-cat src/api/*.ts | claude -p "generate API documentation in markdown"
-
-# Find TODOs and prioritize
-grep -r "TODO" src/ | claude -p "prioritize these TODOs by importance"
-```
-
-### 3. Multi-Session Workflows
-
-Manage complex projects with multiple conversation threads.
-
-```bash
-# Start a feature branch session
-claude -r "feature-auth" "let's implement user authentication"
-
-# Later, continue the session
-claude -r "feature-auth" "add password reset functionality"
-
-# Fork to try an alternative approach
-claude --resume feature-auth --fork-session "try OAuth instead"
-
-# Switch between different feature sessions
-claude -r "feature-payments" "continue with Stripe integration"
-```
-
-### 4. Custom Agent Configuration
-
-Define specialized agents for your team's workflows.
-
-```bash
-# Save agents config to file
-cat > ~/.claude/agents.json << 'EOF'
-{
-  "reviewer": {
-    "description": "Code reviewer for PR reviews",
-    "prompt": "Review code for quality, security, and maintainability.",
-    "model": "opus"
-  },
-  "documenter": {
-    "description": "Documentation specialist",
-    "prompt": "Generate clear, comprehensive documentation.",
-    "model": "sonnet"
-  },
-  "refactorer": {
-    "description": "Code refactoring expert",
-    "prompt": "Suggest and implement clean code refactoring.",
-    "tools": ["Read", "Edit", "Glob"]
-  }
-}
-EOF
-
-# Use agents in session
-claude --agents "$(cat ~/.claude/agents.json)" "review the auth module"
-```
-
-### 5. Batch Processing
-
-Process multiple queries with consistent settings.
-
-```bash
-# Process multiple files
-for file in src/*.ts; do
-  echo "Processing $file..."
-  claude -p --model haiku "summarize this file: $(cat $file)" >> summaries.md
-done
-
-# Batch code review
-find src -name "*.py" -exec sh -c '
-  echo "## $1" >> review.md
-  cat "$1" | claude -p "brief code review" >> review.md
-' _ {} \;
-
-# Generate tests for all modules
-for module in $(ls src/modules/); do
-  claude -p "generate unit tests for src/modules/$module" > "tests/$module.test.ts"
-done
-```
-
-### 6. Security-Conscious Development
-
-Use permission controls for safe operation.
-
-```bash
-# Read-only security audit
-claude --permission-mode plan \
-  --tools "Read,Grep,Glob" \
-  "audit this codebase for security vulnerabilities"
-
-# Block dangerous commands
-claude --disallowedTools "Bash(rm:*)" "Bash(curl:*)" "Bash(wget:*)" \
-  "help me clean up this project"
-
-# Restricted automation
-claude -p --max-turns 2 \
-  --allowedTools "Read" "Glob" \
-  "find all hardcoded credentials"
-```
-
-### 7. JSON API Integration
-
-Use Claude as a programmable API for your tools with `jq` parsing.
-
-```bash
-# Get structured analysis
-claude -p --output-format json \
-  --json-schema '{"type":"object","properties":{"functions":{"type":"array"},"complexity":{"type":"string"}}}' \
-  "analyze main.py and return function list with complexity rating"
-
-# Integrate with jq for processing
-claude -p --output-format json "list all API endpoints" | jq '.endpoints[]'
-
-# Use in scripts
-RESULT=$(claude -p --output-format json "is this code secure? answer with {secure: boolean, issues: []}" < code.py)
-if echo "$RESULT" | jq -e '.secure == false' > /dev/null; then
-  echo "Security issues found!"
-  echo "$RESULT" | jq '.issues[]'
-fi
-```
-
-### jq Parsing Examples
-
-Parse and process Claude's JSON output using `jq`:
-
-```bash
-# Extract specific fields
-claude -p --output-format json "analyze this code" | jq '.result'
-
-# Filter array elements
-claude -p --output-format json "list issues" | jq -r '.issues[] | select(.severity=="high")'
-
-# Extract multiple fields
-claude -p --output-format json "describe the project" | jq -r '.{name, version, description}'
-
-# Convert to CSV
-claude -p --output-format json "list functions" | jq -r '.functions[] | [.name, .lineCount] | @csv'
-
-# Conditional processing
-claude -p --output-format json "check security" | jq 'if .vulnerabilities | length > 0 then "UNSAFE" else "SAFE" end'
-
-# Extract nested values
-claude -p --output-format json "analyze performance" | jq '.metrics.cpu.usage'
-
-# Process entire array
-claude -p --output-format json "find todos" | jq '.todos | length'
-
-# Transform output
-claude -p --output-format json "list improvements" | jq 'map({title: .title, priority: .priority})'
-```
+如果你要做自动化、集成第三方系统或团队分发，这些命令迟早会用到。
 
 ---
 
-## Models
+## session 管理
 
-Claude Code supports multiple models with different capabilities:
+当你开始做稍复杂的工作后，session 管理会非常重要。
 
-| Model | ID | Context Window | Notes |
-|-------|-----|----------------|-------|
-| Opus 4.6 | `claude-opus-4-6` | 1M tokens | Most capable, adaptive effort levels |
-| Sonnet 4.6 | `claude-sonnet-4-6` | 1M tokens | Balanced speed and capability |
-| Haiku 4.5 | `claude-haiku-4-5` | 1M tokens | Fastest, best for quick tasks |
+常见场景：
 
-### Model Selection
+- 延续昨天的任务
+- 给当前任务起名
+- 从当前会话分叉出实验方案
 
-```bash
-# Use short names
-claude --model opus "complex architectural review"
-claude --model sonnet "implement this feature"
-claude --model haiku -p "format this JSON"
+常用命令和 flags：
 
-# Use opusplan alias (Opus plans, Sonnet executes)
-claude --model opusplan "design and implement the API"
+- `/resume`
+- `/rename`
+- `/fork`
+- `claude -c`
+- `claude -r`
 
-# Toggle fast mode during session
-/fast
-```
-
-### Effort Levels (Opus 4.6)
-
-Opus 4.6 supports adaptive reasoning with effort levels:
-
-```bash
-# Set effort level via CLI flag
-claude --effort high "complex review"
-
-# Set effort level via slash command
-/effort high
-
-# Set effort level via environment variable
-export CLAUDE_CODE_EFFORT_LEVEL=high   # low, medium, high, or max (Opus 4.6 only)
-```
-
-The "ultrathink" keyword in prompts activates deep reasoning. The `max` effort level is exclusive to Opus 4.6.
+不命名 session，前期感觉没问题，后期会越来越难管理。
 
 ---
 
-## Key Environment Variables
+## CLI 和自动化的关系
 
-| Variable | Description |
-|----------|-------------|
-| `ANTHROPIC_API_KEY` | API key for authentication |
-| `ANTHROPIC_MODEL` | Override default model |
-| `ANTHROPIC_CUSTOM_MODEL_OPTION` | Custom model option for API |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | Override default Opus model ID |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | Override default Sonnet model ID |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | Override default Haiku model ID |
-| `MAX_THINKING_TOKENS` | Set extended thinking token budget |
-| `CLAUDE_CODE_EFFORT_LEVEL` | Set effort level (`low`/`medium`/`high`/`max`) |
-| `CLAUDE_CODE_SIMPLE` | Minimal mode, set by `--bare` flag |
-| `CLAUDE_CODE_DISABLE_AUTO_MEMORY` | Disable automatic CLAUDE.md updates |
-| `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` | Disable background task execution |
-| `CLAUDE_CODE_DISABLE_CRON` | Disable scheduled/cron tasks |
-| `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` | Disable git-related instructions |
-| `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` | Disable terminal title updates |
-| `CLAUDE_CODE_DISABLE_1M_CONTEXT` | Disable 1M token context window |
-| `CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK` | Disable non-streaming fallback |
-| `CLAUDE_CODE_ENABLE_TASKS` | Enable task list feature |
-| `CLAUDE_CODE_TASK_LIST_ID` | Named task directory shared across sessions |
-| `CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION` | Toggle prompt suggestions (`true`/`false`) |
-| `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | Enable experimental agent teams |
-| `CLAUDE_CODE_NEW_INIT` | Use new initialization flow |
-| `CLAUDE_CODE_SUBAGENT_MODEL` | Model for subagent execution |
-| `CLAUDE_CODE_PLUGIN_SEED_DIR` | Directory for plugin seed files |
-| `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` | Env vars to scrub from subprocesses |
-| `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` | Override auto-compaction percentage |
-| `CLAUDE_STREAM_IDLE_TIMEOUT_MS` | Stream idle timeout in milliseconds |
-| `SLASH_COMMAND_TOOL_CHAR_BUDGET` | Character budget for slash command tools |
-| `ENABLE_TOOL_SEARCH` | Enable tool search capability |
-| `MAX_MCP_OUTPUT_TOKENS` | Maximum tokens for MCP tool output |
+当你要做这些事情时，CLI 会变得尤其重要：
+
+- CI/CD
+- shell 脚本
+- 批处理
+- JSON 输出
+- 定时任务
+- 后台任务编排
+
+很多“高级能力”最后都会落回 CLI 参数和脚本调用层。
+
+所以如果你真想把 Claude Code 用深，CLI 不是可选项，而是核心能力。
 
 ---
 
-## Quick Reference
+## 哪些内容绝对不能翻
 
-### Most Common Commands
+如果你在本地化文档，这些内容必须保持英文原样：
 
-```bash
-# Interactive session
-claude
+- `claude`
+- `claude -p`
+- flags，例如 `--model`、`--permission-mode`
+- 子命令，例如 `claude mcp`、`claude plugin`
+- 输出格式名，例如 `json`
 
-# Quick question
-claude -p "how do I..."
+CLI 是最典型的“说明文本可以翻，命令本身不能翻”的内容。
 
-# Continue conversation
-claude -c
+---
 
-# Process a file
-cat file.py | claude -p "review this"
+## 中国用户特别注意
 
-# JSON output for scripts
-claude -p --output-format json "query"
-```
+### 1. 网络环境
 
-### Flag Combinations
+如果你在公司网络、代理或受控环境下使用 CLI，先确认：
 
-| Use Case | Command |
-|----------|---------|
-| Quick code review | `cat file | claude -p "review"` |
-| Structured output | `claude -p --output-format json "query"` |
-| Safe exploration | `claude --permission-mode plan` |
-| Autonomous with safety | `claude --enable-auto-mode --permission-mode auto` |
-| CI/CD integration | `claude -p --max-turns 3 --output-format json` |
-| Resume work | `claude -r "session-name"` |
-| Custom model | `claude --model opus "complex task"` |
-| Minimal mode | `claude --bare "quick query"` |
-| Budget-capped run | `claude -p --max-budget-usd 2.00 "analyze code"` |
+- API 访问
+- GitHub 连通性
+- npm / uv / Python 依赖下载
+- 证书与代理设置
+
+### 2. Windows / WSL 差异
+
+Windows 用户建议尽早确认自己使用的是：
+
+- PowerShell
+- Git Bash
+- WSL
+
+这会直接影响路径、命令行为和脚本兼容性。
+
+### 3. 自动化不要一开始就开太猛
+
+建议从这些低风险任务开始：
+
+- 日志解释
+- 测试摘要
+- 结构化分析
+
+不要一开始就上高权限全自动修改流程。
+
+---
+
+## 常见坑
+
+### 1. 把 print mode 当普通聊天
+
+`claude -p` 更适合一次性、明确输入输出的任务。
+
+### 2. 不给 session 命名
+
+短期还行，任务一多就会混乱。
+
+### 3. 翻译 CLI flags
+
+这会让用户复制命令后直接失败。
+
+### 4. 没区分“能跑”和“适合自动化”
+
+某个命令能跑，不代表它就适合直接放进 CI/CD。
 
 ---
 
 ## Troubleshooting
 
-### Command Not Found
+如果 CLI 行为不符合预期，优先排查：
 
-**Problem:** `claude: command not found`
-
-**Solutions:**
-- Install Claude Code: `npm install -g @anthropic-ai/claude-code`
-- Check PATH includes npm global bin directory
-- Try running with full path: `npx claude`
-
-### API Key Issues
-
-**Problem:** Authentication failed
-
-**Solutions:**
-- Set API key: `export ANTHROPIC_API_KEY=your-key`
-- Check key is valid and has sufficient credits
-- Verify key permissions for the model requested
-
-### Session Not Found
-
-**Problem:** Cannot resume session
-
-**Solutions:**
-- List available sessions to find correct name/ID
-- Sessions may expire after period of inactivity
-- Use `-c` to continue most recent session
-
-### Output Format Issues
-
-**Problem:** JSON output is malformed
-
-**Solutions:**
-- Use `--json-schema` to enforce structure
-- Add explicit JSON instructions in prompt
-- Use `--output-format json` (not just asking for JSON in prompt)
-
-### Permission Denied
-
-**Problem:** Tool execution blocked
-
-**Solutions:**
-- Check `--permission-mode` setting
-- Review `--allowedTools` and `--disallowedTools` flags
-- Use `--dangerously-skip-permissions` for automation (with caution)
+1. 当前是不是该用交互模式，而不是 print mode
+2. flags 是否拼对
+3. 权限模式是否合适
+4. 环境变量是否已导出
+5. 当前 shell / 路径环境是否匹配
 
 ---
 
-## Additional Resources
+## Best Practices
 
-- **[Official CLI Reference](https://code.claude.com/docs/en/cli-reference)** - Complete command reference
-- **[Headless Mode Documentation](https://code.claude.com/docs/en/headless)** - Automated execution
-- **[Slash Commands](../01-slash-commands/)** - Custom shortcuts within Claude
-- **[Memory Guide](../02-memory/)** - Persistent context via CLAUDE.md
-- **[MCP Protocol](../05-mcp/)** - External tool integrations
-- **[Advanced Features](../09-advanced-features/)** - Planning mode, extended thinking
-- **[Subagents Guide](../04-subagents/)** - Delegated task execution
+- 先熟练 `claude`、`claude -p`、`claude -c`、`claude -r`
+- 自动化从小任务开始
+- 所有 CLI 示例都保留英文原样
+- 把 session 命名当成好习惯
+- 中国用户优先排除网络与 shell 环境问题
 
 ---
 
-*Part of the [Claude How To](../) guide series*
+## 推荐下一步
+
+- 想更系统地看高级能力：看 [09-advanced-features](../09-advanced-features/)
+- 想查安装与路径：看 [QUICK_REFERENCE.md](../QUICK_REFERENCE.md)
+- 想结合 hooks / MCP / plugins：回看 [06-hooks](../06-hooks/)、[05-mcp](../05-mcp/)、[07-plugins](../07-plugins/)

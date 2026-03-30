@@ -1,47 +1,24 @@
 # Code Review Checklist
 
 ## Security Checklist
-- [ ] No hardcoded credentials or secrets
-- [ ] Input validation on all user inputs
-- [ ] SQL injection prevention (parameterized queries)
-- [ ] CSRF protection on state-changing operations
-- [ ] XSS prevention with proper escaping
-- [ ] Authentication checks on protected endpoints
-- [ ] Authorization checks on resources
-- [ ] Secure password hashing (bcrypt, argon2)
-- [ ] No sensitive data in logs
-- [ ] HTTPS enforced
+
+- [ ] 没有硬编码 secrets
+- [ ] 所有用户输入都有校验
+- [ ] 避免 SQL injection
+- [ ] 状态修改接口有 CSRF 保护（如适用）
+- [ ] 有 XSS 防护
+- [ ] 受保护接口有鉴权检查
 
 ## Performance Checklist
-- [ ] No N+1 queries
-- [ ] Appropriate use of indexes
-- [ ] Caching implemented where beneficial
-- [ ] No blocking operations on main thread
-- [ ] Async/await used correctly
-- [ ] Large datasets paginated
-- [ ] Database connections pooled
-- [ ] Regular expressions optimized
-- [ ] No unnecessary object creation
-- [ ] Memory leaks prevented
+
+- [ ] 没有明显 O(n²) 热路径
+- [ ] 避免 N+1 查询
+- [ ] 缓存策略合理
+- [ ] 没有明显内存浪费
 
 ## Quality Checklist
-- [ ] Functions < 50 lines
-- [ ] Clear variable naming
-- [ ] No duplicate code
-- [ ] Proper error handling
-- [ ] Comments explain WHY, not WHAT
-- [ ] No console.logs in production
-- [ ] Type checking (TypeScript/JSDoc)
-- [ ] SOLID principles followed
-- [ ] Design patterns applied correctly
-- [ ] Self-documenting code
 
-## Testing Checklist
-- [ ] Unit tests written
-- [ ] Edge cases covered
-- [ ] Error scenarios tested
-- [ ] Integration tests present
-- [ ] Coverage > 80%
-- [ ] No flaky tests
-- [ ] Mock external dependencies
-- [ ] Clear test names
+- [ ] 命名清晰
+- [ ] 函数职责单一
+- [ ] 没有明显重复代码
+- [ ] 关键逻辑有足够测试

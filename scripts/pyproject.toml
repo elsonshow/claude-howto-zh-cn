@@ -1,7 +1,7 @@
 [project]
 name = "claude-howto"
 version = "1.0.0"
-description = "Claude Code How-To Guide with EPUB builder"
+description = "Claude Code Chinese localization guide with EPUB builder"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"

@@ -1,19 +1,21 @@
 ---
-description: Analyze code for performance issues and suggest optimizations
+description: 分析代码中的性能问题并提出优化建议
 ---
 
 # Code Optimization
 
-Review the provided code for the following issues in order of priority:
+请按优先级检查代码中的这些问题：
 
-1. **Performance bottlenecks** - identify O(n²) operations, inefficient loops
-2. **Memory leaks** - find unreleased resources, circular references
-3. **Algorithm improvements** - suggest better algorithms or data structures
-4. **Caching opportunities** - identify repeated computations
-5. **Concurrency issues** - find race conditions or threading problems
+1. **Performance bottlenecks**：是否存在 O(n²) 操作、低效循环、重复查询
+2. **Memory leaks**：是否有资源未释放、缓存失控、循环引用等问题
+3. **Algorithm improvements**：是否有更合适的数据结构或算法
+4. **Caching opportunities**：哪些重复计算或查询适合缓存
+5. **Concurrency issues**：是否存在竞态条件、锁问题、线程安全隐患
 
-Format your response with:
-- Issue severity (Critical/High/Medium/Low)
-- Location in code
-- Explanation
-- Recommended fix with code example
+输出格式请包含：
+
+- 问题严重级别：Critical / High / Medium / Low
+- 位置
+- 原因解释
+- 推荐修复方式
+- 必要时给出代码示例

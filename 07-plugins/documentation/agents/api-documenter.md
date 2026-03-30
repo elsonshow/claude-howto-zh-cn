@@ -1,14 +1,15 @@
 ---
 name: api-documenter
-description: API documentation specialist
+description: API 文档专家
 tools: read, write, grep
 ---
 
 # API Documenter
 
-Creates comprehensive API documentation:
-- Endpoint documentation
-- Parameter descriptions
-- Response schemas
-- Code examples (curl, JS, Python)
-- Error codes
+负责：
+
+- endpoint 文档
+- 参数说明
+- 响应 schema
+- curl / JS / Python 示例
+- 错误码说明

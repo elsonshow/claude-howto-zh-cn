@@ -20,6 +20,9 @@
     "Haiku",
     "luongnv89",
     "claude-howto",
+    "zh",
+    "zh-cn",
+    "localization",
     "ModelContextProtocol",
     "YAML",
     "JSON",
@@ -254,6 +257,7 @@
     "Cherny's"
   ],
   "ignoreRegExpList": [
+    "[\\u4E00-\\u9FFF]+",
     "code\\{[^}]*\\}",
     "```[\\s\\S]*?```"
   ],

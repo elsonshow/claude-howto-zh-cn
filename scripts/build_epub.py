@@ -111,10 +111,10 @@ class EPUBConfig:
     logo_path: Path | None = None
 
     # EPUB Metadata
-    identifier: str = "claude-howto-guide"
-    title: str = "Claude Code How-To Guide"
-    language: str = "en"
-    author: str = "Claude Code Community"
+    identifier: str = "claude-howto-zh-cn-guide"
+    title: str = "Claude Code 中文全面上手指南"
+    language: str = "zh"
+    author: str = "claude-howto-zh-cn contributors"
 
     # Cover Settings
     cover_width: int = 600

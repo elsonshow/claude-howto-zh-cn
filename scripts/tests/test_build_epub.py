@@ -88,10 +88,10 @@ class TestEPUBConfig:
             root_path=tmp_path,
             output_path=tmp_path / "out.epub",
         )
-        assert config.identifier == "claude-howto-guide"
-        assert config.title == "Claude Code How-To Guide"
-        assert config.language == "en"
-        assert config.author == "Claude Code Community"
+        assert config.identifier == "claude-howto-zh-cn-guide"
+        assert config.title == "Claude Code 中文全面上手指南"
+        assert config.language == "zh"
+        assert config.author == "claude-howto-zh-cn contributors"
         assert config.request_timeout == 30.0
         assert config.max_concurrent_requests == 10
         assert config.max_retries == 3

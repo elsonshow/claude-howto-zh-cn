@@ -3,73 +3,85 @@
   <img alt="Claude How To" src="../resources/logos/claude-howto-logo.svg">
 </picture>
 
-# Claude Code Plugins
+# Plugins 指南
 
-This folder contains complete plugin examples that bundle multiple Claude Code features into cohesive, installable packages.
+如果说 skills、hooks、MCP、subagents 分别是单项能力，那么 plugins 就是把这些能力打包成“一整套可安装方案”的方式。
 
-## Overview
+对中国用户来说，plugin 章节之所以重要，不只是因为它“高级”，而是因为它最接近团队实际使用场景：一套命令、一套 agents、一套 hooks、一套外部集成，最好一次装好、一次分发。
 
-Claude Code Plugins are bundled collections of customizations (slash commands, subagents, MCP servers, and hooks) that install with a single command. They represent the highest-level extension mechanism—combining multiple features into cohesive, shareable packages.
+---
 
-## Plugin Architecture
+## plugin 是什么
 
-```mermaid
-graph TB
-    A["Plugin"]
-    B["Slash Commands"]
-    C["Subagents"]
-    D["MCP Servers"]
-    E["Hooks"]
-    F["Configuration"]
+plugin 通常会组合这些内容：
 
-    A -->|bundles| B
-    A -->|bundles| C
-    A -->|bundles| D
-    A -->|bundles| E
-    A -->|bundles| F
+- commands
+- skills
+- subagents
+- hooks
+- `.mcp.json`
+- 辅助脚本与模板
+
+所以它特别适合：
+
+- 团队统一工作流
+- 跨项目复用
+- 把一套最佳实践做成可分发单元
+
+---
+
+## plugin 的价值到底在哪里
+
+当你已经有很多零散配置时，plugin 解决的是：
+
+- 怎么一次装完整套能力
+- 怎么让团队成员拿到一致配置
+- 怎么让“个人技巧”变成“团队资产”
+
+如果你已经有单独的 slash command、skill、subagent、hook 在工作，那么下一步自然就是考虑是否要把它们打包。
+
+---
+
+## 基本结构
+
+```text
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json
+├── commands/
+├── agents/
+├── skills/
+├── hooks/
+├── .mcp.json
+├── scripts/
+├── templates/
+└── docs/
 ```
 
-## Plugin Loading Process
+### 这些目录分别做什么
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Claude as Claude Code
-    participant Plugin as Plugin Marketplace
-    participant Install as Installation
-    participant SlashCmds as Slash Commands
-    participant Subagents
-    participant MCPServers as MCP Servers
-    participant Hooks
-    participant Tools as Configured Tools
+| 目录 | 用途 |
+|------|------|
+| `.claude-plugin/plugin.json` | plugin manifest |
+| `commands/` | 可直接调用的命令入口 |
+| `agents/` | 子代理定义 |
+| `skills/` | 自动触发或复用能力 |
+| `hooks/` | 自动化事件处理 |
+| `.mcp.json` | 外部系统接入 |
+| `scripts/` | 实际执行脚本 |
+| `templates/` | 输出模板 |
 
-    User->>Claude: /plugin install pr-review
-    Claude->>Plugin: Download plugin manifest
-    Plugin-->>Claude: Return plugin definition
-    Claude->>Install: Extract components
-    Install->>SlashCmds: Configure
-    Install->>Subagents: Configure
-    Install->>MCPServers: Configure
-    Install->>Hooks: Configure
-    SlashCmds-->>Tools: Ready to use
-    Subagents-->>Tools: Ready to use
-    MCPServers-->>Tools: Ready to use
-    Hooks-->>Tools: Ready to use
-    Tools-->>Claude: Plugin installed ✅
+---
+
+## manifest 结构与高风险字段
+
+plugin manifest 采用 JSON 格式，位置是：
+
+```text
+.claude-plugin/plugin.json
 ```
 
-## Plugin Types & Distribution
-
-| Type | Scope | Shared | Authority | Examples |
-|------|-------|--------|-----------|----------|
-| Official | Global | All users | Anthropic | PR Review, Security Guidance |
-| Community | Public | All users | Community | DevOps, Data Science |
-| Organization | Internal | Team members | Company | Internal standards, tools |
-| Personal | Individual | Single user | Developer | Custom workflows |
-
-## Plugin Definition Structure
-
-Plugin manifest uses JSON format in `.claude-plugin/plugin.json`:
+一个最小示例：
 
 ```json
 {
@@ -79,865 +91,207 @@ Plugin manifest uses JSON format in `.claude-plugin/plugin.json`:
   "author": {
     "name": "Your Name"
   },
-  "homepage": "https://example.com",
-  "repository": "https://github.com/user/repo",
   "license": "MIT"
 }
 ```
 
-## Plugin Structure Example
+### 这些 key 不要翻
 
-```
-my-plugin/
-├── .claude-plugin/
-│   └── plugin.json       # Manifest (name, description, version, author)
-├── commands/             # Skills as Markdown files
-│   ├── task-1.md
-│   ├── task-2.md
-│   └── workflows/
-├── agents/               # Custom agent definitions
-│   ├── specialist-1.md
-│   ├── specialist-2.md
-│   └── configs/
-├── skills/               # Agent Skills with SKILL.md files
-│   ├── skill-1.md
-│   └── skill-2.md
-├── hooks/                # Event handlers in hooks.json
-│   └── hooks.json
-├── .mcp.json             # MCP server configurations
-├── .lsp.json             # LSP server configurations
-├── settings.json         # Default settings
-├── templates/
-│   └── issue-template.md
-├── scripts/
-│   ├── helper-1.sh
-│   └── helper-2.py
-├── docs/
-│   ├── README.md
-│   └── USAGE.md
-└── tests/
-    └── plugin.test.js
-```
+- `name`
+- `version`
+- `description`
+- `author`
+- `license`
 
-### LSP server configuration
+同样，plugin 名称本身也不要改成中文标识，否则会影响识别、安装和后续同步维护。
 
-Plugins can include Language Server Protocol (LSP) support for real-time code intelligence. LSP servers provide diagnostics, code navigation, and symbol information as you work.
-
-**Configuration locations**:
-- `.lsp.json` file in the plugin root directory
-- Inline `lsp` key in `plugin.json`
-
-#### Field reference
-
-| Field | Required | Description |
-|-------|----------|-------------|
-| `command` | Yes | LSP server binary (must be in PATH) |
-| `extensionToLanguage` | Yes | Maps file extensions to language IDs |
-| `args` | No | Command-line arguments for the server |
-| `transport` | No | Communication method: `stdio` (default) or `socket` |
-| `env` | No | Environment variables for the server process |
-| `initializationOptions` | No | Options sent during LSP initialization |
-| `settings` | No | Workspace configuration passed to the server |
-| `workspaceFolder` | No | Override the workspace folder path |
-| `startupTimeout` | No | Maximum time (ms) to wait for server startup |
-| `shutdownTimeout` | No | Maximum time (ms) for graceful shutdown |
-| `restartOnCrash` | No | Automatically restart if the server crashes |
-| `maxRestarts` | No | Maximum restart attempts before giving up |
-
-#### Example configurations
-
-**Go (gopls)**:
-
-```json
-{
-  "go": {
-    "command": "gopls",
-    "args": ["serve"],
-    "extensionToLanguage": {
-      ".go": "go"
-    }
-  }
-}
-```
-
-**Python (pyright)**:
-
-```json
-{
-  "python": {
-    "command": "pyright-langserver",
-    "args": ["--stdio"],
-    "extensionToLanguage": {
-      ".py": "python",
-      ".pyi": "python"
-    }
-  }
-}
-```
-
-**TypeScript**:
-
-```json
-{
-  "typescript": {
-    "command": "typescript-language-server",
-    "args": ["--stdio"],
-    "extensionToLanguage": {
-      ".ts": "typescript",
-      ".tsx": "typescriptreact",
-      ".js": "javascript",
-      ".jsx": "javascriptreact"
-    }
-  }
-}
-```
-
-#### Available LSP plugins
-
-The official marketplace includes pre-configured LSP plugins:
-
-| Plugin | Language | Server Binary | Install Command |
-|--------|----------|---------------|----------------|
-| `pyright-lsp` | Python | `pyright-langserver` | `pip install pyright` |
-| `typescript-lsp` | TypeScript/JavaScript | `typescript-language-server` | `npm install -g typescript-language-server typescript` |
-| `rust-lsp` | Rust | `rust-analyzer` | Install via `rustup component add rust-analyzer` |
-
-#### LSP capabilities
-
-Once configured, LSP servers provide:
-
-- **Instant diagnostics** — errors and warnings appear immediately after edits
-- **Code navigation** — go to definition, find references, implementations
-- **Hover information** — type signatures and documentation on hover
-- **Symbol listing** — browse symbols in the current file or workspace
-
-## Plugin Options (v2.1.83+)
-
-Plugins can declare user-configurable options in the manifest via `userConfig`. Values marked `sensitive: true` are stored in the system keychain rather than plain-text settings files:
-
-```json
-{
-  "name": "my-plugin",
-  "version": "1.0.0",
-  "userConfig": {
-    "apiKey": {
-      "description": "API key for the service",
-      "sensitive": true
-    },
-    "region": {
-      "description": "Deployment region",
-      "default": "us-east-1"
-    }
-  }
-}
-```
-
-## Persistent Plugin Data (`${CLAUDE_PLUGIN_DATA}`) (v2.1.78+)
-
-Plugins have access to a persistent state directory via the `${CLAUDE_PLUGIN_DATA}` environment variable. This directory is unique per plugin and survives across sessions, making it suitable for caches, databases, and other persistent state:
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "command": "node ${CLAUDE_PLUGIN_DATA}/track-usage.js"
-      }
-    ]
-  }
-}
-```
-
-The directory is created automatically when the plugin is installed. Files stored here persist until the plugin is uninstalled.
-
-## Inline Plugin via Settings (`source: 'settings'`) (v2.1.80+)
-
-Plugins can be defined inline in settings files as marketplace entries using the `source: 'settings'` field. This allows embedding a plugin definition directly without requiring a separate repository or marketplace:
-
-```json
-{
-  "pluginMarketplaces": [
-    {
-      "name": "inline-tools",
-      "source": "settings",
-      "plugins": [
-        {
-          "name": "quick-lint",
-          "source": "./local-plugins/quick-lint"
-        }
-      ]
-    }
-  ]
-}
-```
-
-## Plugin Settings
-
-Plugins can ship a `settings.json` file to provide default configuration. This currently supports the `agent` key, which sets the main thread agent for the plugin:
-
-```json
-{
-  "agent": "agents/specialist-1.md"
-}
-```
-
-When a plugin includes `settings.json`, its defaults are applied on installation. Users can override these settings in their own project or user configuration.
-
-## Standalone vs Plugin Approach
-
-| Approach | Command Names | Configuration | Best For |
-|----------|---------------|---|---|
-| **Standalone** | `/hello` | Manual setup in CLAUDE.md | Personal, project-specific |
-| **Plugins** | `/plugin-name:hello` | Automated via plugin.json | Sharing, distribution, team use |
-
-Use **standalone slash commands** for quick personal workflows. Use **plugins** when you want to bundle multiple features, share with a team, or publish for distribution.
-
-## Practical Examples
-
-### Example 1: PR Review Plugin
-
-**File:** `.claude-plugin/plugin.json`
-
-```json
-{
-  "name": "pr-review",
-  "version": "1.0.0",
-  "description": "Complete PR review workflow with security, testing, and docs",
-  "author": {
-    "name": "Anthropic"
-  },
-  "repository": "https://github.com/anthropic/pr-review",
-  "license": "MIT"
-}
-```
-
-**File:** `commands/review-pr.md`
-
-```markdown
----
-name: Review PR
-description: Start comprehensive PR review with security and testing checks
 ---
 
-# PR Review
+## plugin 还有哪些可选能力
 
-This command initiates a complete pull request review including:
+### 1. LSP 支持
 
-1. Security analysis
-2. Test coverage verification
-3. Documentation updates
-4. Code quality checks
-5. Performance impact assessment
-```
+plugin 可以通过 `.lsp.json` 或 manifest 中的 `lsp` 配置提供 LSP 支持。
 
-**File:** `agents/security-reviewer.md`
+适合：
 
-```yaml
+- 语言诊断
+- 跳转定义
+- symbol 浏览
+- hover 信息
+
+### 2. 用户配置项
+
+某些 plugin 会暴露用户可配置项，例如 API key、部署 region、开关参数。
+
+### 3. 持久化数据
+
+某些 plugin 会使用持久化目录存储缓存、数据库或状态。
+
+如果你在做团队级 plugin，这三类能力很值得提前规划。
+
 ---
-name: security-reviewer
-description: Security-focused code review
-tools: read, grep, diff
+
+## 本目录里的示例 plugins
+
+| plugin | 用途 | 适合谁 |
+|--------|------|--------|
+| `pr-review` | PR 审查流程 | 代码审查较频繁的团队 |
+| `documentation` | 文档生成与同步 | 文档经常落后的项目 |
+| `devops-automation` | 部署、监控、事故处理 | 有稳定交付流程的团队 |
+
+### `pr-review`
+
+把安全检查、测试覆盖检查和性能影响分析整合进 PR 工作流。
+
+### `documentation`
+
+把 README、API docs、文档同步和校验整理成一套文档工作流。
+
+### `devops-automation`
+
+把部署、回滚、状态检查和 incident 响应整合起来。
+
 ---
 
-# Security Reviewer
+## 怎么安装
 
-Specializes in finding security vulnerabilities:
-- Authentication/authorization issues
-- Data exposure
-- Injection attacks
-- Secure configuration
-```
+### Marketplace / 已发布 plugin
 
-**Installation:**
-
-```bash
-/plugin install pr-review
-
-# Result:
-# ✅ 3 slash commands installed
-# ✅ 3 subagents configured
-# ✅ 2 MCP servers connected
-# ✅ 4 hooks registered
-# ✅ Ready to use!
-```
-
-### Example 2: DevOps Plugin
-
-**Components:**
-
-```
-devops-automation/
-├── commands/
-│   ├── deploy.md
-│   ├── rollback.md
-│   ├── status.md
-│   └── incident.md
-├── agents/
-│   ├── deployment-specialist.md
-│   ├── incident-commander.md
-│   └── alert-analyzer.md
-├── mcp/
-│   ├── github-config.json
-│   ├── kubernetes-config.json
-│   └── prometheus-config.json
-├── hooks/
-│   ├── pre-deploy.js
-│   ├── post-deploy.js
-│   └── on-error.js
-└── scripts/
-    ├── deploy.sh
-    ├── rollback.sh
-    └── health-check.sh
-```
-
-### Example 3: Documentation Plugin
-
-**Bundled Components:**
-
-```
-documentation/
-├── commands/
-│   ├── generate-api-docs.md
-│   ├── generate-readme.md
-│   ├── sync-docs.md
-│   └── validate-docs.md
-├── agents/
-│   ├── api-documenter.md
-│   ├── code-commentator.md
-│   └── example-generator.md
-├── mcp/
-│   ├── github-docs-config.json
-│   └── slack-announce-config.json
-└── templates/
-    ├── api-endpoint.md
-    ├── function-docs.md
-    └── adr-template.md
-```
-
-## Plugin Marketplace
-
-The official Anthropic-managed plugin directory is `anthropics/claude-plugins-official`. Enterprise admins can also create private plugin marketplaces for internal distribution.
-
-```mermaid
-graph TB
-    A["Plugin Marketplace"]
-    B["Official<br/>anthropics/claude-plugins-official"]
-    C["Community<br/>Marketplace"]
-    D["Enterprise<br/>Private Registry"]
-
-    A --> B
-    A --> C
-    A --> D
-
-    B -->|Categories| B1["Development"]
-    B -->|Categories| B2["DevOps"]
-    B -->|Categories| B3["Documentation"]
-
-    C -->|Search| C1["DevOps Automation"]
-    C -->|Search| C2["Mobile Dev"]
-    C -->|Search| C3["Data Science"]
-
-    D -->|Internal| D1["Company Standards"]
-    D -->|Internal| D2["Legacy Systems"]
-    D -->|Internal| D3["Compliance"]
-
-    style A fill:#e1f5fe,stroke:#333,color:#333
-    style B fill:#e8f5e9,stroke:#333,color:#333
-    style C fill:#f3e5f5,stroke:#333,color:#333
-    style D fill:#fff3e0,stroke:#333,color:#333
-```
-
-### Marketplace Configuration
-
-Enterprise and advanced users can control marketplace behavior through settings:
-
-| Setting | Description |
-|---------|-------------|
-| `extraKnownMarketplaces` | Add additional marketplace sources beyond the defaults |
-| `strictKnownMarketplaces` | Control which marketplaces users are allowed to add |
-| `deniedPlugins` | Admin-managed blocklist to prevent specific plugins from being installed |
-
-### Additional Marketplace Features
-
-- **Default git timeout**: Increased from 30s to 120s for large plugin repositories
-- **Custom npm registries**: Plugins can specify custom npm registry URLs for dependency resolution
-- **Version pinning**: Lock plugins to specific versions for reproducible environments
-
-### Marketplace definition schema
-
-Plugin marketplaces are defined in `.claude-plugin/marketplace.json`:
-
-```json
-{
-  "name": "my-team-plugins",
-  "owner": "my-org",
-  "plugins": [
-    {
-      "name": "code-standards",
-      "source": "./plugins/code-standards",
-      "description": "Enforce team coding standards",
-      "version": "1.2.0",
-      "author": "platform-team"
-    },
-    {
-      "name": "deploy-helper",
-      "source": {
-        "source": "github",
-        "repo": "my-org/deploy-helper",
-        "ref": "v2.0.0"
-      },
-      "description": "Deployment automation workflows"
-    }
-  ]
-}
-```
-
-| Field | Required | Description |
-|-------|----------|-------------|
-| `name` | Yes | Marketplace name in kebab-case |
-| `owner` | Yes | Organization or user who maintains the marketplace |
-| `plugins` | Yes | Array of plugin entries |
-| `plugins[].name` | Yes | Plugin name (kebab-case) |
-| `plugins[].source` | Yes | Plugin source (path string or source object) |
-| `plugins[].description` | No | Brief plugin description |
-| `plugins[].version` | No | Semantic version string |
-| `plugins[].author` | No | Plugin author name |
-
-### Plugin source types
-
-Plugins can be sourced from multiple locations:
-
-| Source | Syntax | Example |
-|--------|--------|---------|
-| **Relative path** | String path | `"./plugins/my-plugin"` |
-| **GitHub** | `{ "source": "github", "repo": "owner/repo" }` | `{ "source": "github", "repo": "acme/lint-plugin", "ref": "v1.0" }` |
-| **Git URL** | `{ "source": "url", "url": "..." }` | `{ "source": "url", "url": "https://git.internal/plugin.git" }` |
-| **Git subdirectory** | `{ "source": "git-subdir", "url": "...", "path": "..." }` | `{ "source": "git-subdir", "url": "https://github.com/org/monorepo.git", "path": "packages/plugin" }` |
-| **npm** | `{ "source": "npm", "package": "..." }` | `{ "source": "npm", "package": "@acme/claude-plugin", "version": "^2.0" }` |
-| **pip** | `{ "source": "pip", "package": "..." }` | `{ "source": "pip", "package": "claude-data-plugin", "version": ">=1.0" }` |
-
-GitHub and git sources support optional `ref` (branch/tag) and `sha` (commit hash) fields for version pinning.
-
-### Distribution methods
-
-**GitHub (recommended)**:
-```bash
-# Users add your marketplace
-/plugin marketplace add owner/repo-name
-```
-
-**Other git services** (full URL required):
-```bash
-/plugin marketplace add https://gitlab.com/org/marketplace-repo.git
-```
-
-**Private repositories**: Supported via git credential helpers or environment tokens. Users must have read access to the repository.
-
-**Official marketplace submission**: Submit plugins to the Anthropic-curated marketplace for broader distribution.
-
-### Strict mode
-
-Control how marketplace definitions interact with local `plugin.json` files:
-
-| Setting | Behavior |
-|---------|----------|
-| `strict: true` (default) | Local `plugin.json` is authoritative; marketplace entry supplements it |
-| `strict: false` | Marketplace entry is the entire plugin definition |
-
-**Organization restrictions** with `strictKnownMarketplaces`:
-
-| Value | Effect |
-|-------|--------|
-| Not set | No restrictions — users can add any marketplace |
-| Empty array `[]` | Lockdown — no marketplaces allowed |
-| Array of patterns | Allowlist — only matching marketplaces can be added |
-
-```json
-{
-  "strictKnownMarketplaces": [
-    "my-org/*",
-    "github.com/trusted-vendor/*"
-  ]
-}
-```
-
-> **Warning**: In strict mode with `strictKnownMarketplaces`, users can only install plugins from allowlisted marketplaces. This is useful for enterprise environments requiring controlled plugin distribution.
-
-## Plugin Installation & Lifecycle
-
-```mermaid
-graph LR
-    A["Discover"] -->|Browse| B["Marketplace"]
-    B -->|Select| C["Plugin Page"]
-    C -->|View| D["Components"]
-    D -->|Install| E["/plugin install"]
-    E -->|Extract| F["Configure"]
-    F -->|Activate| G["Use"]
-    G -->|Check| H["Update"]
-    H -->|Available| G
-    G -->|Done| I["Disable"]
-    I -->|Later| J["Enable"]
-    J -->|Back| G
-```
-
-## Plugin Features Comparison
-
-| Feature | Slash Command | Skill | Subagent | Plugin |
-|---------|---------------|-------|----------|--------|
-| **Installation** | Manual copy | Manual copy | Manual config | One command |
-| **Setup Time** | 5 minutes | 10 minutes | 15 minutes | 2 minutes |
-| **Bundling** | Single file | Single file | Single file | Multiple |
-| **Versioning** | Manual | Manual | Manual | Automatic |
-| **Team Sharing** | Copy file | Copy file | Copy file | Install ID |
-| **Updates** | Manual | Manual | Manual | Auto-available |
-| **Dependencies** | None | None | None | May include |
-| **Marketplace** | No | No | No | Yes |
-| **Distribution** | Repository | Repository | Repository | Marketplace |
-
-## Plugin CLI Commands
-
-All plugin operations are available as CLI commands:
-
-```bash
-claude plugin install <name>@<marketplace>   # Install from a marketplace
-claude plugin uninstall <name>               # Remove a plugin
-claude plugin list                           # List installed plugins
-claude plugin enable <name>                  # Enable a disabled plugin
-claude plugin disable <name>                 # Disable a plugin
-claude plugin validate                       # Validate plugin structure
-```
-
-## Installation Methods
-
-### From Marketplace
-```bash
-/plugin install plugin-name
-# or from CLI:
-claude plugin install plugin-name@marketplace-name
-```
-
-### Enable / Disable (with auto-detected scope)
-```bash
-/plugin enable plugin-name
-/plugin disable plugin-name
-```
-
-### Local Plugin (for development)
-```bash
-# CLI flag for local testing (repeatable for multiple plugins)
-claude --plugin-dir ./path/to/plugin
-claude --plugin-dir ./plugin-a --plugin-dir ./plugin-b
-```
-
-### From Git Repository
-```bash
-/plugin install github:username/repo
-```
-
-## When to Create a Plugin
-
-```mermaid
-graph TD
-    A["Should I create a plugin?"]
-    A -->|Need multiple components| B{"Multiple commands<br/>or subagents<br/>or MCPs?"}
-    B -->|Yes| C["✅ Create Plugin"]
-    B -->|No| D["Use Individual Feature"]
-    A -->|Team workflow| E{"Share with<br/>team?"}
-    E -->|Yes| C
-    E -->|No| F["Keep as Local Setup"]
-    A -->|Complex setup| G{"Needs auto<br/>configuration?"}
-    G -->|Yes| C
-    G -->|No| D
-```
-
-### Plugin Use Cases
-
-| Use Case | Recommendation | Why |
-|----------|-----------------|-----|
-| **Team Onboarding** | ✅ Use Plugin | Instant setup, all configurations |
-| **Framework Setup** | ✅ Use Plugin | Bundles framework-specific commands |
-| **Enterprise Standards** | ✅ Use Plugin | Central distribution, version control |
-| **Quick Task Automation** | ❌ Use Command | Overkill complexity |
-| **Single Domain Expertise** | ❌ Use Skill | Too heavy, use skill instead |
-| **Specialized Analysis** | ❌ Use Subagent | Create manually or use skill |
-| **Live Data Access** | ❌ Use MCP | Standalone, don't bundle |
-
-## Testing a Plugin
-
-Before publishing, test your plugin locally using the `--plugin-dir` CLI flag (repeatable for multiple plugins):
-
-```bash
-claude --plugin-dir ./my-plugin
-claude --plugin-dir ./my-plugin --plugin-dir ./another-plugin
-```
-
-This launches Claude Code with your plugin loaded, allowing you to:
-- Verify all slash commands are available
-- Test subagents and agents function correctly
-- Confirm MCP servers connect properly
-- Validate hook execution
-- Check LSP server configurations
-- Check for any configuration errors
-
-## Hot-Reload
-
-Plugins support hot-reload during development. When you modify plugin files, Claude Code can detect changes automatically. You can also force a reload with:
-
-```bash
-/reload-plugins
-```
-
-This re-reads all plugin manifests, commands, agents, skills, hooks, and MCP/LSP configurations without restarting the session.
-
-## Managed Settings for Plugins
-
-Administrators can control plugin behavior across an organization using managed settings:
-
-| Setting | Description |
-|---------|-------------|
-| `enabledPlugins` | Allowlist of plugins that are enabled by default |
-| `deniedPlugins` | Blocklist of plugins that cannot be installed |
-| `extraKnownMarketplaces` | Add additional marketplace sources beyond the defaults |
-| `strictKnownMarketplaces` | Restrict which marketplaces users are allowed to add |
-| `allowedChannelPlugins` | Control which plugins are permitted per release channel |
-
-These settings can be applied at the organization level via managed configuration files and take precedence over user-level settings.
-
-## Plugin Security
-
-Plugin subagents run in a restricted sandbox. The following frontmatter keys are **not allowed** in plugin subagent definitions:
-
-- `hooks` -- Subagents cannot register event handlers
-- `mcpServers` -- Subagents cannot configure MCP servers
-- `permissionMode` -- Subagents cannot override the permission model
-
-This ensures that plugins cannot escalate privileges or modify the host environment beyond their declared scope.
-
-## Publishing a Plugin
-
-**Steps to publish:**
-
-1. Create plugin structure with all components
-2. Write `.claude-plugin/plugin.json` manifest
-3. Create `README.md` with documentation
-4. Test locally with `claude --plugin-dir ./my-plugin`
-5. Submit to plugin marketplace
-6. Get reviewed and approved
-7. Published on marketplace
-8. Users can install with one command
-
-**Example submission:**
-
-```markdown
-# PR Review Plugin
-
-## Description
-Complete PR review workflow with security, testing, and documentation checks.
-
-## What's Included
-- 3 slash commands for different review types
-- 3 specialized subagents
-- GitHub and CodeQL MCP integration
-- Automated security scanning hooks
-
-## Installation
-```bash
+```text
 /plugin install pr-review
 ```
 
-## Features
-✅ Security analysis
-✅ Test coverage checking
-✅ Documentation verification
-✅ Code quality assessment
-✅ Performance impact analysis
+### 本地开发 plugin
 
-## Usage
-```bash
-/review-pr
-/check-security
-/check-tests
-```
+如果你是在本地调试自己写的 plugin，一般会使用 Claude Code 支持的本地 plugin 目录或测试方式。
 
-## Requirements
-- Claude Code 1.0+
-- GitHub access
-- CodeQL (optional)
-```
+### 从 Git 仓库安装
 
-## Plugin vs Manual Configuration
+如果以后你把中文 plugin 发布到自己的仓库，建议在 README 中明确写出：
 
-**Manual Setup (2+ hours):**
-- Install slash commands one by one
-- Create subagents individually
-- Configure MCPs separately
-- Set up hooks manually
-- Document everything
-- Share with team (hope they configure correctly)
+- 仓库地址
+- 安装方式
+- 依赖条件
+- 支持平台
 
-**With Plugin (2 minutes):**
-```bash
-/plugin install pr-review
-# ✅ Everything installed and configured
-# ✅ Ready to use immediately
-# ✅ Team can reproduce exact setup
-```
+---
 
-## Best Practices
+## 什么时候值得做 plugin
 
-### Do's ✅
-- Use clear, descriptive plugin names
-- Include comprehensive README
-- Version your plugin properly (semver)
-- Test all components together
-- Document requirements clearly
-- Provide usage examples
-- Include error handling
-- Tag appropriately for discovery
-- Maintain backward compatibility
-- Keep plugins focused and cohesive
-- Include comprehensive tests
-- Document all dependencies
+### 值得做 plugin
 
-### Don'ts ❌
-- Don't bundle unrelated features
-- Don't hardcode credentials
-- Don't skip testing
-- Don't forget documentation
-- Don't create redundant plugins
-- Don't ignore versioning
-- Don't overcomplicate component dependencies
-- Don't forget to handle errors gracefully
+- 你已经有多项能力要一起分发
+- 团队成员都要用
+- 安装过程需要足够简单
+- 你希望工作流版本化
 
-## Installation Instructions
+### 先别急着做 plugin
 
-### Installing from Marketplace
+- 你还只有一个 command 或 skill
+- 工作流还没稳定
+- 需求变化很快
 
-1. **Browse available plugins:**
-   ```bash
-   /plugin list
-   ```
+这时通常先用单独的 skills、hooks 或 agents 更合适。
 
-2. **View plugin details:**
-   ```bash
-   /plugin info plugin-name
-   ```
+---
 
-3. **Install a plugin:**
-   ```bash
-   /plugin install plugin-name
-   ```
+## 设计一个好 plugin 的建议
 
-### Installing from Local Path
+### 1. 先确定“解决哪个完整场景”
 
-```bash
-/plugin install ./path/to/plugin-directory
-```
+不要只是把几个文件塞一起。好的 plugin 通常对应一个完整场景，例如：
 
-### Installing from GitHub
+- 代码审查
+- 文档维护
+- 部署与事故处理
 
-```bash
-/plugin install github:username/repo
-```
+### 2. 明确依赖边界
 
-### Listing Installed Plugins
+需要写清楚：
 
-```bash
-/plugin list --installed
-```
+- 外部服务依赖
+- 必要的 token / env vars
+- 所需 CLI
+- 权限需求
 
-### Updating a Plugin
+### 3. 不要把实验性配置过早打包
 
-```bash
-/plugin update plugin-name
-```
+plugin 一旦面向团队分发，稳定性要求就会更高。
 
-### Disabling/Enabling a Plugin
+---
 
-```bash
-# Temporarily disable
-/plugin disable plugin-name
+## 中国用户特别注意
 
-# Re-enable
-/plugin enable plugin-name
-```
+### 1. 外部服务依赖
 
-### Uninstalling a Plugin
+plugin 里经常带有：
 
-```bash
-/plugin uninstall plugin-name
-```
+- GitHub
+- Kubernetes
+- 第三方 API
+- 网络 webhook
 
-## Related Concepts
+不要默认这些服务在本地就能直接访问。
 
-The following Claude Code features work together with plugins:
+### 2. token / CLI / 环境变量
 
-- **[Slash Commands](../01-slash-commands/)** - Individual commands bundled in plugins
-- **[Memory](../02-memory/)** - Persistent context for plugins
-- **[Skills](../03-skills/)** - Domain expertise that can be wrapped into plugins
-- **[Subagents](../04-subagents/)** - Specialized agents included as plugin components
-- **[MCP Servers](../05-mcp/)** - Model Context Protocol integrations bundled in plugins
-- **[Hooks](../06-hooks/)** - Event handlers that trigger plugin workflows
+发布中文 plugin 时，建议 README 明确说明：
 
-## Complete Example Workflow
+- 依赖哪些外部服务
+- 需要哪些 token / CLI / 环境变量
+- Windows / WSL 是否支持
 
-### PR Review Plugin Full Workflow
+### 3. 安装方式别写得太抽象
 
-```
-1. User: /review-pr
+中国用户最怕“概念都懂，但不知道下一步打什么命令”。  
+建议每个 plugin 至少给一个“最小安装路径”。
 
-2. Plugin executes:
-   ├── pre-review.js hook validates git repo
-   ├── GitHub MCP fetches PR data
-   ├── security-reviewer subagent analyzes security
-   ├── test-checker subagent verifies coverage
-   └── performance-analyzer subagent checks performance
+---
 
-3. Results synthesized and presented:
-   ✅ Security: No critical issues
-   ⚠️  Testing: Coverage 65% (recommend 80%+)
-   ✅ Performance: No significant impact
-   📝 12 recommendations provided
-```
+## 常见坑
+
+### 1. 只改 README，不检查 manifest
+
+真正影响安装和识别的是 `.claude-plugin/plugin.json`，不是说明文。
+
+### 2. 过早打包
+
+如果工作流还不稳定，plugin 只会增加维护负担。
+
+### 3. 把 plugin 名和命令名翻译掉
+
+这会直接影响调用、安装和同步维护。
+
+### 4. 没写清依赖
+
+对中国用户来说，这是导致“看起来很强但根本跑不起来”的高频原因。
+
+---
 
 ## Troubleshooting
 
-### Plugin Won't Install
-- Check Claude Code version compatibility: `/version`
-- Verify `plugin.json` syntax with a JSON validator
-- Check internet connection (for remote plugins)
-- Review permissions: `ls -la plugin/`
+如果 plugin 装了但不好用，优先排查：
 
-### Components Not Loading
-- Verify paths in `plugin.json` match actual directory structure
-- Check file permissions: `chmod +x scripts/`
-- Review component file syntax
-- Check logs: `/plugin debug plugin-name`
+1. manifest 是否有效
+2. 依赖的 commands / agents / hooks / MCP 是否都在正确目录
+3. 外部服务是否能访问
+4. 环境变量是否正确导出
+5. 插件命名空间和命令名是否保持英文原样
 
-### MCP Connection Failed
-- Verify environment variables are set correctly
-- Check MCP server installation and health
-- Test MCP connection independently with `/mcp test`
-- Review MCP configuration in `mcp/` directory
+---
 
-### Commands Not Available After Install
-- Ensure plugin was installed successfully: `/plugin list --installed`
-- Check if plugin is enabled: `/plugin status plugin-name`
-- Restart Claude Code: `exit` and reopen
-- Check for naming conflicts with existing commands
+## Best Practices
 
-### Hook Execution Issues
-- Verify hook files have correct permissions
-- Check hook syntax and event names
-- Review hook logs for error details
-- Test hooks manually if possible
+- 先跑通单项能力，再打包
+- 保持 plugin 目标聚焦
+- 在 README 中明确依赖和适用场景
+- 不要为了中文化改坏 manifest 和命令标识
+- 团队发布前先做一轮真实安装演练
 
-## Additional Resources
+---
 
-- [Official Plugins Documentation](https://code.claude.com/docs/en/plugins)
-- [Discover Plugins](https://code.claude.com/docs/en/discover-plugins)
-- [Plugin Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
-- [Plugins Reference](https://code.claude.com/docs/en/plugins-reference)
-- [MCP Server Reference](https://modelcontextprotocol.io/)
-- [Subagent Configuration Guide](../04-subagents/README.md)
-- [Hook System Reference](../06-hooks/README.md)
+## 推荐下一步
+
+- 想先理解单项能力：回看 [03-skills](../03-skills/)、[04-subagents](../04-subagents/)、[05-mcp](../05-mcp/)、[06-hooks](../06-hooks/)
+- 想补高级工作流与权限控制：看 [09-advanced-features](../09-advanced-features/)

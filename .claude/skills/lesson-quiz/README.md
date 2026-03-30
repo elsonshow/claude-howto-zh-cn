@@ -1,69 +1,64 @@
 # Lesson Quiz
 
-> Interactive quiz that tests your understanding of a specific Claude Code lesson with 10 questions, per-question feedback, and targeted review guidance.
+> 针对单个 Claude Code lesson 的互动测验 skill。它不只是随便出几道题，而是会按 lesson 组织题面、给出评分、错题解释、复习建议和后续动作。
 
 ## Highlights
 
-- 10 questions per lesson mixing conceptual understanding and practical application
-- Covers all 10 lessons (01-Slash Commands through 10-CLI)
-- Three timing modes: pre-test, progress check, or mastery verification
-- Per-question feedback with correct answers and explanations
-- Targeted review recommendations pointing to specific lesson sections
-- 100-question bank across all lessons in `references/question-bank.md`
+- 每次固定 8 题
+- 覆盖 10 个 lesson
+- 支持学前、学中、学后三种测验时机
+- 每道错题都会给出解释和建议回看的章节
+- 会给出总分、等级判断和下一步建议
 
-## When to Use
+## 什么时候用
 
-| Say this... | Skill will... |
+| 你可以这样说 | 它会做什么 |
 |---|---|
-| "quiz me on hooks" | Run a 10-question quiz on Lesson 06: Hooks |
-| "lesson quiz 03" | Test your knowledge of Lesson 03: Skills |
-| "do I understand MCP" | Assess your understanding of Lesson 05: MCP |
-| "practice quiz" | Let you pick a lesson, then quiz you |
+| “帮我测一下 hooks” | 做一轮 `06-hooks` 相关测验 |
+| “我会不会 MCP” | 测 `05-mcp` 的理解程度 |
+| “来个 lesson quiz” | 让你先选 lesson，再开始测 |
+| “测试我对 skills 的理解” | 直接进入 `03-skills` 测验 |
 
-## How It Works
+## 使用方式
 
-```mermaid
-graph TD
-    A["Select lesson"] --> B["Choose timing: pre/during/after"]
-    B --> C["Answer 10 questions in 5 rounds"]
-    C --> D["Score and review feedback"]
-    style A fill:#4CAF50,color:#fff
-    style D fill:#2196F3,color:#fff
-```
-
-## Usage
-
-```
+```text
 /lesson-quiz [lesson-name-or-number]
 ```
 
-Examples:
-```
+例如：
+
+```text
 /lesson-quiz hooks
 /lesson-quiz 03
 /lesson-quiz advanced-features
-/lesson-quiz           # (prompts for lesson selection)
+/lesson-quiz
 ```
 
-## Output
+## 输出内容
 
-### Score Report
-- Total score out of 10 with grade (Mastered / Proficient / Developing / Beginning)
-- Breakdown by question category (conceptual vs. practical)
+### 1. 总分与等级
 
-### Per-Question Feedback
-For each incorrect answer:
-- What you answered vs. the correct answer
-- Explanation of why the correct answer is right
-- Specific section of the lesson to review
+- 例如 `7/8 — Proficient`
 
-### Timing-Aware Guidance
-- **Pre-test**: Establishes baseline, highlights areas to focus on while studying
-- **During**: Identifies what you've grasped and what to revisit
-- **After**: Confirms mastery or pinpoints remaining gaps
+### 2. 每题结果
 
-## Resources
+- 哪些答对
+- 哪些答错
+- 概念题 / 实践题表现如何
 
-| Path | Description |
-|---|---|
-| `references/question-bank.md` | 100 pre-written questions (10 per lesson) with answers, explanations, and review pointers |
+### 3. 错题解释
+
+对每个答错的问题，给出：
+
+- 你选了什么
+- 正确答案是什么
+- 为什么正确答案更合理
+- 建议回看 lesson 的哪一节
+
+### 4. 后续动作
+
+测完后可以继续：
+
+- 重测当前 lesson
+- 切到另一课
+- 让 Claude 详细解释某道错题
