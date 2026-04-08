@@ -60,6 +60,15 @@ skill-name/
 
 ---
 
+## April 2026 这批 skills 更新，最值得知道什么
+
+- skill description 的预算更紧了：默认只占上下文窗口的 **1%**，fallback 约 **8,000 字符**
+- 即使装了很多 skills，**skill 名称会保留**，description 则会被裁短
+- 如果你希望某个 skill 只在某些路径下自动触发，可以在 frontmatter 里加 `paths`
+- 写 description 时要把“最关键的使用场景”放前面，否则容易在预算裁剪时丢失重点
+
+---
+
 ## progressive disclosure 是什么意思
 
 skills 的一个核心优点是按需加载，而不是一上来把所有内容都塞进上下文里。
@@ -122,8 +131,19 @@ cp -r 03-skills/code-review .claude/skills/
 - `description`
 - `effort`
 - `shell`
+- `paths`
 
 同时，skill 名称本身也不要擅自中文化改名。
+
+### `paths` 是什么
+
+这是新版里很实用的一个 frontmatter 字段，用来限制 skill 只在某些目录或文件模式下触发，例如：
+
+```yaml
+paths: "src/api/**/*.ts"
+```
+
+如果你已经开始做团队级 skills，这个字段很值得用。
 
 ---
 
@@ -165,6 +185,10 @@ Claude 就不知道什么时候该用它，或者会误触发。
 ### 3. 把 frontmatter key 翻译掉
 
 这会直接让 skill 无法正确解析。
+
+### 4. description 把重点写在后面
+
+现在 description 预算更紧，Claude 可能先看到的是前半句。最该写在前面的，是“什么时候调用它”。
 
 ---
 

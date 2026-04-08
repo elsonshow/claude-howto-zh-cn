@@ -44,10 +44,16 @@ Claude Code 里的 slash commands 大致分四类：
 | `/mcp` | 管理 MCP |
 | `/plugin` | 管理 plugins |
 | `/plan` | 进入 planning mode |
+| `/sandbox` | 切换 sandbox 模式 |
+| `/powerup` | 用交互式 lesson 了解内建能力 |
 | `/rewind` | 回退到 checkpoint |
 | `/resume` | 恢复以前的 session |
+| `/ultraplan` | 先产出详细计划，再在浏览器中审阅 |
+| `/usage` | 查看 plan 用量与限流状态 |
 
 这些命令不用安装，开箱即用。
+
+> 截至 2026 年 4 月，上游内建命令已经到了 **60+**。这里保留的是中国小白最该先掌握的一批。
 
 ---
 
@@ -124,6 +130,21 @@ cp 01-slash-commands/optimize.md .claude/commands/
 
 适合后端或接口项目，尤其是你已经有一些固定的接口风格想统一输出文档时。
 
+### `/ultraplan`
+
+适合复杂任务。它会先帮你产出更完整的计划，再进入浏览器审阅或继续执行，特别适合多文件改动和高风险任务。
+
+---
+
+## April 2026 这批命令变化，最值得知道什么
+
+- `/pr-comments` 已移除；现在更推荐直接让 Claude 查看 PR 评论
+- `/vim` 已移除；编辑器模式改从 `/config` 里设置
+- `/powerup` 新增，用交互式 lesson 带你认识 Claude Code 的能力
+- `/ultraplan` 新增，适合端到端计划工作流
+- `/schedule` 更偏向 Cloud scheduled tasks，不再只是本地提醒
+- `/init` 的交互增强模式现在更常见的写法是 `CLAUDE_CODE_NEW_INIT=1`
+
 ---
 
 ## slash commands 和 skills 的关系
@@ -173,6 +194,10 @@ cp 01-slash-commands/optimize.md .claude/commands/
 ### 3. 以为 command 和 skill 是两套完全不同的东西
 
 不是。现在推荐实践是更偏向 skill，只是调用方式和使用时机不同。
+
+### 4. 看到旧资料还在用 `/pr-comments` 或 `/vim`
+
+这类写法大多已经过时。遇到老截图、老博客时，优先以当前版本的 `/help` 和官方 CLI 行为为准。
 
 ---
 

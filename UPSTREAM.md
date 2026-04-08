@@ -5,6 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
+- 最近检查到的上游 commit：`561c6cbaa3043aa86f530af75f46ab697304f531`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +62,24 @@ uv run python scripts/validate_localization.py
 
 ## 最近一次同步记录
 
+### Upstream Sync — 2026-04-08
+
+- Reviewed upstream range: `0ca8c37` → `561c6cb`
+- 重点上游变化：
+  - 上游在 2026 年 4 月完成一轮更大的文档同步，并发布 `v2.3.0`
+  - 新增 `CLAUDE.md`
+  - 新增 `04-subagents/performance-optimizer.md`
+  - 新增 `06-hooks/pre-tool-check.sh` 与 `06-hooks/dependency-check.sh`
+  - 一批 hooks 脚本改为读取 stdin JSON，并补齐 Windows Git Bash 兼容性
+  - 文档层面新增 / 修正了 `MCP Apps`、`/ultraplan`、Agent Teams、Channels、`cleanupPeriodDays` 等说明
+  - 上游新增 `zh/`、`vi/` 多语言目录，并重构了部分 CI / release 流程
+- Chinese fork actions:
+  - 将与中文主线直接相关的新增能力和示例同步到根目录中文文档
+  - 新增中文 `CLAUDE.md`，适配本仓库自己的校验和本地化工作流
+  - 新增 `performance-optimizer` subagent，并更新 `CATALOG.md`
+  - 同步高价值 hooks 脚本与新版协议行为
+  - 在 `README.md` 中更新最近同步日期与本轮更新说明
+  - 未采用上游 `zh/` / `vi/` 目录结构与 README 指标徽章，继续保持“中文主线在根目录”的 fork 结构
 ### Upstream Sync — 2026-04-01
 
 - Upstream range: `d41b335` → `0ca8c37`

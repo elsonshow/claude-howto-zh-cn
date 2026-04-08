@@ -1,6 +1,6 @@
 ---
 name: self-assessment
-version: 2.2.0
+version: 2.3.0
 description: Claude Code 中文自测与学习路径顾问。用于评估当前水平、识别短板、推荐学习顺序。Use when asked to "assess my level", "take the quiz", "find my level", "where should I start", "what should I learn next", "check my skills", "skill check", or similar Chinese requests.
 ---
 

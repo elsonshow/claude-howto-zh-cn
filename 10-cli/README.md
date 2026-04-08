@@ -81,6 +81,7 @@ cat error.log | claude -p "explain this error"
 | `--permission-mode` | 指定权限模式 |
 | `--bare` | 以最小模式启动 |
 | `--add-dir` | 加额外目录到工作上下文 |
+| `--tmux` | 给 worktree / 多任务场景创建 tmux 会话 |
 
 ---
 
@@ -137,6 +138,22 @@ claude --append-system-prompt "Always explain tradeoffs" "review this plan"
 ```
 
 如果你要长期使用 Claude Code，把模型、权限、输出格式这些参数理解清楚，会直接影响效率和成本。
+
+---
+
+## 这轮 CLI 更新里，最值得你知道的一个新 flag
+
+```bash
+claude --tmux
+```
+
+它适合：
+
+- 你已经开始频繁用 worktrees
+- 想把多个任务分屏展示
+- 想为更复杂的多终端协作留出界面空间
+
+如果你还处在基础阶段，不必先学它；但当你开始并行做多条任务线时，它会很有用。
 
 ---
 
@@ -238,6 +255,7 @@ claude plugin install my-plugin
 
 - `/resume`
 - `/rename`
+- `/branch`（较新的主名称，部分环境里 `/fork` 仍可能作为兼容别名出现）
 - `/fork`
 - `claude -c`
 - `claude -r`

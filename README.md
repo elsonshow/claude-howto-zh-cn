@@ -20,12 +20,14 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-04-01
-- **同步上游基线**：`d41b335` -> `0ca8c37`
+- **最近同步日期**：2026-04-08
+- **本轮参考范围**：`0ca8c37` -> `561c6cb`
 - **本次同步内容**：
-  - 上游不再推荐通过 `06-hooks/auto-adapt-mode.py` 学习用户批准记录，改为一次性权限种子脚本 `09-advanced-features/setup-auto-mode-permissions.py`
-  - `Advanced Features` 中的 auto-mode 权限基线收窄为更保守的默认集合，并支持按需开启 edits、tests、git writes、package installs、GitHub write 等能力
-  - 上游 `README` 增加了 GitHub Trending 徽章；中文版仓库**不直接照搬该徽章**，避免把上游热度状态误写成当前中文 fork 的实际状态
+  - 新增 [`CLAUDE.md`](CLAUDE.md)，把这个中文 fork 的协作方式、校验命令和兼容性原则写成仓库级说明
+  - 新增 `performance-optimizer` subagent，并把 `subagents` / `advanced features` 里的 Agent Teams 区分讲清楚
+  - 新增 `06-hooks/pre-tool-check.sh`、`06-hooks/dependency-check.sh`，并把现有 shell hooks 同步到新版的 stdin JSON 协议与 Git Bash 兼容写法
+  - 更新 `slash commands`、`memory`、`skills`、`MCP`、`checkpoints`、`advanced features`、`CLI` 等章节，吸收 2026 年 4 月上游文档里的关键变化
+  - 保留中文主线仓库结构；**未直接照搬** 上游新增的 `zh/` / `vi/` 多语言目录、README 指标徽章和 release 流水线改造
 
 ---
 

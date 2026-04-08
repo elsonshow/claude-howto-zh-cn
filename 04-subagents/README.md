@@ -33,6 +33,7 @@ subagent 具备这些特点：
 - 文档生成
 - 调试与根因定位
 - 多条线并行处理
+- 性能瓶颈定位与优化
 
 不太适合：
 
@@ -110,6 +111,7 @@ model: inherit
 | `implementation-agent` | `implementation-agent.md` | 功能实现 |
 | `debugger` | `debugger.md` | 错误调试与根因定位 |
 | `data-scientist` | `data-scientist.md` | 数据分析与 SQL 任务 |
+| `performance-optimizer` | `performance-optimizer.md` | Profiling、性能瓶颈定位与优化 |
 
 ---
 
@@ -125,6 +127,36 @@ cp 04-subagents/*.md .claude/agents/
 ```bash
 cp 04-subagents/code-reviewer.md .claude/agents/
 ```
+
+---
+
+## 新增角色：`performance-optimizer`
+
+这是上游 2026 年 4 月新增的一个示例 subagent，适合这些情况：
+
+- API 延迟明显偏高
+- SQL 查询越来越慢
+- 某段算法或脚本 CPU / 内存占用异常
+- 你已经知道“有性能问题”，但还没确认瓶颈到底在哪里
+
+它强调的不是“先拍脑袋优化”，而是：
+
+1. 先量化基线
+2. 再找热点
+3. 一次只做一个高收益改动
+4. 做完重新测
+
+如果你在团队里已经开始让 Claude 参与优化任务，这个角色很值得保留。
+
+---
+
+## subagents 和 Agent Teams 怎么区分
+
+- `subagents`：主 Claude 委派一个边界清晰的子任务，等它把结果带回来
+- `Agent Teams`：多个 Claude Code 实例协作，彼此有独立上下文窗口，还能直接通信
+
+对绝大多数中国小白用户来说，先掌握 subagents 就足够了。  
+`Agent Teams` 依然是实验性能力，更适合复杂协作场景，细节放在 [09-advanced-features](../09-advanced-features/) 里看。
 
 ---
 

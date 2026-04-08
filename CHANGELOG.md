@@ -2,6 +2,28 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-04-08
+
+### Upstream Review
+
+- 核对上游范围：`0ca8c37` → `561c6cb`
+- 上游这轮重点：
+  - 发布 `v2.3.0`
+  - 新增 `CLAUDE.md`
+  - 新增 `performance-optimizer` subagent
+  - 新增 `pre-tool-check.sh` 与 `dependency-check.sh`
+  - hooks shell 示例统一到 stdin JSON 协议，并补 Windows Git Bash 兼容性
+  - 文档更新覆盖 `/ultraplan`、`MCP Apps`、Agent Teams、Channels、`cleanupPeriodDays` 等主题
+  - 上游新增 `zh/` / `vi/` 多语言目录
+
+### Chinese Fork Handling
+
+- 新增根目录 [CLAUDE.md](CLAUDE.md)，写明本仓库的协作与校验约定
+- 新增 `04-subagents/performance-optimizer.md`
+- 新增 `06-hooks/pre-tool-check.sh` 与 `06-hooks/dependency-check.sh`
+- 将 `format-code.sh`、`log-bash.sh`、`security-scan.sh`、`validate-prompt.sh` 同步到新版协议写法
+- 更新 `README.md` 的最近同步说明，以及 `01`、`02`、`03`、`04`、`05`、`06`、`08`、`09`、`10` 模块的中文说明
+- 未采用上游的多语言目录拆分与 README 星标 / fork 指标，继续保留当前中文主线仓库结构
 ## 中文版同步 — 2026-04-01
 
 ### Upstream Sync
