@@ -20,14 +20,14 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-04-08
-- **本轮参考范围**：`0ca8c37` -> `561c6cb`
+- **最近同步日期**：2026-04-14
+- **本轮参考范围**：`561c6cb` -> `9c224ff`
 - **本次同步内容**：
-  - 新增 [`CLAUDE.md`](CLAUDE.md)，把这个中文 fork 的协作方式、校验命令和兼容性原则写成仓库级说明
-  - 新增 `performance-optimizer` subagent，并把 `subagents` / `advanced features` 里的 Agent Teams 区分讲清楚
-  - 新增 `06-hooks/pre-tool-check.sh`、`06-hooks/dependency-check.sh`，并把现有 shell hooks 同步到新版的 stdin JSON 协议与 Git Bash 兼容写法
-  - 更新 `slash commands`、`memory`、`skills`、`MCP`、`checkpoints`、`advanced features`、`CLI` 等章节，吸收 2026 年 4 月上游文档里的关键变化
-  - 保留中文主线仓库结构；**未直接照搬** 上游新增的 `zh/` / `vi/` 多语言目录、README 指标徽章和 release 流水线改造
+  - 把 `memory` 章节同步到最新行为：`# ...` inline memory 快捷写法已停用，改为 `/memory` 或自然语言更新
+  - 修正 `05-mcp/README.md` 中仍保留的 `WebSocket transport` 旧说法，统一回到当前官方主线强调的 `http` / `stdio`
+  - 同步 `/team-onboarding`、更完整的 `/ultraplan` 说明，以及 `Monitor Tool` 相关入口
+  - 修复 `06-hooks/pre-tool-check.sh` 的输出通道和误拦截问题，补上审计日志与回归测试
+  - 保留中文主线仓库结构；**未直接照搬** 上游 README 的乌克兰语入口和 `uk/` 本地化目录
 
 ---
 

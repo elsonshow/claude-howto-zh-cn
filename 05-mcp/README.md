@@ -79,12 +79,6 @@ claude mcp add --transport http notion https://mcp.notion.com/mcp
 claude mcp add --transport stdio myserver -- npx @myorg/mcp-server
 ```
 
-### WebSocket transport
-
-```bash
-claude mcp add --transport ws realtime-server wss://example.com/mcp
-```
-
 ---
 
 ## 直接复制示例配置
@@ -120,6 +114,8 @@ MCP 配置是高风险文件，以下内容默认不要翻：
 ---
 
 ## 中国用户特别注意
+
+目前中文主线和上游同步时，优先保留官方文档里最常见、最稳定的 `http` / `stdio` 配置路径。看到旧教程还在强调 `WebSocket transport` 时，优先以当前官方 MCP 文档为准。
 
 ### 1. 网络和代理
 

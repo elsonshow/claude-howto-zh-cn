@@ -21,9 +21,11 @@
 主要包括：
 
 - planning mode
+- Ultraplan
 - extended thinking
 - Auto Mode
 - background tasks
+- Monitor Tool
 - scheduled tasks
 - channels
 - permission modes
@@ -56,6 +58,11 @@
 让耗时任务后台跑，不阻塞当前会话。
 
 如果你不是重度用户，先掌握这四个就足够产生明显收益。
+
+如果你已经开始频繁做多文件任务，下一步最值得补的是：
+
+- `/ultraplan`：把复杂规划交给云端起草，再决定在浏览器还是本地执行
+- Monitor Tool：让 Claude 盯住后台命令的事件流，而不是不断轮询
 
 ---
 
@@ -104,25 +111,66 @@ claude --permission-mode plan
 
 如果 planning mode 只给你几句空话，那不是好计划。
 
-### `ultraplan` 是什么
+## Ultraplan
 
-如果你已经不满足于简单 `/plan`，可以关注新的：
+`/ultraplan` 会把“起草计划”这一步交给 Claude Code on the web 的云端会话来完成。你本地终端不用一直等着，等云端把 plan 草案写好后，再去浏览器审阅，并决定继续在云端执行，还是把计划带回本地终端落地。
+
+你可以把它理解成：
+
+- `/plan`：更像本地规划模式
+- `/ultraplan`：更像云端起草 + 浏览器审阅 + 再决定执行位置
+
+### 什么时候最值
+
+- 高风险多文件修改
+- 需要先看详细计划再放权
+- 想让计划阶段和执行阶段彻底分开
+- 需要把计划发给同事或团队成员一起看
+
+### 使用门槛
+
+- 需要 Claude Code on the web 账户
+- 最好有一个可供云端克隆的 GitHub 仓库
+- 目前不适用于 Amazon Bedrock、Google Cloud Vertex AI、Microsoft Foundry
+
+### 三种进入方式
+
+1. 直接输入：
 
 ```text
 /ultraplan <prompt>
 ```
 
-它更像“端到端规划工作流”：
+2. 在普通请求里明确说要用 ultraplan。
+3. 先在本地做一轮 plan，再把草案交给 Ultraplan 深挖。
 
-1. 先产出详细计划
-2. 在浏览器里审阅
-3. 再决定让 Claude 继续执行，还是带回本地终端执行
+> 按上游 2026-04-11 的说明，首次调用 `/ultraplan` 时会自动创建 Claude Code on the web 环境，不需要再手工等容器预热。
 
-适合：
+### 你会看到的状态
 
-- 高风险多文件修改
-- 需要你先审计划再放权的任务
-- 想把计划阶段和执行阶段明确分开的工作流
+| 状态 | 含义 |
+|------|------|
+| `ultraplan` | Claude 正在云端研究代码并起草计划 |
+| `ultraplan needs your input` | 云端会话有澄清问题，需要你去浏览器回应 |
+| `ultraplan ready` | 计划已经准备好，可以在浏览器里审阅 |
+
+### 审阅后怎么执行
+
+当草案准备好后，你通常有两条路：
+
+1. **继续在云端执行**  
+   直接在浏览器里批准计划，让 Claude 在云端继续实现，并从 web 侧发起 PR。
+
+2. **把计划带回本地终端**  
+   适合你更想在本地环境里继续做实现、跑测试和手工检查。
+
+如果你选择带回本地，常见分支是：
+
+- `Implement here`：就在当前终端继续做
+- `Start new session`：新开一个本地 session 再做
+- `Cancel`：先把计划存下来，稍后再继续
+
+> 如果你当前开着 Remote Control，启动 Ultraplan 时它会断开，因为两者都会占用 Claude Code on the web 这个界面。
 
 ---
 
@@ -246,78 +294,84 @@ python3 09-advanced-features/setup-auto-mode-permissions.py --include-gh-read --
 
 ---
 
-## 没有 Team plan 时的替代方案：一次性权限种子脚本
+## background tasks
 
-如果你没有 Team plan，或者你不想用“后台分类器 + 自动判定”这套模式，上游最近新增了一种更务实的替代方案：
+background tasks 适合这些场景：
 
-- 直接用一次性脚本把一组 **更保守的安全权限基线** 写进 `~/.claude/settings.json`
+- 长时间运行的任务
+- 不想阻塞当前对话
+- 需要并行推进的工作
+- 希望 Claude 先把耗时命令挂起来，自己继续做别的
 
-脚本位置：
+典型例子包括：
 
-```text
-09-advanced-features/setup-auto-mode-permissions.py
-```
+- 本地开发服务器
+- 长时间测试
+- 构建流程
+- 日志持续输出
 
-### 典型用法
+如果你已经会用 background tasks，下一步就很值得把 Monitor Tool 一起学掉。
+
+## Monitor Tool
+
+Monitor Tool 是上游最近更明确写进文档的新重点。它的核心价值是：
+
+- Claude 不需要再每隔几十秒 `sleep` 一下去轮询
+- 而是直接盯住后台命令的 stdout 事件流
+- 一旦匹配到事件，就立刻唤醒当前会话
+
+简单说：  
+**它适合“等某件事发生”这种场景，比低效轮询更省 token，也更及时。**
+
+### 它为什么值得学
+
+- 后台安静时几乎不消耗额外 token
+- 有事件发生时，Claude 能第一时间反应
+- 很适合日志、测试输出、服务启动、错误监控
+
+### 两种最常见用法
+
+#### 1. 持续流过滤
+
+适合一直往外吐日志的命令：
 
 ```bash
-# 先预览会加什么，不落盘
-python3 09-advanced-features/setup-auto-mode-permissions.py --dry-run
-
-# 写入保守基线
-python3 09-advanced-features/setup-auto-mode-permissions.py
-
-# 按需再放开能力
-python3 09-advanced-features/setup-auto-mode-permissions.py --include-edits --include-tests
-python3 09-advanced-features/setup-auto-mode-permissions.py --include-git-write --include-packages
-python3 09-advanced-features/setup-auto-mode-permissions.py --include-gh-read --include-gh-write
+tail -F server.log | grep --line-buffered -E "ERROR|FATAL"
 ```
 
-### 这组权限默认包含什么
+#### 2. 定时查询后只在有变化时输出
 
-| 类别 | 示例 |
-|------|------|
-| Core read-only tools | `Read(*)`、`Glob(*)`、`Grep(*)`、`Agent(*)`、`WebSearch(*)`、`WebFetch(*)` |
-| Local inspection | `Bash(git status:*)`、`Bash(git log:*)`、`Bash(git diff:*)`、`Bash(cat:*)` |
-| Optional edits | `Edit(*)`、`Write(*)`、`NotebookEdit(*)` |
-| Optional test/build | `Bash(pytest:*)`、`Bash(cargo test:*)`、`Bash(make:*)` |
-| Optional git writes | `Bash(git add:*)`、`Bash(git commit:*)`、`Bash(git stash:*)` |
-| Optional packages | `Bash(npm install:*)`、`Bash(pip install:*)` |
-| Optional GitHub CLI | `Bash(gh pr view:*)`、`Bash(gh pr create:*)` |
+适合没有原生事件流、只能自己轮询的接口：
 
-### 它和旧的 `auto-adapt-mode` 有什么不同
+```bash
+last=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+while true; do
+  gh api "repos/owner/repo/issues/123/comments?since=$last" || true
+  last=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  sleep 30
+done
+```
 
-旧思路：
+### 一个很容易踩的坑
 
-- 通过 hook 动态学习你批准过什么
+如果你是把流接到 `grep` 上，记得**一定**带：
 
-现在的新思路：
+```bash
+grep --line-buffered
+```
 
-- 一次性写入一组明确的规则
-- 再通过命令行参数按需增加范围
+不然 `grep` 可能会缓冲输出，看起来像“明明有事件，Claude 却迟迟没反应”。
 
-这对中文用户尤其有帮助，因为它更容易解释清楚：
+## scheduled tasks
 
-- 现在到底开了哪些权限
-- 哪些是默认安全基线
-- 哪些是你主动额外放开的
+scheduled tasks 适合：
 
-### 明确不会自动加进去的危险操作
+- 周期性检查
+- 定时重复 prompt
+- 简单提醒
+- 固定时间执行的轻量任务
 
-脚本明确不会帮你加入这些类型：
-
-- `rm -rf`
-- `sudo`
-- force push
-- `git reset --hard`
-- `DROP TABLE`
-- `kubectl delete`
-- `terraform destroy`
-- `npm publish`
-- `curl | bash`
-- 生产环境 deploy
-
-如果你想要“更自动化”，请先明确你是**真的需要**，而不是只是觉得方便。
+如果你还没掌握 print mode、permission modes 和 background tasks，先别急着把 scheduled tasks 配得太复杂。
 
 ---
 
@@ -381,30 +435,6 @@ cat error.log | claude -p "Explain this error"
 - 一开始先用小任务试
 - 不要直接上高权限全自动流程
 - 需要 JSON 输出时，先确认消费端怎么解析
-
----
-
-## background tasks 与 scheduled tasks
-
-### background tasks
-
-适合：
-
-- 长时间运行的任务
-- 不想阻塞当前对话
-- 需要并行推进的工作
-
-### scheduled tasks
-
-适合：
-
-- 周期性检查
-- 定时重复 prompt
-- 简单提醒或轮询式任务
-
-如果你还没掌握 print mode 和权限模式，先别急着把 scheduled tasks 做复杂。
-
----
 
 ## Channels / 外部事件通道
 

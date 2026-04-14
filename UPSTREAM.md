@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`561c6cbaa3043aa86f530af75f46ab697304f531`
+- 最近检查到的上游 commit：`9c224ff71b383a4cb1a37884a9319496da6623cb`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,23 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### Upstream Sync — 2026-04-14
+
+- Reviewed upstream range: `561c6cb` → `9c224ff`
+- 重点上游变化：
+  - 上游把 `# ...` inline memory 快捷写法标记为 discontinued，推荐改用 `/memory` 或自然语言记忆请求
+  - `05-mcp/README.md` 不再继续强调 `WebSocket transport`
+  - 新增 `/team-onboarding` 命令说明，并扩充了 `/ultraplan` 的云端起草细节
+  - `Monitor Tool` 被明确写进 advanced features，用于替代低效轮询
+  - `06-hooks/pre-tool-check.sh` 修复了 block reason 输出和 `rm -rf /tmp/...` 误拦截问题
+  - README 补充了乌克兰语入口，但这属于上游多语言分发层变化
+- Chinese fork actions:
+  - 更新中文 `memory` 文档，移除对 `# ...` 快捷写法的继续推荐
+  - 删除中文 `MCP` 文档里已经过时的 `WebSocket transport` 说明
+  - 在中文命令目录、Catalog、Quick Reference 中补上 `/team-onboarding`、`/ultraplan` 与 `Monitor Tool`
+  - 同步 `pre-tool-check.sh` 的上游修复，并新增回归测试覆盖 block/warn 行为
+  - 保持根目录中文主线结构，不引入上游 `uk/` 目录和 README 语言切换入口
 
 ### Upstream Sync — 2026-04-08
 

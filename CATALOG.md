@@ -48,6 +48,8 @@ slash commands 是用户在 Claude Code 里主动输入的快捷操作，例如 
 | `/plan` | 进入 planning mode |
 | `/rewind` | 回退到 checkpoint |
 | `/resume` | 恢复之前的 session |
+| `/team-onboarding` | 根据当前项目配置生成新人上手说明 |
+| `/ultraplan` | 把计划起草交给浏览器里的云端会话 |
 | `/branch` | 从当前对话分叉（某些版本中 `/fork` 仍可能可用） |
 
 ### 仓库里的示例命令
@@ -258,6 +260,7 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `CLAUDE.md` 不是随便写笔记的地方，它更像项目规范和上下文入口。
 - 项目级和个人级 memory 适合放不同内容。
 - memory 很强，但它不替代 skills、hooks 和 slash commands。
+- 旧教程里常见的 `# ...` 快捷写 memory 已经停用；现在请用 `/memory` 或自然语言更新。
 
 ---
 
@@ -266,6 +269,9 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 这个仓库同步的是 Claude Code 较新的能力集，因此你会在文档里频繁看到这些内容：
 
 - Auto Mode
+- Monitor Tool
+- `/team-onboarding`
+- `/ultraplan`
 - Voice Dictation
 - Channels
 - background tasks

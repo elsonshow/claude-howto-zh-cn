@@ -48,6 +48,7 @@ Claude Code 里的 slash commands 大致分四类：
 | `/powerup` | 用交互式 lesson 了解内建能力 |
 | `/rewind` | 回退到 checkpoint |
 | `/resume` | 恢复以前的 session |
+| `/team-onboarding` | 生成一份适合新同事的 Claude Code 上手说明 |
 | `/ultraplan` | 先产出详细计划，再在浏览器中审阅 |
 | `/usage` | 查看 plan 用量与限流状态 |
 
@@ -134,6 +135,12 @@ cp 01-slash-commands/optimize.md .claude/commands/
 
 适合复杂任务。它会先帮你产出更完整的计划，再进入浏览器审阅或继续执行，特别适合多文件改动和高风险任务。
 
+### `/team-onboarding`
+
+适合团队刚开始把 Claude Code 用进项目时。它会根据你当前项目里的 `CLAUDE.md`、skills、subagents、hooks 等实际配置，生成一份给新同事看的 ramp-up guide。
+
+如果你已经把仓库的协作方式写进了 memory，这个命令会特别省时间。
+
 ---
 
 ## April 2026 这批命令变化，最值得知道什么
@@ -141,6 +148,7 @@ cp 01-slash-commands/optimize.md .claude/commands/
 - `/pr-comments` 已移除；现在更推荐直接让 Claude 查看 PR 评论
 - `/vim` 已移除；编辑器模式改从 `/config` 里设置
 - `/powerup` 新增，用交互式 lesson 带你认识 Claude Code 的能力
+- `/team-onboarding` 新增，适合自动生成团队上手说明
 - `/ultraplan` 新增，适合端到端计划工作流
 - `/schedule` 更偏向 Cloud scheduled tasks，不再只是本地提醒
 - `/init` 的交互增强模式现在更常见的写法是 `CLAUDE_CODE_NEW_INIT=1`

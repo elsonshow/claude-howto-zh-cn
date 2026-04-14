@@ -96,6 +96,12 @@ chmod +x ~/.claude/hooks/*.sh
 # 进入规划模式
 /plan Task description
 
+# 把复杂规划交给云端会话起草
+/ultraplan Task description
+
+# 为新同事生成项目 onboarding guide
+/team-onboarding
+
 # 常见 permission mode
 claude --permission-mode default
 claude --permission-mode acceptEdits
@@ -126,6 +132,8 @@ claude -r "session-name"
 | Plugins | `/plugin install` | 一次安装多能力 | 团队分发 |
 | Checkpoints | 内建 | `Esc+Esc`、`/rewind` | 安全试错 |
 | Planning Mode | 内建 | `/plan <task>` | 复杂任务规划 |
+| Ultraplan | 内建 | `/ultraplan <task>` | 云端起草复杂计划 |
+| Monitor Tool | 内建 | 监控后台命令 stdout 事件流 | 适合替代轮询 |
 | Print Mode | 内建 | `claude -p` | 脚本 / CI/CD |
 
 ---
