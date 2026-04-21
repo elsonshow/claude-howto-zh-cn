@@ -1,27 +1,43 @@
 ---
-name: Bug report
-about: 报告一个缺陷或不符合预期的问题
-title: '[BUG] '
+name: Bug Report
+about: Report an issue with an example, guide, or documentation
+title: "[BUG] "
 labels: bug
 assignees: ''
+
 ---
 
-## 问题描述
+## Description
+Brief description of the issue.
 
-请简要说明你遇到了什么问题。
+## Steps to Reproduce
+1. Step 1
+2. Step 2
+3. Step 3
 
-## 复现步骤
+## Expected Behavior
+What should happen?
 
-1. 执行了什么操作
-2. 看到什么结果
-3. 预期应该是什么
+## Actual Behavior
+What actually happened?
 
-## 相关环境
+## Environment
+- **Claude Code Version**: (e.g., 1.0.5)
+- **Operating System**: (e.g., macOS 14.1, Ubuntu 22.04, Windows 11)
+- **Python Version**: (if relevant, e.g., 3.11)
+- **Affected Component**: (e.g., 01-slash-commands, 03-skills, etc.)
 
-- Claude Code 版本：
-- 操作系统：
-- 相关文件 / 模块：
+## Example Code
+If applicable, provide the example code that's not working:
+```
+[Insert code here]
+```
 
-## 补充信息
+## Screenshots
+If applicable, add screenshots showing the issue.
 
-可以附上截图、日志、命令输出或最小复现示例。
+## Additional Context
+Any other context that might help us understand the issue?
+
+## Possible Solution
+If you have a suggestion for fixing this, share it here.

@@ -3,131 +3,118 @@
   <img alt="Claude How To" src="../resources/logos/claude-howto-logo.svg">
 </picture>
 
-# EPUB 构建脚本与本地化校验脚本
+# EPUB Builder Script
 
-这个目录现在主要包含两类脚本：
+Build an EPUB ebook from the Claude How-To markdown files.
 
-- `build_epub.py`：把仓库内的 Markdown 文档打包成 EPUB
-- `validate_localization.py`：校验中文本土化过程中是否把可执行标识、链接或配置翻坏
+## Features
 
----
+- Organizes chapters by folder structure (01-slash-commands, 02-memory, etc.)
+- Renders Mermaid diagrams as PNG images via Kroki.io API
+- Async concurrent fetching - renders all diagrams in parallel
+- Generates a cover image from the project logo
+- Converts internal markdown links to EPUB chapter references
+- Strict error mode - fails if any diagram cannot be rendered
 
-## `build_epub.py`
-
-用于把整个指南打包成 EPUB 电子书。
-
-当前默认会优先使用仓库里的固定封面图：
-
-`assets/cover/epub-cover-official.png`
-
-如果这个文件存在，就直接作为 EPUB 封面；如果不存在，才回退到脚本自动生成封面。
-
-### 功能
-
-- 按目录结构组织章节
-- 把 Mermaid 图通过 Kroki.io 渲染成图片
-- 生成封面
-- 处理内部 Markdown 链接
-- 在构建失败时明确报错
-
-### 依赖
+## Requirements
 
 - Python 3.10+
 - [uv](https://github.com/astral-sh/uv)
-- 可访问 Kroki.io 的网络环境
+- Internet connection for Mermaid diagram rendering
 
-### 快速开始
+## Quick Start
 
 ```bash
+# Simplest way - uv handles everything
 uv run scripts/build_epub.py
 ```
 
-### 常见选项
-
-```text
-usage: build_epub.py [-h] [--root ROOT] [--output OUTPUT] [--verbose]
-                     [--timeout TIMEOUT] [--max-concurrent MAX_CONCURRENT]
-```
+## Development Setup
 
 ```bash
-# 查看详细日志
-uv run scripts/build_epub.py --verbose
-
-# 自定义输出位置
-uv run scripts/build_epub.py --output ~/Desktop/claude-guide.epub
-
-# 如果遇到速率限制，降低并发
-uv run scripts/build_epub.py --max-concurrent 5
-```
-
----
-
-## `validate_localization.py`
-
-用于在中文本土化过程中做“翻译后验活”，避免这些问题：
-
-- 内部 Markdown 链接失效
-- YAML frontmatter 被改坏
-- JSON / YAML 无法解析
-- shell 脚本语法损坏
-- 关键命令名、字段名、环境变量名、plugin manifest 标识被误改
-
-### 快速开始
-
-```bash
-uv run python scripts/validate_localization.py
-```
-
-### 它会检查什么
-
-- Markdown 相对链接
-- frontmatter 合法性
-- `.json` / `.yml` / `.yaml` 语法
-- `*.sh` 的 `bash -n`
-- 关键 protected tokens
-
-### 什么时候运行
-
-- 每次大规模翻译或重写之后
-- 每次修改 `SKILL.md`、subagent、slash command 或 plugin manifest 之后
-- 每次准备提交前
-- 每次同步上游变更后
-
----
-
-## 本地开发
-
-```bash
-# 创建虚拟环境
+# Create virtual environment
 uv venv
 
-# 激活并安装依赖
+# Activate and install dependencies
 source .venv/bin/activate
-uv pip install -r scripts/requirements-dev.txt
+uv pip install -r requirements-dev.txt
 
-# 运行全部测试
+# Run tests
 pytest scripts/tests/ -v
 
-# 运行本地化校验
-uv run python scripts/validate_localization.py
-
-# 构建 EPUB
+# Run the script
 python scripts/build_epub.py
 ```
 
----
+## Command-Line Options
 
-## 常见问题
+```
+usage: build_epub.py [-h] [--root ROOT] [--output OUTPUT] [--verbose]
+                     [--timeout TIMEOUT] [--max-concurrent MAX_CONCURRENT]
 
-**EPUB 构建失败且提示网络错误**  
-先检查网络、代理以及 Kroki.io 是否可访问，可以尝试提高 `--timeout`。
+options:
+  -h, --help            show this help message and exit
+  --root, -r ROOT       Root directory (default: repo root)
+  --output, -o OUTPUT   Output path (default: claude-howto-guide.epub)
+  --verbose, -v         Enable verbose logging
+  --timeout TIMEOUT     API timeout in seconds (default: 30)
+  --max-concurrent N    Max concurrent requests (default: 10)
+```
 
-**本地化校验失败**  
-优先检查：
+## Examples
 
-- 是否把 `/optimize`、`/pr`、`claude -p` 这类命令改坏了
-- 是否把 `allowed-tools`、`tools`、`model`、`env` 这类字段翻译掉了
-- 是否删掉了 `GITHUB_TOKEN`、`mcpServers`、`license` 等受保护标识
+```bash
+# Build with verbose output
+uv run scripts/build_epub.py --verbose
 
-**中文内容导致拼写检查报错**  
-仓库已对中文字符做了忽略处理；如果仍然报错，多半是英文术语或项目名新增了未收录词条。
+# Custom output location
+uv run scripts/build_epub.py --output ~/Desktop/claude-guide.epub
+
+# Limit concurrent requests (if rate-limited)
+uv run scripts/build_epub.py --max-concurrent 5
+```
+
+## Output
+
+Creates `claude-howto-guide.epub` in the repository root directory.
+
+The EPUB includes:
+- Cover image with project logo
+- Table of contents with nested sections
+- All markdown content converted to EPUB-compatible HTML
+- Mermaid diagrams rendered as PNG images
+
+## Running Tests
+
+```bash
+# With virtual environment
+source .venv/bin/activate
+pytest scripts/tests/ -v
+
+# Or with uv directly
+uv run --with pytest --with pytest-asyncio \
+    --with ebooklib --with markdown --with beautifulsoup4 \
+    --with httpx --with pillow --with tenacity \
+    pytest scripts/tests/ -v
+```
+
+## Dependencies
+
+Managed via PEP 723 inline script metadata:
+
+| Package | Purpose |
+|---------|---------|
+| `ebooklib` | EPUB generation |
+| `markdown` | Markdown to HTML conversion |
+| `beautifulsoup4` | HTML parsing |
+| `httpx` | Async HTTP client |
+| `pillow` | Cover image generation |
+| `tenacity` | Retry logic |
+
+## Troubleshooting
+
+**Build fails with network error**: Check internet connectivity and Kroki.io status. Try `--timeout 60`.
+
+**Rate limiting**: Reduce concurrent requests with `--max-concurrent 3`.
+
+**Missing logo**: The script generates a text-only cover if `claude-howto-logo.png` is not found.

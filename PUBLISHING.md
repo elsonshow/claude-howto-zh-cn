@@ -5,46 +5,46 @@
 ### 单行版本
 
 ```text
-docs: ship the first polished zh-cn Claude Code guide release
+docs: sync upstream and keep Chinese-English parallel docs
 ```
 
 ### 带正文版本
 
 ```text
-docs: ship the first polished zh-cn Claude Code guide release
+docs: sync upstream and keep Chinese-English parallel docs
 
-- localize all tracked markdown docs into a Chinese-first guide
-- restore interactive self-assessment and lesson-quiz flows
-- add localization guardrails, tests, and CI validation
-- improve release readiness for Chinese beginner users
+- merge the latest upstream Claude How To content
+- keep the English source in the repository root
+- keep Chinese documentation under zh/ for side-by-side reading
+- preserve fork maintenance notes for future localization syncs
 ```
 
 ## 推荐仓库描述（GitHub About）
 
 ```text
-Claude Code 中文全面上手指南。基于 luongnv89/claude-howto 本土化重写，面向中国小白用户，保留命令与配置兼容性，并附学习路径与本地化校验护栏。
+Claude Code 中文对照指南。基于 luongnv89/claude-howto 同步维护，根目录保留英文原文，zh/ 提供中文版本，方便中英文对照学习。
 ```
 
 ## 推荐 GitHub 首页摘要
 
 ```text
-这是一个基于 luongnv89/claude-howto 的非官方中文本土化 fork，目标不是逐句翻译，而是做成适合中国小白长期学习的 Claude Code 全面上手指南。
+这是一个基于 luongnv89/claude-howto 的非官方中文对照 fork。根目录保留上游英文主线，zh/ 目录提供中文版本，方便用户在英文原文和中文说明之间对照学习。
 
-你可以从 README、学习路线图和速查卡开始，再逐步进入 slash commands、memory、skills、MCP、hooks、subagents、plugins、CLI 等模块。仓库同时保留了关键可执行标识，并提供本地化校验脚本，尽量避免“中文化后示例不可用”的问题。
+你可以从 README、学习路线图和速查卡开始，再逐步进入 slash commands、memory、skills、MCP、hooks、subagents、plugins、CLI 等模块。中文文档会保留关键可执行标识，尽量避免“中文化后示例不可用”的问题。
 ```
 
 ## 推荐首版 Release 标题
 
 ```text
-v1.0.0 — 首个中文本土化发布
+v1.1.0 - 中英文对照同步版
 ```
 
 ## 推荐首版 Release 摘要
 
 ```text
-首个正式中文本土化版本，面向中国小白用户重写 Claude Code 学习主线，并保留关键命令、配置和 frontmatter 兼容性。
+同步上游主线内容，并调整为英文根目录 + zh/ 中文目录的中英文对照结构。
 
-本版完成了中文首页、学习路线、速查卡、功能总表、主要模块 README，以及高频执行型 Markdown 的中文化收口；同时恢复了 self-assessment / lesson-quiz 的完整交互结构，并加入本地化校验脚本、测试与 CI 护栏。
+本版保留上游英文原文，补齐中文入口，方便后续继续跟随主仓库更新。
 ```
 
 ## 发布前建议核对

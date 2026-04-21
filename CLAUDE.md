@@ -1,107 +1,157 @@
 # CLAUDE.md
 
-这个文件给 Claude Code 提供“如何在这个仓库里协作”的工作说明。
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 项目定位
+## Project Overview
 
-`claude-howto-zh-cn` 是一个 **documentation-as-code** 仓库。
+Claude How To is a tutorial repository for Claude Code features. This is **documentation-as-code** — the primary output is markdown files organized into numbered learning modules, not an executable application.
 
-- 主体产物是 Markdown 教程与示例，不是可执行应用
-- 核心目标是把上游 `luongnv89/claude-howto` 做成更适合中国小白的中文主线指南
-- 兼容性优先级很高：命令名、frontmatter、JSON/YAML key、环境变量、路径约定都不能被本地化改坏
+**Architecture**: Each module (01-10) covers a specific Claude Code feature with copy-paste templates, Mermaid diagrams, and examples. The build system validates documentation quality and generates an EPUB ebook.
 
-## 你最常用的命令
+## Common Commands
 
-### 本地化校验
+### Pre-commit Quality Checks
+
+All documentation must pass four quality checks before commits (these run automatically via pre-commit hooks):
 
 ```bash
-uv run python scripts/validate_localization.py
+# Install pre-commit hooks (runs on every commit)
+pre-commit install
+
+# Run all checks manually
+pre-commit run --all-files
 ```
 
-检查重点包括：
+The four checks are:
+1. **markdown-lint** — Markdown structure and formatting via `markdownlint`
+2. **cross-references** — Internal links, anchors, code fence syntax (Python script)
+3. **mermaid-syntax** — Validates all Mermaid diagrams parse correctly (Python script)
+4. **link-check** — External URLs are reachable (Python script)
+5. **build-epub** — EPUB generates without errors (on `.md` changes)
 
-- frontmatter 是否可解析
-- 关键保留词是否被误翻
-- Markdown 链接是否有效
-- JSON / YAML / shell 脚本是否还能正常解析
-
-### 测试脚本
+### Development Environment Setup
 
 ```bash
-uv run pytest scripts/tests/ -q
+# Install uv (Python package manager)
+pip install uv
+
+# Create virtual environment and install Python dependencies
+uv venv
+source .venv/bin/activate
+uv pip install -r scripts/requirements-dev.txt
+
+# Install Node.js tools (markdown linter and Mermaid validator)
+npm install -g markdownlint-cli
+npm install -g @mermaid-js/mermaid-cli
+
+# Install pre-commit hooks
+uv pip install pre-commit
+pre-commit install
 ```
 
-### EPUB 构建
+### Testing
+
+Python scripts in `scripts/` have unit tests:
 
 ```bash
+# Run all tests
+pytest scripts/tests/ -v
+
+# Run with coverage
+pytest scripts/tests/ -v --cov=scripts --cov-report=html
+
+# Run specific test
+pytest scripts/tests/test_build_epub.py -v
+```
+
+### Code Quality
+
+```bash
+# Lint and format Python code
+ruff check scripts/
+ruff format scripts/
+
+# Security scan
+bandit -c scripts/pyproject.toml -r scripts/ --exclude scripts/tests/
+
+# Type checking
+mypy scripts/ --ignore-missing-imports
+```
+
+### EPUB Build
+
+```bash
+# Generate ebook (renders Mermaid diagrams via Kroki.io API)
 uv run scripts/build_epub.py
+
+# With options
+uv run scripts/build_epub.py --verbose --output custom-name.epub --max-concurrent 5
 ```
 
-### Python 质量检查
+## Directory Structure
 
-```bash
-uv run ruff check scripts/
-uv run ruff format scripts/
+```
+├── 01-slash-commands/      # User-invoked shortcuts
+├── 02-memory/              # Persistent context examples
+├── 03-skills/              # Reusable capabilities
+├── 04-subagents/           # Specialized AI assistants
+├── 05-mcp/                 # Model Context Protocol examples
+├── 06-hooks/               # Event-driven automation
+├── 07-plugins/             # Bundled features
+├── 08-checkpoints/         # Session snapshots
+├── 09-advanced-features/   # Planning, thinking, backgrounds
+├── 10-cli/                 # CLI reference
+├── scripts/
+│   ├── build_epub.py           # EPUB generator (renders Mermaid via Kroki API)
+│   ├── check_cross_references.py   # Validates internal links
+│   ├── check_links.py          # Checks external URLs
+│   ├── check_mermaid.py        # Validates Mermaid syntax
+│   └── tests/                  # Unit tests for scripts
+├── .pre-commit-config.yaml    # Quality check definitions
+└── README.md               # Main guide (also module index)
 ```
 
-## 仓库结构
+## Content Guidelines
 
-```text
-01-slash-commands/      slash commands 教程与模板
-02-memory/              CLAUDE.md / memory 教程与模板
-03-skills/              skills 教程与示例
-04-subagents/           subagents 教程与示例
-05-mcp/                 MCP 教程与配置示例
-06-hooks/               hooks 教程与脚本示例
-07-plugins/             plugins 教程与完整样例
-08-checkpoints/         checkpoints / rewind 教程
-09-advanced-features/   高级能力说明
-10-cli/                 CLI 指南
-.claude/skills/         仓库内置的教学 skills
-scripts/                校验、构建、测试脚本
-```
+### Module Structure
+Each numbered folder follows the pattern:
+- **README.md** — Overview of the feature with examples
+- **Example files** — Copy-paste templates (`.md` for commands, `.json` for configs, `.sh` for hooks)
+- Files are organized by feature complexity and dependencies
 
-## 修改文档时的核心原则
+### Mermaid Diagrams
+- All diagrams must parse successfully (checked by pre-commit hook)
+- EPUB build renders diagrams via Kroki.io API (requires internet)
+- Use Mermaid for flowcharts, sequence diagrams, and architecture visuals
 
-1. 先保兼容，再谈翻译  
-   任何会被 Claude Code 直接读取或执行的标识，优先保留原样。
+### Cross-References
+- Use relative paths for internal links (e.g., `(01-slash-commands/README.md)`)
+- Code fences must specify language (e.g., ` ```bash `, ` ```python `)
+- Anchor links use `#heading-name` format
 
-2. 先讲用途，再讲命令  
-   中文读者更容易先理解“这是什么 / 什么时候用 / 为什么有价值”，再接受 CLI、配置和脚本细节。
+### Link Validation
+- External URLs must be reachable (checked by pre-commit hook)
+- Avoid linking to ephemeral content
+- Use permalinks where possible
 
-3. 不要把正文写成翻译腔  
-   优先自然中文表达；必要时保留 `skills`、`CLI`、`hooks`、`MCP`、`subagents` 这类英文术语。
+## Key Architecture Points
 
-4. 高风险文件少改、谨慎改  
-   `.sh`、`.py`、`.json`、`.yml` 默认只同步必要的兼容性变化；注释能不动就不动。
+1. **Numbered folders indicate learning order** — The 01-10 prefix represents the recommended sequence for learning Claude Code features. This numbering is intentional; do not reorganize alphabetically.
 
-## 修改示例文件时要特别注意
+2. **Scripts are utilities, not the product** — The Python scripts in `scripts/` support documentation quality and EPUB generation. The actual content is in the numbered module folders.
 
-以下内容默认不要翻译：
+3. **Pre-commit is the gatekeeper** — All four quality checks must pass before a PR is accepted. The CI pipeline runs these same checks as a second pass.
 
-- 文件名、目录名
-- slash command 名称
-- skill / subagent / plugin 名称
-- YAML frontmatter key
-- JSON / YAML key
-- CLI flags
-- 环境变量名
-- MCP server 名
-- 代码块里的可执行命令
+4. **Mermaid rendering requires network** — The EPUB build calls Kroki.io API to render diagrams. Build failures here are typically network issues or invalid Mermaid syntax.
 
-## 推荐提交流程
+5. **This is a tutorial, not a library** — When adding content, focus on clear explanations, copy-paste examples, and visual diagrams. The value is in teaching concepts, not providing reusable code.
 
-1. 改文档或示例
-2. 跑 `uv run python scripts/validate_localization.py`
-3. 跑 `uv run pytest scripts/tests/ -q`
-4. 如果改了 EPUB 构建，再跑 `uv run scripts/build_epub.py`
-5. 在 `README.md`、`UPSTREAM.md`、`CHANGELOG.md` 里记录最近同步内容
+## Commit Conventions
 
-## 提交信息风格
+Follow conventional commit format:
+- `feat(slash-commands): Add API documentation generator`
+- `docs(memory): Improve personal preferences example`
+- `fix(README): Correct table of contents link`
+- `refactor(hooks): Simplify hook configuration examples`
 
-优先使用 conventional commits，例如：
-
-- `docs(readme): sync upstream April 2026 updates`
-- `feat(subagents): add performance-optimizer example`
-- `fix(hooks): switch shell hooks to stdin JSON protocol`
-- `refactor(epub): polish zh-cn cover and reading experience`
+Scope should match the folder name when applicable.

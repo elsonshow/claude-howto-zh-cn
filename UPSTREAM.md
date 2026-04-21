@@ -4,132 +4,88 @@
 
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
-- 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`9c224ff71b383a4cb1a37884a9319496da6623cb`
+- 最近同步到的上游 commit：`cf92e8e4f8e1e98e2ee26f5c8227f9029e85b2f7`
+- 上游版本标签：`v2.1.112`
 - 上游许可证：[MIT License](LICENSE)
+
+## 当前结构
+
+本仓库现在采用和上游一致的多语言结构：
+
+- 根目录保持英文主线，尽量与 `upstream/main` 一致。
+- `zh/` 目录保存中文版本，用于和英文根目录对照阅读。
+- `vi/`、`uk/` 目录跟随上游保留，避免后续同步时反复制造删除差异。
+- `LOCALIZATION-STYLE.md` 和本文件是本 fork 的维护说明，不属于上游主线内容。
+
+这次调整替代了早期“根目录中文主线”的维护方式。后续同步时，优先保证英文根目录能干净跟进上游，再检查 `zh/` 目录是否需要补齐中文表达或链接入口。
 
 ## 本仓库性质
 
-本仓库是一个 **非官方中文本土化 fork**，目标是面向中国小白用户重写 Claude Code 学习材料，同时尽量保持与上游结构、示例和运行行为兼容。
+本仓库是一个非官方中文对照 fork，目标是让中文用户可以对照英文原文学习 Claude Code，同时尽量保持上游示例、脚本、目录结构和运行行为一致。
 
 它不是：
 
 - 官方 Anthropic 文档
-- 上游仓库的逐字逐句翻译镜像
+- 上游仓库的独立重写版本
 - 为中国平台完全重构后的独立产品
-
-## 本仓库做了哪些调整
-
-- 把首页、学习路线、Quick Reference、Catalog 等核心入口文档改成中文主线。
-- 用“先讲用途，再讲安装，再讲示例和常见坑”的方式重写表达。
-- 保留目录结构、文件路径、命令名、frontmatter key、JSON/YAML key、环境变量、CLI flags 等关键兼容元素。
-- 增加中国用户常见障碍说明，例如 GitHub Token、`npm` / `npx` / `uv` / Python 环境、网络与代理、Windows / WSL 差异。
-- 增加本地化校验脚本与 CI 护栏，避免翻译把示例和配置改坏。
 
 ## 本地化原则
 
-1. **兼容性优先**  
-   任何会影响 Claude Code 运行、加载或复制执行的标识，默认不翻。
+1. **英文主线先同步**
+   根目录文档、脚本、CI 和资源文件默认跟随 `upstream/main`，避免中英内容混杂。
 
-2. **中文表达优先**  
-   给人看的说明文字、学习路径、FAQ、对比表、导语等内容，以中文重写为主。
+2. **中文对照放在 `zh/`**
+   中文版本集中维护在 `zh/`，尽量与英文路径一一对应，方便用户在英文原文和中文说明之间切换。
 
-3. **术语保真**  
-   `skills`、`CLI`、`hooks`、`MCP`、`subagents` 这类高频术语保留英文，首次出现补中文解释。
+3. **运行标识不翻译**
+   目录名、文件名、frontmatter key、JSON/YAML key、CLI flags、环境变量、slash command 名称、skill/subagent/plugin 名称默认保持英文。
 
-4. **持续同步**  
-   本仓库默认采用“跟进上游版本 -> 判定受影响文件 -> 更新中文内容 -> 记录处理结果”的维护方式。
+4. **中文表达可以本土化**
+   说明性文字、学习路线、FAQ、导读和常见坑可以按中文用户习惯改写，但不能改坏可复制运行的示例。
 
 ## 推荐同步流程
 
-1. 获取上游新版本或新 commit。
-2. 列出上游变更的文件范围。
-3. 判断哪些文件影响本仓库的中文文档、示例或校验脚本。
-4. 优先同步以下类型的变化：
-   - 命令名、字段名、协议名、路径约定
-   - 新增或废弃功能
-   - 影响复制可运行性的示例变更
-5. 更新中文文档后，运行：
+1. `git fetch --all --prune`
+2. 合并 `upstream/main` 到本 fork 的 `main`。
+3. 对上游已存在的文件，优先恢复为 `upstream/main` 内容，避免自动合并造成中英文段落混杂。
+4. 检查 `README.md` 和 `zh/README.md` 的语言入口。
+5. 检查 `zh/` 是否和英文根目录保持可对照结构。
+6. 运行本仓库可用的校验命令，至少包括：
+
+```bash
+git diff --check
+python -m pytest scripts/tests/test_build_epub.py
+```
+
+如继续维护本 fork 的旧本地化校验脚本，也可以额外运行：
 
 ```bash
 uv run python scripts/validate_localization.py
 ```
 
-6. 在提交说明或更新日志中记录：
-   - 上游变更点
-   - 本仓库采取了什么处理
-   - 哪些内容暂时未同步
-
 ## 最近一次同步记录
 
-### Upstream Sync — 2026-04-14
+### Upstream Sync - 2026-04-21
 
-- Reviewed upstream range: `561c6cb` → `9c224ff`
+- Reviewed upstream range: `9c224ff` -> `cf92e8e`
 - 重点上游变化：
-  - 上游把 `# ...` inline memory 快捷写法标记为 discontinued，推荐改用 `/memory` 或自然语言记忆请求
-  - `05-mcp/README.md` 不再继续强调 `WebSocket transport`
-  - 新增 `/team-onboarding` 命令说明，并扩充了 `/ultraplan` 的云端起草细节
-  - `Monitor Tool` 被明确写进 advanced features，用于替代低效轮询
-  - `06-hooks/pre-tool-check.sh` 修复了 block reason 输出和 `rm -rf /tmp/...` 误拦截问题
-  - README 补充了乌克兰语入口，但这属于上游多语言分发层变化
+  - 上游发布 `v2.1.112`
+  - 同步 Claude Code `v2.1.110` 相关文档更新
+  - 根目录 README 保持英文主线，并提供 English / Vietnamese / Chinese / Ukrainian 语言入口
+  - 上游已经维护 `zh/` 中文目录
 - Chinese fork actions:
-  - 更新中文 `memory` 文档，移除对 `# ...` 快捷写法的继续推荐
-  - 删除中文 `MCP` 文档里已经过时的 `WebSocket transport` 说明
-  - 在中文命令目录、Catalog、Quick Reference 中补上 `/team-onboarding`、`/ultraplan` 与 `Monitor Tool`
-  - 同步 `pre-tool-check.sh` 的上游修复，并新增回归测试覆盖 block/warn 行为
-  - 保持根目录中文主线结构，不引入上游 `uk/` 目录和 README 语言切换入口
+  - 合并 `upstream/main`
+  - 将上游已有文件恢复为英文主线内容
+  - 保留 `zh/` 作为中文对照目录
+  - 在中文 README 顶部补充语言切换入口，方便从中文版本返回英文原文
+  - 更新本文件和 `LOCALIZATION-STYLE.md`，记录新的中英文对照维护策略
 
-### Upstream Sync — 2026-04-08
+### Earlier Sync History
 
-- Reviewed upstream range: `0ca8c37` → `561c6cb`
-- 重点上游变化：
-  - 上游在 2026 年 4 月完成一轮更大的文档同步，并发布 `v2.3.0`
-  - 新增 `CLAUDE.md`
-  - 新增 `04-subagents/performance-optimizer.md`
-  - 新增 `06-hooks/pre-tool-check.sh` 与 `06-hooks/dependency-check.sh`
-  - 一批 hooks 脚本改为读取 stdin JSON，并补齐 Windows Git Bash 兼容性
-  - 文档层面新增 / 修正了 `MCP Apps`、`/ultraplan`、Agent Teams、Channels、`cleanupPeriodDays` 等说明
-  - 上游新增 `zh/`、`vi/` 多语言目录，并重构了部分 CI / release 流程
-- Chinese fork actions:
-  - 将与中文主线直接相关的新增能力和示例同步到根目录中文文档
-  - 新增中文 `CLAUDE.md`，适配本仓库自己的校验和本地化工作流
-  - 新增 `performance-optimizer` subagent，并更新 `CATALOG.md`
-  - 同步高价值 hooks 脚本与新版协议行为
-  - 在 `README.md` 中更新最近同步日期与本轮更新说明
-  - 未采用上游 `zh/` / `vi/` 目录结构与 README 指标徽章，继续保持“中文主线在根目录”的 fork 结构
-### Upstream Sync — 2026-04-01
-
-- Upstream range: `d41b335` → `0ca8c37`
-- Affected files:
-  - `06-hooks/README.md`
-  - `06-hooks/auto-adapt-mode.py`
-  - `09-advanced-features/README.md`
-  - `09-advanced-features/setup-auto-mode-permissions.py`
-  - `README.md`
-- Chinese fork actions:
-  - 删除旧的 `auto-adapt-mode` hook 文件，不再继续维护“动态记忆批准”方案
-  - 新增 `09-advanced-features/setup-auto-mode-permissions.py`，同步上游的一次性权限种子脚本
-  - 在中文 `Advanced Features` 和 `Hooks` 文档中补上新的使用方式、适用场景和安全边界
-  - 在项目介绍中写明最近同步日期与本次上游更新内容
-  - 上游新增的 Trending 徽章未直接照搬，因为它描述的是上游仓库状态，而不是当前中文 fork 的状态
-
-## 建议记录模板
-
-```md
-## Upstream Sync - YYYY-MM-DD
-
-- Upstream range: <old>...<new>
-- Affected files:
-  - README.md
-  - 05-mcp/README.md
-- Chinese fork actions:
-  - 同步了 MCP 章节新增字段说明
-  - 保留了命令名与 JSON key 不变
-  - 补充了中国用户的安装注意事项
-```
+本 fork 早期曾使用“根目录中文主线”的方式维护，并手工同步过 2026-04-01、2026-04-08、2026-04-14 的上游变化。自 2026-04-21 起，维护策略改为“英文根目录 + `zh/` 中文对照目录”，以降低后续与上游合并时的冲突和混排风险。
 
 ## 额外说明
 
-- 如果你未来将本仓库发布到自己的 GitHub 账号下，建议仓库名使用 `claude-howto-zh-cn`。
-- 如果需要替换徽章、封面图、仓库 URL，请在保留来源声明的前提下调整。
-- 如果某处翻译和可执行性冲突，**优先保留原始标识**，并在正文中补中文解释。
+- 如果 GitHub About 仍强调中文版本，建议描述为“Claude Code 中文对照指南，基于 luongnv89/claude-howto 同步维护”。
+- 如果需要补充中国用户常见安装、网络或环境说明，优先放在 `zh/` 对应文档里。
+- 如果某处翻译和可执行性冲突，优先保留原始标识，并在中文正文中补充解释。

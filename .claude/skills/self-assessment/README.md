@@ -1,61 +1,73 @@
-# 自测与学习路径顾问
+# Self-Assessment & Learning Path Advisor
 
-> 这是一个完整的 Claude Code 熟练度自测 skill，不只是“问几个问题”，而是会对 10 个能力域做结构化评估，并给出个性化学习路径。
+> Comprehensive Claude Code proficiency assessment that evaluates 10 feature areas, identifies skill gaps, and generates a personalized learning path to level up.
 
 ## Highlights
 
-- 两种模式：Quick（约 2 分钟）和 Deep（约 5 分钟）
-- 覆盖 10 个主题：Slash Commands、Memory、Skills、Hooks、MCP、Subagents、Checkpoints、Advanced Features、Plugins、CLI
-- 能输出总等级、分主题得分、强项、短板和建议起点
-- 学习路径会按依赖顺序排序，而不是简单罗列一堆章节
-- 结果后会提供后续动作，例如从第一个短板开始、深入某个弱项或重测
+- Two assessment modes: Quick (8 questions, 2 min) and Deep (5 rounds, 5 min)
+- Evaluates 10 feature areas: Slash Commands, Memory, Skills, Hooks, MCP, Subagents, Checkpoints, Advanced Features, Plugins, CLI
+- Per-topic scoring with mastery levels (None / Basic / Proficient)
+- Gap analysis with dependency-aware prioritization
+- Personalized learning path with specific exercises and success criteria
+- Follow-up actions: start learning, deep dive, practice project, or retake
 
-## 什么时候用
+## When to Use
 
-| 你可以这样说 | 它会做什么 |
+| Say this... | Skill will... |
 |---|---|
-| “评估一下我的水平” | 做完整自测，判断你处于 Beginner / Intermediate / Advanced 哪个阶段 |
-| “我该从哪里开始学” | 判断你当前的起点并推荐学习顺序 |
-| “我接下来该学什么” | 找出短板并给出按依赖顺序排列的路线 |
-| “检查我的技能” | 输出分主题熟练度概览 |
+| "assess my level" | Run the assessment quiz and determine your level |
+| "where should I start" | Evaluate your experience and suggest a starting point |
+| "check my skills" | Produce a detailed skill profile across all 10 areas |
+| "what should I learn next" | Identify gaps and build a prioritized learning path |
 
-## 使用方式
+## How It Works
 
-```text
+```mermaid
+graph TD
+    A["Choose assessment mode"] --> B["Answer quiz questions"]
+    B --> C["Score per-topic proficiency"]
+    C --> D["Generate personalized learning path"]
+    D --> E["Start learning or deep dive"]
+    style A fill:#4CAF50,color:#fff
+    style E fill:#2196F3,color:#fff
+```
+
+## Assessment Modes
+
+### Quick Assessment (~2 min)
+- 8 yes/no experience questions across 2 rounds
+- Determines overall level: Beginner / Intermediate / Advanced
+- Lists specific gaps with tutorial links
+- Best for: first-time users, quick check-ins
+
+### Deep Assessment (~5 min)
+- 5 rounds of questions covering 10 feature areas (2 topics per round)
+- Per-topic scoring (0-2 points each, 20 points total)
+- Mastery table with strength areas, priority gaps, and review items
+- Dependency-aware learning path with phases and time estimates
+- Recommended practice projects combining gap topics
+- Best for: experienced users wanting to level up, periodic skill reviews
+
+## Usage
+
+```
 /self-assessment
 ```
 
-## 它会输出什么
+## Output
 
-### 1. 总体结果
+### Skill Profile Table
+Shows per-topic score, mastery level, and status (Learn / Review / Mastered).
 
-- 当前等级
-- 总得分（Deep 模式）
-- 一句简洁总结
+### Personalized Learning Path
+- Organized into phases based on dependency order
+- Each topic includes: tutorial link, focus areas, key exercise, success criterion
+- Time estimate adjusted for topics already mastered
+- Practice projects combining multiple gap areas
 
-### 2. 分主题能力表
-
-会展示每个主题的：
-
-- 得分
-- 掌握程度
-- 当前状态（Learn / Review / Mastered）
-
-### 3. 个性化学习路径
-
-会根据你的结果生成：
-
-- 按依赖顺序排列的阶段
-- 每阶段推荐看的教程
-- 应重点关注的知识点
-- 一个建议练习
-- 一个完成判据
-
-### 4. 后续动作
-
-测完后可以继续：
-
-- 从第一个短板开始学
-- 深挖某个主题
-- 进入练习项目
-- 改用另一种测评模式重测
+### Follow-up Actions
+After results, choose to:
+- Start the first gap tutorial with guided exercises
+- Deep dive into a specific gap area
+- Set up a practice project covering your gaps
+- Retake in a different assessment mode

@@ -1,23 +1,44 @@
 ---
-name: Documentation
-about: 报告文档问题或提出文档改进建议
-title: '[DOCS] '
+name: Documentation Issue
+about: Report unclear documentation, typos, or missing information
+title: "[DOCS] "
 labels: documentation
 assignees: ''
+
 ---
 
-## 文档位置
+## Type of Issue
+- [ ] Typo or grammar error
+- [ ] Unclear explanation
+- [ ] Missing information
+- [ ] Broken link or reference
+- [ ] Outdated content
+- [ ] Better example needed
 
-请写明对应文件或章节。
+## Location
+Which section has the issue?
+- **File**: (e.g., README.md, 03-skills/README.md)
+- **Section**: (e.g., "Installation Quick Reference")
+- **Line/Area**: (if specific)
 
-## 当前问题
+## Current Content
+What does it currently say?
+```
+[Paste the current text here]
+```
 
-- 信息不准确
-- 表达不清楚
-- 链接失效
-- 示例不可用
-- 缺少内容
+## Issue Description
+What's wrong with it?
 
-## 建议改法
+## Suggested Improvement
+How could this be improved or clarified?
+```
+[Provide improved text or suggestion here]
+```
 
-请说明你希望文档怎么改，越具体越好。
+## Why This Matters
+How does this issue impact users?
+
+## Related Documentation
+Links to related sections:
+- Related Guide: <!-- Add link here -->

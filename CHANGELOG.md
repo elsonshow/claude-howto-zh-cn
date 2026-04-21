@@ -1,66 +1,102 @@
 # Changelog
 
-> 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
+## v2.1.112 — 2026-04-16
 
-## 中文版同步 — 2026-04-08
+### Highlights
 
-### Upstream Review
+- Sync all English tutorials with Claude Code v2.1.112 and the new Opus 4.7 model (`claude-opus-4-7`), including the new `xhigh` effort level (default on Opus 4.7, between `high` and `max`), two new built-in slash commands (`/ultrareview`, `/less-permission-prompts`), auto-mode no longer requiring `--enable-auto-mode` for Max subscribers on Opus 4.7, the PowerShell tool on Windows, the "Auto (match terminal)" theme, and plan files named after prompts. All 18 EN doc footers bumped to Claude Code v2.1.112. @Luong NGUYEN
 
-- 核对上游范围：`0ca8c37` → `561c6cb`
-- 上游这轮重点：
-  - 发布 `v2.3.0`
-  - 新增 `CLAUDE.md`
-  - 新增 `performance-optimizer` subagent
-  - 新增 `pre-tool-check.sh` 与 `dependency-check.sh`
-  - hooks shell 示例统一到 stdin JSON 协议，并补 Windows Git Bash 兼容性
-  - 文档更新覆盖 `/ultraplan`、`MCP Apps`、Agent Teams、Channels、`cleanupPeriodDays` 等主题
-  - 上游新增 `zh/` / `vi/` 多语言目录
+### Features
 
-### Chinese Fork Handling
+- Add complete Ukrainian (uk) localization across all modules, root docs, examples, and references (039dde2) @Evgenij I
 
-- 新增根目录 [CLAUDE.md](CLAUDE.md)，写明本仓库的协作与校验约定
-- 新增 `04-subagents/performance-optimizer.md`
-- 新增 `06-hooks/pre-tool-check.sh` 与 `06-hooks/dependency-check.sh`
-- 将 `format-code.sh`、`log-bash.sh`、`security-scan.sh`、`validate-prompt.sh` 同步到新版协议写法
-- 更新 `README.md` 的最近同步说明，以及 `01`、`02`、`03`、`04`、`05`、`06`、`08`、`09`、`10` 模块的中文说明
-- 未采用上游的多语言目录拆分与 README 星标 / fork 指标，继续保留当前中文主线仓库结构
-## 中文版同步 — 2026-04-01
+### Bug Fixes
 
-### Upstream Sync
+- Correct pre-tool-check.sh hook protocol bugs (bce7cf8) @yarlinghe
+- Change bad mermaid example to text block to pass CI (b8a7b1f) @Evgenij I
+- Fix CP1251 encoding in Ukrainian claude_concepts_guide.md ToC (d970cc6) @Evgenij I
+- Replace stub Ukrainian README with full translation, fix broken anchors (f6d73e2) @Evgenij I
+- Correct Claude Code version to 2.1.97 across all footers (63a1416) @Luong NGUYEN
+- Apply 2026-04-09 documentation accuracy updates (e015f39) @Luong NGUYEN
 
-- 同步上游范围：`d41b335` → `0ca8c37`
-- 核心变化：
-  - hooks 不再推荐旧的 `auto-adapt-mode` 动态学习方案
-  - 新增一次性权限种子脚本 `09-advanced-features/setup-auto-mode-permissions.py`
-  - auto-mode 权限基线改为更保守的默认集合，并支持按需开启 edits、tests、git writes、packages、GitHub writes
-  - 上游 `README` 新增 Trending 徽章
+### Documentation
 
-### Chinese Fork Handling
+- Sync to Claude Code v2.1.112 (Opus 4.7, `xhigh` effort, `/ultrareview`, `/less-permission-prompts`, PowerShell tool, Auto-match-terminal theme) @Luong NGUYEN
+- Sync to Claude Code v2.1.110 (TUI, push notifications, session recap) (15f0085) @Luong NGUYEN
+- Sync to Claude Code v2.1.101 with `/team-onboarding`, `/ultraplan`, Monitor tool (2deba3a) @Luong NGUYEN
+- Sync Vietnamese documentation with English source (561c6cb) @Thiên Toán
+- Update Last Updated date and Claude Code version across all files (7f2e773) @Luong NGUYEN
+- Add Ukrainian language link to language switcher (9c224ff) @Luong NGUYEN
+- Remove contributors section (f07313d) @Luong NGUYEN
+- Update GitHub metrics to 21,800+ stars, 2,585+ forks (4f55374) @Luong NGUYEN
 
-- 删除本仓库中的旧 `06-hooks/auto-adapt-mode.py`
-- 在 `06-hooks/README.md` 和 `09-advanced-features/README.md` 中补上新的中文说明
-- 在 `README.md` 中加入最近同步日期与更新内容说明
-- 未直接照搬上游 Trending 徽章，以避免误导为当前中文 fork 的真实热度状态
+**Full Changelog**: https://github.com/luongnv89/claude-howto/compare/v2.3.0...v2.1.112
+
+---
+
+## v2.3.0 — 2026-04-07
+
+### Features
+
+- build and publish EPUB artifacts per language (90e9c30) @Thiên Toán
+- add missing pre-tool-check.sh hook to 06-hooks (b511ed1) @JiayuWang
+- add Chinese translations in zh/ directory (89e89d4) @Luong NGUYEN
+- Add performance-optimizer subagent and dependency-check hook (f53d080) @qk
+
+### Bug Fixes
+
+- Windows Git Bash compatibility + stdin JSON protocol (2cbb10c) @Luong NGUYEN
+- correct autoCheckpoint config documentation in 08-checkpoints (749c79f) @JiayuWang
+- embed SVG images instead of replacing with placeholders (1b16709) @Thiên Toán
+- nested code fence rendering in memory README (ce24423) @Zhaoshan Duan
+- apply review fixes dropped by squash merge (34259ca) @Luong NGUYEN
+- make hook scripts compatible with Windows Git Bash and use stdin JSON protocol (107153d) @binyu li
+
+### Documentation
+
+- sync all tutorials with latest Claude Code docs (April 2026) (72d3b01) @Luong NGUYEN
+- add Chinese language link to language switcher (6cbaa4d) @Luong NGUYEN
+- add language switcher between English and Vietnamese (100c45e) @Luong NGUYEN
+- add GitHub #1 Trending badge (0ca8c37) @Luong NGUYEN
+- Introduce cc-context-stats for context zone monitoring (d41b335) @Luong NGUYEN
+- Introduce luongnv89/skills collection and luongnv89/asm skill manager (7e3c0b6) @Luong NGUYEN
+- Update README stats to reflect current GitHub metrics (5,900+ stars, 690+ forks) (5001525) @Luong NGUYEN
+- Update README stats to reflect current GitHub metrics (3,900+ stars, 460+ forks) (9cb92d6) @Luong NGUYEN
+
+### Refactoring
+
+- replace Kroki HTTP dependency with local mmdc rendering (e76bbe4) @Luong NGUYEN
+- shift quality checks to pre-commit, CI as 2nd pass (6d1e0ae) @Luong NGUYEN
+- narrow auto-mode permissions baseline (2790fb2) @Luong NGUYEN
+- Replace auto-adapt hook with one-time permissions setup script (995a5d6) @Luong NGUYEN
+
+### Other
+
+- shift-left quality gates — add mypy to pre-commit, fix CI failures (699fb39) @Luong NGUYEN
+- Add Vietnamese (Tiếng Việt) Localization (a70777e) @Thiên Toán
+
+**Full Changelog**: https://github.com/luongnv89/claude-howto/compare/v2.2.0...v2.3.0
+
+---
 
 ## v2.2.0 — 2026-03-26
 
 ### Documentation
 
-- 将全部教程和参考文档同步到 Claude Code `v2.1.84`
-  - slash commands 更新为 55+ 个内建命令 + 5 个 bundled skills，并标记 3 个已废弃项
-  - hooks 事件从 18 个扩展到 25 个，并新增 `agent` hook type
-  - advanced features 新增 Auto Mode、Channels、Voice Dictation
-  - `SKILL.md` frontmatter 新增 `effort`、`shell`
-  - subagent 字段新增 `initialPrompt`、`disallowedTools`
-  - MCP 新增 WebSocket transport、elicitation、2KB tool cap 等说明
-  - plugins 新增 LSP、`userConfig`、`${CLAUDE_PLUGIN_DATA}` 相关支持
-  - 更新 `CATALOG`、`QUICK_REFERENCE`、`LEARNING-ROADMAP`、`INDEX`
-- README 改写为更像 landing page 的结构
+- Sync all tutorials and references with Claude Code v2.1.84 (f78c094) @luongnv89
+  - Update slash commands to 55+ built-in + 5 bundled skills, mark 3 deprecated
+  - Expand hook events from 18 to 25, add `agent` hook type (now 4 types)
+  - Add Auto Mode, Channels, Voice Dictation to advanced features
+  - Add `effort`, `shell` skill frontmatter fields; `initialPrompt`, `disallowedTools` agent fields
+  - Add WebSocket MCP transport, elicitation, 2KB tool cap
+  - Add plugin LSP support, `userConfig`, `${CLAUDE_PLUGIN_DATA}`
+  - Update all reference docs (CATALOG, QUICK_REFERENCE, LEARNING-ROADMAP, INDEX)
+- Rewrite README as landing-page-structured guide (32a0776) @luongnv89
 
 ### Bug Fixes
 
-- 为 CI 补充缺失的 cSpell 词条和 README 章节
-- 在 cSpell 词典中加入 `Sandboxing`
+- Add missing cSpell words and README sections for CI compliance (93f9d51) @luongnv89
+- Add `Sandboxing` to cSpell dictionary (b80ce6f) @luongnv89
 
 **Full Changelog**: https://github.com/luongnv89/claude-howto/compare/v2.1.1...v2.2.0
 
@@ -70,8 +106,8 @@
 
 ### Bug Fixes
 
-- 删除导致链接检查失败的无效 marketplace 链接
-- 在 cSpell 词典中补充 `sandboxed` 和 `pycache`
+- Remove dead marketplace link failing CI link checks (3fdf0d6) @luongnv89
+- Add `sandboxed` and `pycache` to cSpell dictionary (dc64618) @luongnv89
 
 **Full Changelog**: https://github.com/luongnv89/claude-howto/compare/v2.1.0...v2.1.1
 
@@ -81,29 +117,31 @@
 
 ### Features
 
-- 新增自适应学习路径、自测和课后测验相关 skills
-  - `/self-assessment`：对 10 个能力域做交互式自测并给出个性化学习路径
-  - `/lesson-quiz [lesson]`：针对单个模块做 8-10 题知识检查
+- Add adaptive learning path with self-assessment and lesson quiz skills (1ef46cd) @luongnv89
+  - `/self-assessment` — interactive proficiency quiz across 10 feature areas with personalized learning path
+  - `/lesson-quiz [lesson]` — per-lesson knowledge check with 8-10 targeted questions
 
 ### Bug Fixes
 
-- 更新失效 URL、已废弃写法和过时引用
-- 修复资源文档和自测 skill 里的坏链
-- 将概念指南中的嵌套代码块改为波浪线 fence
-- 增补 cSpell 词典缺失词条
+- Update broken URLs, deprecations, and outdated references (8fe4520) @luongnv89
+- Fix broken links in resources and self-assessment skill (7a05863) @luongnv89
+- Use tilde fences for nested code blocks in concepts guide (5f82719) @VikalpP
+- Add missing words to cSpell dictionary (8df7572) @luongnv89
 
 ### Documentation
 
-- 修正文档里的术语、URL 和一致性问题
-- 完成缺失能力覆盖与参考文档补齐
-- 在 MCP 章节加入 MCPorter 运行时说明
-- 补充缺失命令、设置项和特性说明
-- 新增风格指南
-- 将自测和 lesson-quiz 引入 README 与路线图
+- Phase 5 QA — fix consistency, URLs, and terminology across docs (00bbe4c) @luongnv89
+- Complete Phases 3-4 — new feature coverage and reference doc updates (132de29) @luongnv89
+- Add MCPorter runtime to MCP context bloat section (ef52705) @luongnv89
+- Add missing commands, features, and settings across 6 guides (4bc8f15) @luongnv89
+- Add style guide based on existing repo conventions (84141d0) @luongnv89
+- Add self-assessment row to guide comparison table (8fe0c96) @luongnv89
+- Add VikalpP to contributors list for PR #7 (d5b4350) @luongnv89
+- Add self-assessment and lesson-quiz skill references to README and roadmap (d5a6106) @luongnv89
 
 ### New Contributors
 
-- `@VikalpP` 首次贡献
+- @VikalpP made their first contribution in #7
 
 **Full Changelog**: https://github.com/luongnv89/claude-howto/compare/v2.0.0...v2.1.0
 
@@ -113,35 +151,38 @@
 
 ### Features
 
-- 将文档整体同步到 2026 年 2 月的 Claude Code 能力集
-  - 新增 Auto Memory
-  - 新增 Remote Control、Web Sessions、Desktop App
-  - 新增 Agent Teams（实验性）
-  - 新增 MCP OAuth 2.0、Tool Search、Claude.ai Connectors
-  - 新增 subagents 的 persistent memory 与 worktree isolation
-  - 新增 background subagents、task list、prompt suggestions
-  - 新增 sandboxing 与 managed settings
-  - 新增 HTTP hooks 和 7 个新事件
-  - 新增 plugin settings、LSP、marketplace 相关说明
-  - 补充 checkpoints 的 summarize from checkpoint
-  - 补充 17 个新 slash commands
-  - 补充一批新 CLI flags 和环境变量
+- Sync all documentation with Claude Code February 2026 features (487c96d)
+  - Update 26 files across all 10 tutorial directories and 7 reference documents
+  - Add documentation for **Auto Memory** — persistent learnings per project
+  - Add documentation for **Remote Control**, **Web Sessions**, and **Desktop App**
+  - Add documentation for **Agent Teams** (experimental multi-agent collaboration)
+  - Add documentation for **MCP OAuth 2.0**, **Tool Search**, and **Claude.ai Connectors**
+  - Add documentation for **Persistent Memory** and **Worktree Isolation** for subagents
+  - Add documentation for **Background Subagents**, **Task List**, **Prompt Suggestions**
+  - Add documentation for **Sandboxing** and **Managed Settings** (Enterprise)
+  - Add documentation for **HTTP Hooks** and 7 new hook events
+  - Add documentation for **Plugin Settings**, **LSP Servers**, and Marketplace updates
+  - Add documentation for **Summarize from Checkpoint** rewind option
+  - Document 17 new slash commands (`/fork`, `/desktop`, `/teleport`, `/tasks`, `/fast`, etc.)
+  - Document new CLI flags (`--worktree`, `--from-pr`, `--remote`, `--teleport`, `--teammate-mode`, etc.)
+  - Document new environment variables for auto memory, effort levels, agent teams, and more
 
 ### Design
 
-- 重做 logo，改为更简洁的视觉设计
+- Redesign logo to compass-bracket mark with minimal palette (20779db)
 
 ### Bug Fixes / Corrections
 
-- 更新模型名：Sonnet 4.5 → Sonnet 4.6，Opus 4.5 → Opus 4.6
-- 修正 permission mode 名称
-- 修正 hooks 事件名
-- 修正 CLI 写法：`claude-code --headless` → `claude -p`
-- 修正 checkpoint 命令示例
-- 修正 session 管理命令
-- 修正 plugin manifest：`plugin.yaml` → `.claude-plugin/plugin.json`
-- 修正 MCP 配置路径
-- 修正文档 URL，并删除虚构地址
-- 移除多个虚构配置字段
+- Update model names: Sonnet 4.5 → **Sonnet 4.6**, Opus 4.5 → **Opus 4.6**
+- Fix permission mode names: replace fictional "Unrestricted/Confirm/Read-only" with actual `default`/`acceptEdits`/`plan`/`dontAsk`/`bypassPermissions`
+- Fix hook events: remove fictional `PreCommit`/`PostCommit`/`PrePush`, add real events (`SubagentStart`, `WorktreeCreate`, `ConfigChange`, etc.)
+- Fix CLI syntax: replace `claude-code --headless` with `claude -p` (print mode)
+- Fix checkpoint commands: replace fictional `/checkpoint save/list/rewind/diff` with actual `Esc+Esc` / `/rewind` interface
+- Fix session management: replace fictional `/session list/new/switch/save` with real `/resume`/`/rename`/`/fork`
+- Fix plugin manifest format: migrate `plugin.yaml` → `.claude-plugin/plugin.json`
+- Fix MCP config paths: `~/.claude/mcp.json` → `.mcp.json` (project) / `~/.claude.json` (user)
+- Fix documentation URLs: `docs.claude.com` → `docs.anthropic.com`; remove fictional `plugins.claude.com`
+- Remove fictional configuration fields across multiple files
+- Update all "Last Updated" dates to February 2026
 
 **Full Changelog**: https://github.com/luongnv89/claude-howto/compare/20779db...v2.0.0

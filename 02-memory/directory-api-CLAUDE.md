@@ -1,26 +1,24 @@
-# API 模块规则
+# API Module Standards
 
-这个文件用于覆盖根目录 `CLAUDE.md`，作用范围是 `/src/api/` 下的内容。
+This file overrides root CLAUDE.md for everything in /src/api/
 
-## API 专属规范
+## API-Specific Standards
 
 ### Request Validation
-
-- 使用 Zod 做 schema validation
-- 所有输入都必须校验
-- 校验失败返回 400
-- 错误信息尽量提供字段级细节
+- Use Zod for schema validation
+- Always validate input
+- Return 400 with validation errors
+- Include field-level error details
 
 ### Authentication
-
-- 所有 endpoint 默认需要 JWT token
-- token 放在 `Authorization` header
-- token 默认 24 小时过期
-- 实现 refresh token 机制
+- All endpoints require JWT token
+- Token in Authorization header
+- Token expires after 24 hours
+- Implement refresh token mechanism
 
 ### Response Format
 
-所有成功响应统一遵循下面的结构：
+All responses must follow this structure:
 
 ```json
 {
@@ -31,8 +29,7 @@
 }
 ```
 
-错误响应：
-
+Error responses:
 ```json
 {
   "success": false,
@@ -46,22 +43,22 @@
 ```
 
 ### Pagination
-
-- 使用 cursor-based pagination
-- 返回 `hasMore`
-- 单页最大 100
-- 默认每页 20
+- Use cursor-based pagination (not offset)
+- Include `hasMore` boolean
+- Limit max page size to 100
+- Default page size: 20
 
 ### Rate Limiting
-
-- 登录用户每小时 1000 次
-- 公共接口每小时 100 次
-- 超限返回 429
-- 包含 `retry-after` header
+- 1000 requests per hour for authenticated users
+- 100 requests per hour for public endpoints
+- Return 429 when exceeded
+- Include retry-after header
 
 ### Caching
+- Use Redis for session caching
+- Cache duration: 5 minutes default
+- Invalidate on write operations
+- Tag cache keys with resource type
 
-- 使用 Redis 做 session caching
-- 默认缓存 5 分钟
-- 写操作后主动失效
-- cache key 带资源类型标签
+---
+**Last Updated**: April 9, 2026

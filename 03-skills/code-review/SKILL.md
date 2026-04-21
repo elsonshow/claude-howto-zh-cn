@@ -1,47 +1,70 @@
 ---
 name: code-review-specialist
-description: 综合代码审查 skill，覆盖安全、性能、代码质量和可维护性。Use when users ask to review code, analyze code quality, evaluate pull requests, or mention code review, security analysis, or performance optimization.
+description: Comprehensive code review with security, performance, and quality analysis. Use when users ask to review code, analyze code quality, evaluate pull requests, or mention code review, security analysis, or performance optimization.
 ---
 
-# Code Review Skill / 代码审查技能
+# Code Review Skill
 
-这个 skill 用于做结构化代码审查，重点关注：
+This skill provides comprehensive code review capabilities focusing on:
 
 1. **Security Analysis**
+   - Authentication/authorization issues
+   - Data exposure risks
+   - Injection vulnerabilities
+   - Cryptographic weaknesses
+   - Sensitive data logging
+
 2. **Performance Review**
+   - Algorithm efficiency (Big O analysis)
+   - Memory optimization
+   - Database query optimization
+   - Caching opportunities
+   - Concurrency issues
+
 3. **Code Quality**
+   - SOLID principles
+   - Design patterns
+   - Naming conventions
+   - Documentation
+   - Test coverage
+
 4. **Maintainability**
+   - Code readability
+   - Function size (should be < 50 lines)
+   - Cyclomatic complexity
+   - Dependency management
+   - Type safety
 
 ## Review Template
 
-### Summary
+For each piece of code reviewed, provide:
 
-- Overall quality assessment
+### Summary
+- Overall quality assessment (1-5)
 - Key findings count
 - Recommended priority areas
 
-### Critical Issues
-
-- **Issue**
-- **Location**
-- **Impact**
-- **Severity**
-- **Fix**
+### Critical Issues (if any)
+- **Issue**: Clear description
+- **Location**: File and line number
+- **Impact**: Why this matters
+- **Severity**: Critical/High/Medium
+- **Fix**: Code example
 
 ### Findings by Category
 
-#### Security
+#### Security (if issues found)
+List security vulnerabilities with examples
 
-列出安全漏洞或风险点
+#### Performance (if issues found)
+List performance problems with complexity analysis
 
-#### Performance
+#### Quality (if issues found)
+List code quality issues with refactoring suggestions
 
-列出性能问题与复杂度风险
+#### Maintainability (if issues found)
+List maintainability problems with improvements
 
-#### Quality
+## Version History
 
-列出命名、结构、文档和测试问题
-
-#### Maintainability
-
-列出可维护性问题和重构建议
+- v1.0.0 (2024-12-10): Initial release with security, performance, quality, and maintainability analysis

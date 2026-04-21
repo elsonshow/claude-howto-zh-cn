@@ -30,11 +30,11 @@
 #   { "tool_name": "Bash", "tool_input": { "command": "..." } }
 #
 # Output convention (per Claude Code hook protocol):
-#   - exit 0 -> allow. stdout may contain JSON (hookSpecificOutput); stderr
+#   - exit 0 → allow. stdout may contain JSON (hookSpecificOutput); stderr
 #     is silently discarded, so warnings printed to stderr are NOT visible.
 #     For observability on allowed commands, write to an audit log file.
-#   - exit 2 -> block. stderr is surfaced back to Claude as the block reason.
-#     Any echo explaining why a command was blocked MUST be redirected to
+#   - exit 2 → block. stderr is surfaced back to Claude as the block reason.
+#     Any echo explaining *why* a command was blocked MUST be redirected to
 #     stderr with `>&2`, otherwise Claude Code reports "No stderr output".
 #
 # Audit log: every invocation is recorded to
@@ -53,7 +53,7 @@ if [ -z "$COMMAND" ]; then
   COMMAND="$INPUT"
 fi
 
-# -- Audit log ---------------------------------------------------------------
+# ── Audit log ─────────────────────────────────────────────────────────────────
 # Records every invocation with the final decision. This is the only reliable
 # way to observe the WARN tier, because Claude Code silently drops stderr on
 # exit 0. Falls back to $(pwd) when the hook is invoked outside Claude Code
@@ -84,8 +84,8 @@ BLOCKED_PATTERNS=(
 for pattern in "${BLOCKED_PATTERNS[@]}"; do
   if echo "$COMMAND" | grep -qE "$pattern"; then
     log_decision "BLOCK:$pattern"
-    # These echoes MUST go to stderr. Claude Code surfaces stderr as the
-    # block reason on exit 2; writing to stdout yields "No stderr output".
+    # These echoes MUST go to stderr — Claude Code surfaces stderr as the
+    # block reason on exit 2. Writing to stdout would show "No stderr output".
     echo "❌ Blocked: Potentially destructive command detected: $pattern" >&2
     echo "   Command: $COMMAND" >&2
     exit 2
@@ -111,8 +111,9 @@ MATCHED_WARNINGS=""
 for pattern in "${WARNING_PATTERNS[@]}"; do
   if echo "$COMMAND" | grep -qi "$pattern"; then
     MATCHED_WARNINGS="${MATCHED_WARNINGS:+$MATCHED_WARNINGS,}$pattern"
-    # Claude Code drops stderr on exit 0, but it is still useful for local
-    # manual testing. The audit log remains the reliable record.
+    # Mirror the warning on stderr for humans running the hook manually.
+    # Claude Code drops this on exit 0 — the audit log is the reliable
+    # record (see WARN entries).
     echo "⚠️  Warning: High-risk operation detected: $pattern" >&2
   fi
 done

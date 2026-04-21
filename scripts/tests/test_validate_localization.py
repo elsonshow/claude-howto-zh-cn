@@ -57,7 +57,14 @@ def test_validate_shell_scripts_detects_syntax_error(tmp_path: Path) -> None:
 
 def test_validate_protected_snippets_detects_missing_tokens(tmp_path: Path) -> None:
     files = {
-        "README.md": "## Table of Contents\n## Contributing\n## License\nUPSTREAM.md\n",
+        "README.md": (
+            "## Table of Contents\n"
+            "## Contributing\n"
+            "## License\n"
+            "Language / Ngôn ngữ / 语言 / Мова\n"
+            "[中文](zh/README.md)\n"
+        ),
+        "zh/README.md": ("## 目录\n## 许可证\n[English](../README.md)\n"),
         "01-slash-commands/pr.md": "allowed-tools:\nBash(git add:*)\n",
         "03-skills/code-review/SKILL.md": "name: code-review-specialist\n",
         "04-subagents/code-reviewer.md": "name: code-reviewer\n",
@@ -72,4 +79,4 @@ def test_validate_protected_snippets_detects_missing_tokens(tmp_path: Path) -> N
     errors = validate_protected_snippets(tmp_path)
 
     assert errors
-    assert any("LOCALIZATION-STYLE.md" in error for error in errors)
+    assert any("[中文](README.md)" in error for error in errors)
