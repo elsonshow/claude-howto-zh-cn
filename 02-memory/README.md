@@ -148,20 +148,20 @@ Claude 会根据你的描述，把内容写进合适的 `CLAUDE.md`。
 ## 一个适合小白的最小模板
 
 ```md
-# Project Memory
+# 项目记忆
 
-## Project Overview
-- This is a TypeScript web application.
+## 项目概览
+- 这是一个 TypeScript Web 应用。
 
-## Development Rules
-- Run tests before commit.
-- Prefer async/await.
-- Keep API changes documented.
+## 开发规则
+- 提交前先运行测试。
+- 优先使用 async/await。
+- API 变更必须同步更新文档。
 
-## Important Paths
-- `src/` main application code
-- `tests/` automated tests
-- `docs/` documentation
+## 重要路径
+- `src/` 主要应用代码
+- `tests/` 自动化测试
+- `docs/` 文档
 ```
 
 ---

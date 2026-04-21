@@ -1,6 +1,6 @@
-# Code Review Checklist / 审查清单
+# 代码审查清单（Code Review Checklist）
 
-## Security Checklist
+## 安全检查清单
 
 - [ ] 没有硬编码 secrets
 - [ ] 所有用户输入都有校验
@@ -9,14 +9,14 @@
 - [ ] 有 XSS 防护
 - [ ] 受保护接口有鉴权检查
 
-## Performance Checklist
+## 性能检查清单
 
 - [ ] 没有明显 O(n²) 热路径
 - [ ] 避免 N+1 查询
 - [ ] 缓存策略合理
 - [ ] 没有明显内存浪费
 
-## Quality Checklist
+## 质量检查清单
 
 - [ ] 命名清晰
 - [ ] 函数职责单一

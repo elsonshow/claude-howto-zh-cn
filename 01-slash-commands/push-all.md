@@ -7,7 +7,7 @@ allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git
 
 ⚠️ **CAUTION**：这个命令会把当前工作区里的全部改动一起提交并推送。只有在你确认这些改动应该放在同一个 commit 里时才使用。
 
-## Workflow
+## 工作流程
 
 ### 1. 先分析改动
 
@@ -70,7 +70,7 @@ git push
 - branch
 - files changed
 
-## When to Use
+## 什么时候使用
 
 ✅ 适合：
 

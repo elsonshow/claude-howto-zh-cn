@@ -7,7 +7,7 @@
 
 这是一个把部署、回滚、状态检查和 incident 响应打包到一起的 DevOps plugin。
 
-## Features
+## 功能
 
 - 自动部署
 - 回滚流程
@@ -15,28 +15,28 @@
 - incident 响应
 - Kubernetes 集成
 
-## Installation
+## 安装
 
 ```bash
 /plugin install devops-automation
 ```
 
-## What's Included
+## 包含内容
 
-### Commands
+### 命令
 
 - `/deploy`
 - `/rollback`
 - `/status`
 - `/incident`
 
-### Agents
+### 代理
 
 - `deployment-specialist`
 - `incident-commander`
 - `alert-analyzer`
 
-## Requirements
+## 前置要求
 
 - `kubectl`
 - 已配置集群访问

@@ -1,4 +1,4 @@
-# Contributor Code of Conduct
+# 贡献者行为准则
 
 ## 我们的承诺
 

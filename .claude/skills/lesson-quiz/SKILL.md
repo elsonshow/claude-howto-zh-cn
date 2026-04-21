@@ -4,11 +4,11 @@ version: 1.0.0
 description: Claude Code 单模块互动测验。Use when asked to "quiz me on hooks", "test my knowledge of lesson 3", "lesson quiz", "practice quiz for MCP", "do I understand skills", or similar Chinese requests.
 ---
 
-# Lesson Quiz
+# 课程测验（Lesson Quiz）
 
 这是一个针对单个 Claude Code lesson 的完整互动测验 skill，用于检查用户对某一课的理解程度。
 
-## Instructions
+## 使用说明
 
 ### Step 1: 确认 lesson
 
@@ -88,26 +88,26 @@ description: Claude Code 单模块互动测验。Use when asked to "quiz me on h
 输出格式必须包含：
 
 ```markdown
-## Lesson Quiz Results: [Lesson Name]
+## 课程测验结果：[课程名称]
 
-**Score: N/8** — [Grade]
-**Quiz timing**: [Before / During / After]
-**Question breakdown**: N conceptual correct, N practical correct
+**得分：N/8** — [等级]
+**测验时机**: [学习前 / 学习中 / 学习后]
+**答题拆分**: 概念题正确 N 道，实践题正确 N 道
 
-### Per-Question Results
-| # | Category | Question (short) | Your Answer | Result |
+### 单题结果
+| # | 类型 | 问题摘要 | 你的回答 | 结果 |
 
-### Incorrect Answers — Review These
-**Q[N]: [Question]**
-- Your answer:
-- Correct answer:
-- Explanation:
-- Review:
+### 错题复盘
+**Q[N]: [问题]**
+- 你的回答:
+- 正确答案:
+- 解释:
+- 复习建议:
 
-### Timing-specific message
+### 按测验时机给出的反馈
 [根据 pre-test / progress check / mastery check 给不同反馈]
 
-### Recommended Next Steps
+### 推荐下一步
 - [继续下一课 / 回看哪一节 / 重测 / 深入解释]
 ```
 
@@ -115,19 +115,19 @@ description: Claude Code 单模块互动测验。Use when asked to "quiz me on h
 
 ### Step 6: 根据 timing 解释结果
 
-#### If pre-test
+#### 如果是学前测验
 
 - 把成绩解释为“学习前基线”
 - 强调用户接下来应重点关注哪些主题
 
-#### If during
+#### 如果是学习中检查
 
 - 把成绩解释为“阶段性进度检查”
 - 明确哪些点已经掌握、哪些点要补
 
-#### If after
+#### 如果是学后测验
 
-- 把成绩解释为“lesson mastery check”
+- 把成绩解释为“lesson mastery check（课程掌握度检查）”
 - 如果分数高，建议进入下一课
 - 如果分数一般，列出明确回看点
 
@@ -144,7 +144,7 @@ description: Claude Code 单模块互动测验。Use when asked to "quiz me on h
 
 如果选第三项，先问错题编号，再读取该 lesson README 的相关部分，用中文解释并给例子。
 
-## Output Requirements
+## 输出要求
 
 - 中文表达清晰
 - 保留关键英文术语

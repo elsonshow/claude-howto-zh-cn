@@ -1,29 +1,29 @@
-# [METHOD] /api/v1/[endpoint]
+# API endpoint 模板：[METHOD] /api/v1/[endpoint]
 
-## Description
+## 说明
 
 简要说明这个 endpoint 的作用。
 
-## Authentication
+## 鉴权
 
 说明鉴权方式，例如 Bearer token。
 
-## Parameters
+## 参数
 
-### Path Parameters
+### 路径参数
 
-| Name | Type | Required | Description |
+| 名称 | 类型 | 是否必填 | 说明 |
 |------|------|----------|-------------|
-| id | string | Yes | Resource ID |
+| id | string | Yes | 资源 ID |
 
-### Query Parameters
+### 查询参数
 
-| Name | Type | Required | Description |
+| 名称 | 类型 | 是否必填 | 说明 |
 |------|------|----------|-------------|
-| page | integer | No | Page number |
-| limit | integer | No | Items per page |
+| page | integer | No | 页码 |
+| limit | integer | No | 每页条数 |
 
-### Request Body
+### 请求体
 
 ```json
 {
@@ -31,7 +31,7 @@
 }
 ```
 
-## Responses
+## 响应
 
 ### 200 OK
 
@@ -45,9 +45,9 @@
 }
 ```
 
-## Examples
+## 示例
 
-### cURL
+### cURL 示例
 
 ```bash
 curl -X GET "https://api.example.com/api/v1/endpoint" \

@@ -1,4 +1,4 @@
-# Localization Style Guide
+# 本地化风格指南（Localization Style Guide）
 
 ## 目标
 

@@ -67,13 +67,13 @@ MCP server 不再只能返回纯文本，也可以在聊天界面里直接返回
 
 ## 最常见的安装方式
 
-### HTTP transport
+### HTTP transport（HTTP 传输）
 
 ```bash
 claude mcp add --transport http notion https://mcp.notion.com/mcp
 ```
 
-### stdio transport
+### stdio transport（stdio 传输）
 
 ```bash
 claude mcp add --transport stdio myserver -- npx @myorg/mcp-server

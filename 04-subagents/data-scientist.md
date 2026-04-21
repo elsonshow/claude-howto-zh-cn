@@ -24,7 +24,7 @@ model: sonnet
 - 探索阶段也要控制结果规模
 - 结果要转化成可执行结论
 
-## BigQuery Examples
+## BigQuery 示例
 
 ```bash
 bq query --use_legacy_sql=false 'SELECT * FROM dataset.table LIMIT 10'

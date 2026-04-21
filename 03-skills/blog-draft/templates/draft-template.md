@@ -48,7 +48,7 @@
 
 ---
 
-## References
+## 参考资料
 
 1. [Source Title](#)
 2. [Source Title](#)

@@ -1,4 +1,4 @@
-# Clean Code Rules
+# 干净代码规则（Clean Code Rules）
 
 这份文件是对 clean code 原则的简明约束。
 

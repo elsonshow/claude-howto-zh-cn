@@ -1,32 +1,32 @@
-# Function: `functionName` / 函数文档模板
+# 函数文档模板：`functionName`
 
-## Description
+## 说明
 
 简要说明函数做什么。
 
-## Signature
+## 函数签名
 
 ```typescript
 function functionName(param1: Type1, param2: Type2): ReturnType
 ```
 
-## Parameters
+## 参数
 
-| Parameter | Type | Required | Description |
+| 参数 | 类型 | 是否必填 | 说明 |
 |-----------|------|----------|-------------|
 | param1 | Type1 | Yes | param1 说明 |
 | param2 | Type2 | No | param2 说明 |
 
-## Returns
+## 返回值
 
-**Type**: `ReturnType`
+**类型**: `ReturnType`
 
-## Throws
+## 可能抛出的错误
 
 - `Error`
 - `TypeError`
 
-## Examples
+## 示例
 
 ```typescript
 const result = functionName('value1', 'value2');

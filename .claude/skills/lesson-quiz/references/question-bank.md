@@ -1,4 +1,4 @@
-# Lesson Quiz — Question Bank
+# 课程测验题库（Lesson Quiz Question Bank）
 
 每个 lesson 预置 8 道题。每题都包含：
 
@@ -11,7 +11,7 @@
 
 ---
 
-## Lesson 01: Slash Commands
+## Lesson 01：Slash Commands（快捷命令）
 
 ### Q1
 - **Category**: conceptual
@@ -79,7 +79,7 @@
 
 ---
 
-## Lesson 02: Memory
+## Lesson 02：Memory（记忆）
 
 ### Q1
 - **Category**: conceptual
@@ -147,7 +147,7 @@
 
 ---
 
-## Lesson 03: Skills
+## Lesson 03：Skills（技能）
 
 ### Q1
 - **Category**: conceptual
@@ -215,7 +215,7 @@
 
 ---
 
-## Lesson 04: Subagents
+## Lesson 04：Subagents（子代理）
 
 ### Q1
 - **Category**: conceptual
@@ -283,7 +283,7 @@
 
 ---
 
-## Lesson 05: MCP
+## Lesson 05：MCP（外部工具协议）
 
 ### Q1
 - **Category**: conceptual
@@ -351,7 +351,7 @@
 
 ---
 
-## Lesson 06: Hooks
+## Lesson 06：Hooks（钩子）
 
 ### Q1
 - **Category**: conceptual
@@ -419,7 +419,7 @@
 
 ---
 
-## Lesson 07: Plugins
+## Lesson 07：Plugins（插件）
 
 ### Q1
 - **Category**: conceptual
@@ -487,7 +487,7 @@
 
 ---
 
-## Lesson 08: Checkpoints
+## Lesson 08：Checkpoints（检查点）
 
 ### Q1
 - **Category**: conceptual
@@ -555,7 +555,7 @@
 
 ---
 
-## Lesson 09: Advanced Features
+## Lesson 09：Advanced Features（高级功能）
 
 ### Q1
 - **Category**: conceptual
@@ -623,7 +623,7 @@
 
 ---
 
-## Lesson 10: CLI
+## Lesson 10：CLI（命令行）
 
 ### Q1
 - **Category**: conceptual

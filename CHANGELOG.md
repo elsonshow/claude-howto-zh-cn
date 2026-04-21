@@ -1,10 +1,10 @@
-# Changelog
+# 更新日志
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
 ## 中文版同步 — 2026-04-08
 
-### Upstream Review
+### 上游审阅
 
 - 核对上游范围：`0ca8c37` → `561c6cb`
 - 上游这轮重点：
@@ -16,7 +16,7 @@
   - 文档更新覆盖 `/ultraplan`、`MCP Apps`、Agent Teams、Channels、`cleanupPeriodDays` 等主题
   - 上游新增 `zh/` / `vi/` 多语言目录
 
-### Chinese Fork Handling
+### 中文 fork 处理
 
 - 新增根目录 [CLAUDE.md](CLAUDE.md)，写明本仓库的协作与校验约定
 - 新增 `04-subagents/performance-optimizer.md`
@@ -26,7 +26,7 @@
 - 未采用上游的多语言目录拆分与 README 星标 / fork 指标，继续保留当前中文主线仓库结构
 ## 中文版同步 — 2026-04-01
 
-### Upstream Sync
+### 上游同步
 
 - 同步上游范围：`d41b335` → `0ca8c37`
 - 核心变化：
@@ -35,7 +35,7 @@
   - auto-mode 权限基线改为更保守的默认集合，并支持按需开启 edits、tests、git writes、packages、GitHub writes
   - 上游 `README` 新增 Trending 徽章
 
-### Chinese Fork Handling
+### 中文 fork 处理
 
 - 删除本仓库中的旧 `06-hooks/auto-adapt-mode.py`
 - 在 `06-hooks/README.md` 和 `09-advanced-features/README.md` 中补上新的中文说明
@@ -44,7 +44,7 @@
 
 ## v2.2.0 — 2026-03-26
 
-### Documentation
+### 文档
 
 - 将全部教程和参考文档同步到 Claude Code `v2.1.84`
   - slash commands 更新为 55+ 个内建命令 + 5 个 bundled skills，并标记 3 个已废弃项
@@ -57,7 +57,7 @@
   - 更新 `CATALOG`、`QUICK_REFERENCE`、`LEARNING-ROADMAP`、`INDEX`
 - README 改写为更像 landing page 的结构
 
-### Bug Fixes
+### 问题修复
 
 - 为 CI 补充缺失的 cSpell 词条和 README 章节
 - 在 cSpell 词典中加入 `Sandboxing`
@@ -68,7 +68,7 @@
 
 ## v2.1.1 — 2026-03-13
 
-### Bug Fixes
+### 问题修复
 
 - 删除导致链接检查失败的无效 marketplace 链接
 - 在 cSpell 词典中补充 `sandboxed` 和 `pycache`
@@ -79,20 +79,20 @@
 
 ## v2.1.0 — 2026-03-13
 
-### Features
+### 功能
 
 - 新增自适应学习路径、自测和课后测验相关 skills
   - `/self-assessment`：对 10 个能力域做交互式自测并给出个性化学习路径
   - `/lesson-quiz [lesson]`：针对单个模块做 8-10 题知识检查
 
-### Bug Fixes
+### 问题修复
 
 - 更新失效 URL、已废弃写法和过时引用
 - 修复资源文档和自测 skill 里的坏链
 - 将概念指南中的嵌套代码块改为波浪线 fence
 - 增补 cSpell 词典缺失词条
 
-### Documentation
+### 文档
 
 - 修正文档里的术语、URL 和一致性问题
 - 完成缺失能力覆盖与参考文档补齐
@@ -101,7 +101,7 @@
 - 新增风格指南
 - 将自测和 lesson-quiz 引入 README 与路线图
 
-### New Contributors
+### 新贡献者
 
 - `@VikalpP` 首次贡献
 
@@ -111,7 +111,7 @@
 
 ## v2.0.0 — 2026-02-01
 
-### Features
+### 功能
 
 - 将文档整体同步到 2026 年 2 月的 Claude Code 能力集
   - 新增 Auto Memory
@@ -127,11 +127,11 @@
   - 补充 17 个新 slash commands
   - 补充一批新 CLI flags 和环境变量
 
-### Design
+### 设计
 
 - 重做 logo，改为更简洁的视觉设计
 
-### Bug Fixes / Corrections
+### 问题修复 / 纠正
 
 - 更新模型名：Sonnet 4.5 → Sonnet 4.6，Opus 4.5 → Opus 4.6
 - 修正 permission mode 名称

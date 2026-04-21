@@ -1,40 +1,40 @@
-# Code Review Finding Template / 审查问题模板
+# 代码审查问题模板（Code Review Finding Template）
 
-## Issue: [TITLE]
+## 问题：[标题]
 
-### Severity
+### 严重程度
 
-- [ ] Critical
-- [ ] High
-- [ ] Medium
-- [ ] Low
+- [ ] Critical（严重）
+- [ ] High（高）
+- [ ] Medium（中）
+- [ ] Low（低）
 
-### Category
+### 分类
 
-- [ ] Security
-- [ ] Performance
-- [ ] Code Quality
-- [ ] Maintainability
-- [ ] Testing
-- [ ] Design Pattern
-- [ ] Documentation
+- [ ] Security（安全）
+- [ ] Performance（性能）
+- [ ] Code Quality（代码质量）
+- [ ] Maintainability（可维护性）
+- [ ] Testing（测试）
+- [ ] Design Pattern（设计模式）
+- [ ] Documentation（文档）
 
-### Location
+### 位置
 
-**File:** `src/components/UserCard.tsx`  
-**Lines:** 45-52  
-**Function/Method:** `renderUserDetails()`
+**文件:** `src/components/UserCard.tsx`<br>
+**行号:** 45-52<br>
+**函数/方法:** `renderUserDetails()`
 
-### Issue Description
+### 问题描述
 
-- **What**
-- **Why it matters**
-- **Current behavior**
-- **Expected behavior**
+- **问题是什么**
+- **为什么重要**
+- **当前行为**
+- **期望行为**
 
-### Code Example
+### 代码示例
 
-#### Current
+#### 当前写法
 
 ```typescript
 const users = fetchUsers();
@@ -44,7 +44,7 @@ users.forEach(user => {
 });
 ```
 
-#### Suggested Fix
+#### 建议修复
 
 ```typescript
 const usersWithPosts = fetchUsersWithPosts();
@@ -53,11 +53,11 @@ usersWithPosts.forEach(({ user, posts }) => {
 });
 ```
 
-### Impact Analysis
+### 影响分析
 
-| Aspect | Impact | Severity |
+| 方面 | 影响 | 严重程度 |
 |--------|--------|----------|
-| Performance | [describe] | High |
-| User Experience | [describe] | High |
-| Scalability | [describe] | Critical |
-| Maintainability | [describe] | Medium |
+| Performance（性能） | [描述] | High（高） |
+| User Experience（用户体验） | [描述] | High（高） |
+| Scalability（可扩展性） | [描述] | Critical（严重） |
+| Maintainability（可维护性） | [描述] | Medium（中） |

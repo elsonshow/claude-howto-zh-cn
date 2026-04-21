@@ -3,7 +3,7 @@
   <img alt="Claude How To" src="logos/claude-howto-logo.svg">
 </picture>
 
-# Brand Assets
+# 品牌资源
 
 这里收录项目的 logo、icon 和 favicon 资源。
 

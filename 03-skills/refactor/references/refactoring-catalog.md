@@ -1,8 +1,8 @@
-# Refactoring Catalog / 重构方法清单
+# 重构方法清单（Refactoring Catalog）
 
 这个文件汇总了一些常见重构手法及适用场景。
 
-## How to Use
+## 使用方式
 
 1. 先识别 smell
 2. 找对应 refactoring
@@ -11,7 +11,7 @@
 
 ## 常见 Refactorings
 
-### Extract Method
+### 提炼方法（Extract Method）
 
 **适合**：长函数、重复逻辑、需要给概念命名  
 **做法**：
@@ -22,7 +22,7 @@
 4. 用新方法替换原代码
 5. 测试
 
-### Inline Method
+### 内联方法（Inline Method）
 
 **适合**：方法体和名字一样简单，抽象没有价值  
 **做法**：
@@ -32,7 +32,7 @@
 3. 删除原方法
 4. 测试
 
-### Extract Variable
+### 提炼变量（Extract Variable）
 
 **适合**：复杂表达式难懂  
 **做法**：
@@ -42,7 +42,7 @@
 3. 替换原表达式
 4. 测试
 
-### Rename Variable / Function
+### 重命名变量 / 函数（Rename Variable / Function）
 
 **适合**：命名表达不清  
 **做法**：

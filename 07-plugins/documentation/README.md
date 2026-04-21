@@ -7,7 +7,7 @@
 
 用于把 API 文档、README 生成、文档同步和文档校验打包成一套方案。
 
-## Features
+## 功能
 
 - API 文档生成
 - README 创建与更新
@@ -15,22 +15,22 @@
 - 代码注释改进
 - 示例生成
 
-## Installation
+## 安装
 
 ```bash
 /plugin install documentation
 ```
 
-## What's Included
+## 包含内容
 
-### Commands
+### 命令
 
 - `/generate-api-docs`
 - `/generate-readme`
 - `/sync-docs`
 - `/validate-docs`
 
-### Agents
+### 代理
 
 - `api-documenter`
 - `code-commentator`

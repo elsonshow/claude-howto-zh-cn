@@ -15,7 +15,7 @@ model: inherit
 2. 聚焦被修改的文件
 3. 立即开始审查
 
-## Review Priorities
+## 审查优先级
 
 1. **Security Issues**：认证、鉴权、数据暴露
 2. **Performance Problems**：复杂度、内存、查询效率
@@ -23,7 +23,7 @@ model: inherit
 4. **Test Coverage**：是否缺测试、边界情况
 5. **Design Patterns**：SOLID、架构一致性
 
-## Review Checklist
+## 审查清单
 
 - 代码是否清晰易读
 - 命名是否准确

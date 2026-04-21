@@ -31,7 +31,7 @@
 
 ---
 
-## Table of Contents
+## 目录
 
 - [最近同步](#最近同步)
 - [这是什么项目](#这是什么项目)
@@ -43,8 +43,8 @@
 - [15 分钟快速开始](#-15-分钟快速开始)
 - [你能用它搭什么](#你能用它搭什么)
 - [常见问题](#常见问题)
-- [Contributing](#contributing)
-- [License](#license)
+- [参与贡献](#参与贡献)
+- [许可证](#许可证)
 
 ---
 
@@ -200,13 +200,13 @@ cp -r 03-skills/code-review ~/.claude/skills/
 如果你想在 1 小时内完成最小可用配置，可以继续：
 
 ```bash
-# Slash commands
+# Slash commands（快捷命令）
 cp 01-slash-commands/*.md .claude/commands/
 
-# Project memory
+# Project memory（项目记忆）
 cp 02-memory/project-CLAUDE.md ./CLAUDE.md
 
-# A reusable skill
+# A reusable skill（可复用 skill）
 cp -r 03-skills/code-review ~/.claude/skills/
 
 # 周末目标：继续加 hooks、MCP、subagents、plugins
@@ -297,7 +297,7 @@ uv run scripts/build_epub.py
 
 ---
 
-## Contributing
+## 参与贡献
 
 欢迎继续把这个中文 fork 做得更适合中文用户，但请遵循两个底线：
 
@@ -312,7 +312,7 @@ uv run python scripts/validate_localization.py
 
 ---
 
-## License
+## 许可证
 
 本仓库沿用上游项目的 [MIT License](LICENSE)。
 

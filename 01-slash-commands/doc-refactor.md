@@ -19,7 +19,7 @@ tags: documentation, refactoring, organization
    - Design
    - Troubleshooting
    - Deployment
-   - Contributing
+   - Contributing / 参与贡献
 6. **按需生成指南**：
    - User Guide
    - API Documentation

@@ -269,7 +269,7 @@ plugin 里经常带有：
 
 ---
 
-## Troubleshooting
+## 故障排查
 
 如果 plugin 装了但不好用，优先排查：
 
@@ -281,7 +281,7 @@ plugin 里经常带有：
 
 ---
 
-## Best Practices
+## 最佳实践
 
 - 先跑通单项能力，再打包
 - 保持 plugin 目标聚焦

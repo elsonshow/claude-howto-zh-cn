@@ -5,7 +5,7 @@ description: 从源码生成准确、完整的 API 文档和技术说明。Use w
 
 # API Documentation Generator Skill / API 文档技能
 
-## Generates
+## 生成内容
 
 - OpenAPI / Swagger 文档
 - endpoint 文档
@@ -14,12 +14,12 @@ description: 从源码生成准确、完整的 API 文档和技术说明。Use w
 - 错误码说明
 - 鉴权说明
 
-## For Each Endpoint
+## 每个 endpoint 需要包含
 
 输出尽量包含：
 
-- Description
-- Parameters
+- Description（说明）
+- Parameters（参数）
 - Response
 - Errors
 - cURL / JavaScript / Python 示例

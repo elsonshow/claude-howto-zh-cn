@@ -1,4 +1,4 @@
-# Publishing Notes
+# 发布说明
 
 ## 推荐 commit message
 
@@ -13,10 +13,10 @@ docs: ship the first polished zh-cn Claude Code guide release
 ```text
 docs: ship the first polished zh-cn Claude Code guide release
 
-- localize all tracked markdown docs into a Chinese-first guide
-- restore interactive self-assessment and lesson-quiz flows
-- add localization guardrails, tests, and CI validation
-- improve release readiness for Chinese beginner users
+- 将所有已跟踪的 Markdown 文档整理为中文优先指南
+- 恢复 self-assessment / lesson-quiz 的完整交互流程
+- 增加本地化校验护栏、测试和 CI 验证
+- 提升面向中文初学者的发布完成度
 ```
 
 ## 推荐仓库描述（GitHub About）

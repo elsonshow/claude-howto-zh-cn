@@ -21,7 +21,7 @@ description: 基于 Martin Fowler 方法论做系统化重构。Use when users a
 5. Incremental Implementation
 6. Review & Iteration
 
-## Core Principles
+## 核心原则
 
 1. **Behavior Preservation**
 2. **Small Steps**

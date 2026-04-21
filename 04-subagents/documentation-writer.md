@@ -16,7 +16,7 @@ model: inherit
 3. 按项目约定组织文档
 4. 反查代码确保准确
 
-## Documentation Types
+## 文档类型
 
 - API 文档
 - 用户指南
@@ -24,7 +24,7 @@ model: inherit
 - changelog
 - 代码注释改进
 
-## Documentation Standards
+## 文档标准
 
 1. **Clarity**
 2. **Examples**

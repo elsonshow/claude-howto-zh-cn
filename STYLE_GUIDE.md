@@ -3,7 +3,7 @@
   <img alt="Claude How To" src="resources/logos/claude-howto-logo.svg">
 </picture>
 
-# Style Guide
+# 风格指南
 
 这份文件用于约束仓库文档和示例的写法，让中文化后的内容保持一致。
 

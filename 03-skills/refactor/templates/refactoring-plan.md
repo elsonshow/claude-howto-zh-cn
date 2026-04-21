@@ -1,71 +1,71 @@
-# Refactoring Plan Template / 重构计划模板
+# 重构计划模板（Refactoring Plan Template）
 
-## Project Information
+## 项目信息
 
-| Field | Value |
+| 字段 | 内容 |
 |-------|-------|
 | **Project/Module** | [项目名] |
 | **Target Files** | [需要重构的文件] |
 | **Date Created** | [日期] |
 | **Author** | [作者] |
-| **Status** | Draft / In Review / Approved / In Progress / Completed |
+| **Status** | Draft / In Review / Approved / In Progress / Completed（草稿 / 审查中 / 已批准 / 进行中 / 已完成） |
 
 ---
 
-## Executive Summary
+## 执行摘要
 
-### Goals
+### 目标
 
 - [ ] [目标 1]
 - [ ] [目标 2]
 - [ ] [目标 3]
 
-### Constraints
+### 约束
 
 - [ ] [限制 1]
 - [ ] [限制 2]
 
-### Risk Level
+### 风险等级
 
-- [ ] Low
-- [ ] Medium
-- [ ] High
-
----
-
-## Pre-Refactoring Checklist
-
-- [ ] All tests passing
-- [ ] Code reviewed and understood
-- [ ] Backup / version control ready
-- [ ] User approval obtained
+- [ ] Low（低）
+- [ ] Medium（中）
+- [ ] High（高）
 
 ---
 
-## Identified Code Smells
+## 重构前检查清单
 
-| # | Smell | Location | Severity | Priority |
+- [ ] 所有测试已通过
+- [ ] 已审阅并理解相关代码
+- [ ] 备份 / 版本控制已准备好
+- [ ] 已获得用户确认
+
+---
+
+## 已识别的代码坏味道
+
+| # | 坏味道 | 位置 | 严重程度 | 优先级 |
 |---|-------|----------|----------|----------|
-| 1 | [name] | [file:line] | High | P1 |
+| 1 | [名称] | [file:line] | High（高） | P1 |
 
 ---
 
-## Refactoring Phases
+## 重构阶段
 
-### Phase A: Quick Wins
+### 阶段 A：快速收益
 
-| # | Task | File | Refactoring | Status |
+| # | 任务 | 文件 | 重构手法 | 状态 |
 |---|------|------|-------------|--------|
-| A1 | [task] | [file] | [technique] | [ ] |
+| A1 | [任务] | [文件] | [手法] | [ ] |
 
-### Phase B: Structural Improvements
+### 阶段 B：结构改进
 
-| # | Task | File | Refactoring | Status |
+| # | 任务 | 文件 | 重构手法 | 状态 |
 |---|------|------|-------------|--------|
-| B1 | [task] | [file] | [technique] | [ ] |
+| B1 | [任务] | [文件] | [手法] | [ ] |
 
-### Phase C: Higher Risk Changes
+### 阶段 C：较高风险变更
 
-| # | Task | File | Refactoring | Status |
+| # | 任务 | 文件 | 重构手法 | 状态 |
 |---|------|------|-------------|--------|
-| C1 | [task] | [file] | [technique] | [ ] |
+| C1 | [任务] | [文件] | [手法] | [ ] |

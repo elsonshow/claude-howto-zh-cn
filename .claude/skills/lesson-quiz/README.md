@@ -1,8 +1,8 @@
-# Lesson Quiz
+# 课程测验（Lesson Quiz）
 
 > 针对单个 Claude Code lesson 的互动测验 skill。它不只是随便出几道题，而是会按 lesson 组织题面、给出评分、错题解释、复习建议和后续动作。
 
-## Highlights
+## 亮点
 
 - 每次固定 8 题
 - 覆盖 10 个 lesson

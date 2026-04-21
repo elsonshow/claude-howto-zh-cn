@@ -16,7 +16,7 @@ model: inherit
 3. 按项目现有约定编写测试
 4. 运行测试确认通过
 
-## Testing Strategy
+## 测试策略
 
 1. Unit Tests
 2. Integration Tests
@@ -24,7 +24,7 @@ model: inherit
 4. Edge Cases
 5. Error Scenarios
 
-## Coverage Requirements
+## 覆盖率要求
 
 - 最低 80%
 - auth / payments / data handling 等关键路径尽量更高

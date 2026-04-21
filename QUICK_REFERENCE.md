@@ -14,7 +14,7 @@
 
 ## 🚀 安装命令速查
 
-### Slash Commands
+### Slash Commands（快捷命令）
 
 ```bash
 # 安装全部示例 slash commands
@@ -24,7 +24,7 @@ cp 01-slash-commands/*.md .claude/commands/
 cp 01-slash-commands/optimize.md .claude/commands/
 ```
 
-### Memory
+### Memory（记忆）
 
 ```bash
 # 项目级 memory
@@ -34,7 +34,7 @@ cp 02-memory/project-CLAUDE.md ./CLAUDE.md
 cp 02-memory/personal-CLAUDE.md ~/.claude/CLAUDE.md
 ```
 
-### Skills
+### Skills（技能）
 
 ```bash
 # 个人 skills
@@ -44,7 +44,7 @@ cp -r 03-skills/code-review ~/.claude/skills/
 cp -r 03-skills/code-review .claude/skills/
 ```
 
-### Subagents
+### Subagents（子代理）
 
 ```bash
 # 安装全部 subagents
@@ -54,7 +54,7 @@ cp 04-subagents/*.md .claude/agents/
 cp 04-subagents/code-reviewer.md .claude/agents/
 ```
 
-### MCP
+### MCP（外部工具协议）
 
 ```bash
 # 先准备凭证
@@ -67,7 +67,7 @@ cp 05-mcp/github-mcp.json .mcp.json
 # 或者写进用户级配置 ~/.claude.json
 ```
 
-### Hooks
+### Hooks（钩子）
 
 ```bash
 mkdir -p ~/.claude/hooks
@@ -75,7 +75,7 @@ cp 06-hooks/*.sh ~/.claude/hooks/
 chmod +x ~/.claude/hooks/*.sh
 ```
 
-### Plugins
+### Plugins（插件）
 
 ```bash
 /plugin install pr-review
@@ -83,14 +83,14 @@ chmod +x ~/.claude/hooks/*.sh
 /plugin install documentation
 ```
 
-### Checkpoints
+### Checkpoints（检查点）
 
 ```bash
 # checkpoints 默认自动创建
 /rewind
 ```
 
-### Advanced Features
+### Advanced Features（高级功能）
 
 ```bash
 # 进入规划模式
@@ -184,7 +184,7 @@ cp -r 03-skills/doc-generator ~/.claude/skills/
 /plugin install documentation
 ```
 
-### DevOps
+### DevOps（运维自动化）
 
 ```bash
 /plugin install devops-automation
@@ -233,13 +233,13 @@ claude -p "Run tests" --permission-mode dontAsk
 - 很多 MCP 示例、plugin 示例默认依赖 GitHub。
 - 开始之前先确认你能访问 GitHub，并且 `GITHUB_TOKEN` 具备需要的 scope。
 
-### `npm` / `npx` / `uv`
+### `npm` / `npx` / `uv` 使用提醒
 
 - 很多示例会用到 `npx` 安装 MCP server。
 - Python 相关脚本和测试通常依赖 `uv`。
 - 如果第一次安装很慢，优先检查网络、代理、包管理镜像和证书环境。
 
-### Windows / WSL
+### Windows / WSL 使用提醒
 
 - 如果你在 Windows 上，优先明确自己是在 PowerShell、Git Bash，还是 WSL 里操作。
 - 部分 shell 脚本和路径写法默认更偏 Unix / macOS / Linux 风格。

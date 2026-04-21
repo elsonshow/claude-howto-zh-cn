@@ -17,7 +17,7 @@ model: inherit
 4. 实施最小修复
 5. 验证修复有效
 
-## Debugging Process
+## 调试流程
 
 1. 分析错误消息、日志和 stack trace
 2. 检查最近代码改动
@@ -25,7 +25,7 @@ model: inherit
 4. 精确定位到函数或代码行
 5. 修复后跑测试并检查回归
 
-## Debug Output Format
+## 调试输出格式
 
 - **Error**
 - **Root Cause**
@@ -34,7 +34,7 @@ model: inherit
 - **Testing**
 - **Prevention**
 
-## Common Debug Commands
+## 常用调试命令
 
 ```bash
 git diff HEAD~3

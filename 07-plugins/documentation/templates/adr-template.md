@@ -1,36 +1,36 @@
 # ADR [Number]: [Title] / 架构决策记录
 
-## Status
+## 状态
 
-[Proposed | Accepted | Deprecated | Superseded]
+[Proposed | Accepted | Deprecated | Superseded]（提议中 / 已采纳 / 已废弃 / 已替代）
 
-## Context
+## 背景
 
 这个决定要解决什么问题？
 
-## Decision
+## 决策
 
 我们决定采用什么方案？
 
-## Consequences
+## 影响
 
 这个决定带来哪些影响？
 
-### Positive
+### 正面影响
 
 - Benefit 1
 - Benefit 2
 
-### Negative
+### 负面影响
 
 - Drawback 1
 - Drawback 2
 
-### Neutral
+### 中性影响
 
 - Consideration 1
 - Consideration 2
 
-## Alternatives Considered
+## 评估过的替代方案
 
 还考虑过哪些方案？为什么没选？

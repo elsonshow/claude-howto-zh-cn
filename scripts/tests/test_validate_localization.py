@@ -10,6 +10,7 @@ from validate_localization import (
     validate_markdown_links,
     validate_protected_snippets,
     validate_shell_scripts,
+    validate_untranslated_english,
 )
 
 
@@ -57,9 +58,9 @@ def test_validate_shell_scripts_detects_syntax_error(tmp_path: Path) -> None:
 
 def test_validate_protected_snippets_detects_missing_tokens(tmp_path: Path) -> None:
     files = {
-        "README.md": "## Table of Contents\n## Contributing\n## License\nUPSTREAM.md\n",
+        "README.md": "## 目录\n## 参与贡献\n## 许可证\nUPSTREAM.md\n",
         "01-slash-commands/pr.md": "allowed-tools:\nBash(git add:*)\n",
-        "03-skills/code-review/SKILL.md": "name: code-review-specialist\n",
+        "03-skills/code-review/SKILL.md": "name: code-review-specialist\n## 审查模板\n",
         "04-subagents/code-reviewer.md": "name: code-reviewer\n",
         "05-mcp/github-mcp.json": '{"mcpServers": {"github": {}}}\n',
         "07-plugins/pr-review/.claude-plugin/plugin.json": '{"name": "pr-review"}\n',
@@ -73,3 +74,32 @@ def test_validate_protected_snippets_detects_missing_tokens(tmp_path: Path) -> N
 
     assert errors
     assert any("LOCALIZATION-STYLE.md" in error for error in errors)
+
+
+def test_validate_untranslated_english_detects_english_heading(
+    tmp_path: Path,
+) -> None:
+    readme = tmp_path / "README.md"
+    readme.write_text("# Security Policy\n\n中文说明。\n", encoding="utf-8")
+
+    errors = validate_untranslated_english(tmp_path)
+
+    assert errors
+    assert any("Security Policy" in error for error in errors)
+
+
+def test_validate_untranslated_english_allows_protected_terms(
+    tmp_path: Path,
+) -> None:
+    readme = tmp_path / "README.md"
+    readme.write_text(
+        "# Claude Code 中文指南\n\n"
+        "## MCP (外部工具协议)\n\n"
+        "### `/optimize`\n\n"
+        "`GITHUB_TOKEN` 和 `.mcp.json` 这些标识不要翻译。\n",
+        encoding="utf-8",
+    )
+
+    errors = validate_untranslated_english(tmp_path)
+
+    assert errors == []

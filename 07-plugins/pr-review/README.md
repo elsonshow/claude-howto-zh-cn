@@ -7,7 +7,7 @@
 
 把安全检查、测试检查、性能检查和 PR 审查打包成一套工作流。
 
-## Features
+## 功能
 
 - 安全分析
 - 测试覆盖检查
@@ -15,27 +15,27 @@
 - 代码质量审查
 - 性能影响分析
 
-## Installation
+## 安装
 
 ```bash
 /plugin install pr-review
 ```
 
-## What's Included
+## 包含内容
 
-### Commands
+### 命令
 
 - `/review-pr`
 - `/check-security`
 - `/check-tests`
 
-### Agents
+### 代理
 
 - `security-reviewer`
 - `test-checker`
 - `performance-analyzer`
 
-## Requirements
+## 前置要求
 
 - Git 仓库
 - GitHub 访问

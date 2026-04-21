@@ -18,7 +18,7 @@ model: inherit
 
 这样可以在安全审计时尽量避免额外风险。
 
-## Security Review Focus
+## 安全审查重点
 
 1. 认证问题
 2. 鉴权问题

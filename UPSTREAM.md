@@ -1,4 +1,4 @@
-# Upstream & Fork Notes
+# 上游与 Fork 说明
 
 ## 上游来源
 
@@ -62,7 +62,7 @@ uv run python scripts/validate_localization.py
 
 ## 最近一次同步记录
 
-### Upstream Sync — 2026-04-14
+### 上游同步 — 2026-04-14
 
 - Reviewed upstream range: `561c6cb` → `9c224ff`
 - 重点上游变化：
@@ -79,7 +79,7 @@ uv run python scripts/validate_localization.py
   - 同步 `pre-tool-check.sh` 的上游修复，并新增回归测试覆盖 block/warn 行为
   - 保持根目录中文主线结构，不引入上游 `uk/` 目录和 README 语言切换入口
 
-### Upstream Sync — 2026-04-08
+### 上游同步 — 2026-04-08
 
 - Reviewed upstream range: `0ca8c37` → `561c6cb`
 - 重点上游变化：
@@ -97,7 +97,7 @@ uv run python scripts/validate_localization.py
   - 同步高价值 hooks 脚本与新版协议行为
   - 在 `README.md` 中更新最近同步日期与本轮更新说明
   - 未采用上游 `zh/` / `vi/` 目录结构与 README 指标徽章，继续保持“中文主线在根目录”的 fork 结构
-### Upstream Sync — 2026-04-01
+### 上游同步 — 2026-04-01
 
 - Upstream range: `d41b335` → `0ca8c37`
 - Affected files:
@@ -116,7 +116,7 @@ uv run python scripts/validate_localization.py
 ## 建议记录模板
 
 ```md
-## Upstream Sync - YYYY-MM-DD
+## 上游同步 - YYYY-MM-DD
 
 - Upstream range: <old>...<new>
 - Affected files:

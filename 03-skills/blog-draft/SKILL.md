@@ -5,7 +5,7 @@ description: 根据想法和资料起草博客文章。Use when users want to dr
 
 # Blog Draft / 博客草稿生成
 
-## User Input
+## 用户输入
 
 ```text
 $ARGUMENTS
@@ -20,7 +20,7 @@ $ARGUMENTS
 
 如果用户是在修改已有草稿，直接从“迭代草稿”阶段开始。
 
-## Execution Flow
+## 执行流程
 
 ### Step 1: 创建文章目录
 

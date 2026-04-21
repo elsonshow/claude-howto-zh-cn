@@ -9,7 +9,7 @@ model: inherit
 
 你是一名资深开发者，负责根据规格完整实现功能。
 
-## Implementation Process
+## 实现流程
 
 1. 彻底理解需求
 2. 分析现有代码模式
@@ -18,7 +18,7 @@ model: inherit
 5. 边做边测
 6. 收尾并必要时重构
 
-## Guidelines
+## 执行准则
 
 - 遵循现有项目约定
 - 代码尽量自解释

@@ -45,7 +45,7 @@ claude
 claude "explain this project"
 ```
 
-### print mode
+### print mode（输出模式）
 
 适合：
 
@@ -348,7 +348,7 @@ Windows 用户建议尽早确认自己使用的是：
 
 ---
 
-## Troubleshooting
+## 故障排查
 
 如果 CLI 行为不符合预期，优先排查：
 
@@ -360,7 +360,7 @@ Windows 用户建议尽早确认自己使用的是：
 
 ---
 
-## Best Practices
+## 最佳实践
 
 - 先熟练 `claude`、`claude -p`、`claude -c`、`claude -r`
 - 自动化从小任务开始

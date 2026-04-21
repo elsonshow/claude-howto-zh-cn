@@ -2,38 +2,38 @@
 
 这个文件用于把仓库里最容易混淆的几个核心概念放在一起解释。
 
-## 1. Slash Commands
+## 1. Slash Commands（快捷命令）
 
 用户主动输入的快捷命令，适合显式触发某个动作。
 
-## 2. Memory
+## 2. Memory（记忆）
 
 长期自动加载的上下文，适合放项目规则和个人偏好。
 
-## 3. Skills
+## 3. Skills（技能）
 
 可复用、可自动触发的能力，适合沉淀稳定工作流。
 
-## 4. Subagents
+## 4. Subagents（子代理）
 
 用于复杂任务拆分和专业分工的子代理。
 
-## 5. MCP
+## 5. MCP（外部工具协议）
 
 让 Claude 连接外部工具和实时数据的协议。
 
-## 6. Hooks
+## 6. Hooks（钩子）
 
 在特定事件上自动执行动作的机制。
 
-## 7. Plugins
+## 7. Plugins（插件）
 
 把 commands、skills、MCP、hooks、subagents 打包成整套方案。
 
-## 8. Checkpoints
+## 8. Checkpoints（检查点）
 
 用于安全试错和回退。
 
-## 9. CLI
+## 9. CLI（命令行）
 
 Claude Code 的核心使用入口，也是自动化、脚本化和 CI/CD 的关键接口。

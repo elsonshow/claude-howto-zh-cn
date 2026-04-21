@@ -5,13 +5,56 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import subprocess  # nosec B404 - used only for local shell syntax validation
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 
 import yaml
 
 MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
+CJK_RE = re.compile(r"[\u4e00-\u9fff]")
+ENGLISH_WORD_RE = re.compile(r"\b[A-Za-z][A-Za-z']{2,}\b")
+
+MARKDOWN_IGNORE_PARTS = {
+    ".git",
+    ".pytest_cache",
+    ".venv",
+    "node_modules",
+    "zh",
+    "vi",
+    "uk",
+}
+
+ALLOWED_ENGLISH_HEADING_RE = [
+    re.compile(pattern)
+    for pattern in [
+        r"^#{1,6}\s+CLAUDE\.md$",
+        r"^#{1,6}\s+v\d+\.\d+\.\d+\b.*$",
+        r"^#{1,6}\s+CI/CD$",
+        r"^#{1,6}\s+`[^`]+`$",
+        r"^#{1,6}\s+/[A-Za-z0-9_-]+$",
+    ]
+]
+
+FORBIDDEN_UNTRANSLATED_SNIPPETS = [
+    "## Table of Contents",
+    "## Contributing",
+    "## License",
+    "# Security Policy",
+    "# Testing Guide",
+    "# Publishing Notes",
+    "## Review Template",
+    "## Project Information",
+    "## Executive Summary",
+    "## Pre-Refactoring Checklist",
+    "## Identified Code Smells",
+    "## Refactoring Phases",
+    "| Area | Status |",
+    "| Feature Area | Score | Mastery | Status |",
+    "This is a TypeScript web application.",
+    "Run tests before commit.",
+    "Keep API changes documented.",
+]
 LINK_VALIDATION_PATHS = [
     Path("README.md"),
     Path("UPSTREAM.md"),
@@ -36,9 +79,9 @@ LINK_VALIDATION_PATHS = [
 
 PROTECTED_SNIPPETS = {
     Path("README.md"): [
-        "## Table of Contents",
-        "## Contributing",
-        "## License",
+        "## 目录",
+        "## 参与贡献",
+        "## 许可证",
         "UPSTREAM.md",
         "LOCALIZATION-STYLE.md",
     ],
@@ -50,7 +93,7 @@ PROTECTED_SNIPPETS = {
     ],
     Path("03-skills/code-review/SKILL.md"): [
         "name: code-review-specialist",
-        "## Review Template",
+        "## 审查模板",
     ],
     Path("04-subagents/code-reviewer.md"): [
         "name: code-reviewer",
@@ -156,8 +199,8 @@ def validate_shell_scripts(root: Path) -> list[str]:
     for path in root.rglob("*.sh"):
         if ".venv" in path.parts or "node_modules" in path.parts:
             continue
-        # nosec B603,B607: validating repo-local shell files with `bash -n`
-        result = subprocess.run(
+        # Validate repo-local shell files with `bash -n`.
+        result = subprocess.run(  # nosec B603 B607
             ["bash", "-n", str(path)],
             capture_output=True,
             text=True,
@@ -166,6 +209,96 @@ def validate_shell_scripts(root: Path) -> list[str]:
         if result.returncode != 0:
             details = result.stderr.strip() or "bash -n failed"
             errors.append(f"{path}: invalid shell syntax - {details}")
+    return errors
+
+
+def iter_markdown_files(root: Path) -> list[Path]:
+    return sorted(
+        path
+        for path in root.rglob("*.md")
+        if not any(part in MARKDOWN_IGNORE_PARTS for part in path.parts)
+    )
+
+
+def is_allowed_english_heading(line: str) -> bool:
+    return any(pattern.match(line) for pattern in ALLOWED_ENGLISH_HEADING_RE)
+
+
+def strip_inline_code(line: str) -> str:
+    return re.sub(r"`[^`]*`", "", line)
+
+
+def looks_like_command_or_path(line: str) -> bool:
+    stripped = line.strip()
+    if stripped.startswith(("[![", "<", "|", "$", "# /", "# -", "- `", "* `")):
+        return True
+    command_prefixes = (
+        "git ",
+        "npm ",
+        "npx ",
+        "uv ",
+        "python ",
+        "python3 ",
+        "bash ",
+        "claude ",
+        "curl ",
+        "docker ",
+        "kubectl ",
+        "bq ",
+        "cp ",
+        "mkdir ",
+    )
+    return stripped.startswith(command_prefixes)
+
+
+def validate_untranslated_english(root: Path) -> list[str]:
+    errors: list[str] = []
+
+    for path in iter_markdown_files(root):
+        content = read_text(path)
+        errors.extend(
+            f"{path}: untranslated protected text '{snippet}'"
+            for snippet in FORBIDDEN_UNTRANSLATED_SNIPPETS
+            if snippet in content
+        )
+
+        in_fence = False
+        in_frontmatter = False
+        first_line = True
+        for line_number, raw_line in enumerate(content.splitlines(), 1):
+            line = raw_line.strip()
+            if first_line and line == "---":
+                in_frontmatter = True
+                first_line = False
+                continue
+            first_line = False
+            if in_frontmatter:
+                if line == "---":
+                    in_frontmatter = False
+                continue
+            if line.startswith(("```", "~~~")):
+                in_fence = not in_fence
+                continue
+            if in_fence or not line or looks_like_command_or_path(line):
+                continue
+
+            if line.startswith("#") and not CJK_RE.search(line):
+                if ENGLISH_WORD_RE.search(line) and not is_allowed_english_heading(
+                    line
+                ):
+                    errors.append(
+                        f"{path}:{line_number}: untranslated heading '{line}'"
+                    )
+                continue
+
+            text = strip_inline_code(line)
+            if CJK_RE.search(text):
+                continue
+            if len(ENGLISH_WORD_RE.findall(text)) >= 9:
+                errors.append(
+                    f"{path}:{line_number}: likely untranslated text '{line}'"
+                )
+
     return errors
 
 
@@ -191,6 +324,7 @@ def validate_root(root: Path) -> list[str]:
     errors.extend(validate_frontmatter(root))
     errors.extend(validate_data_files(root))
     errors.extend(validate_shell_scripts(root))
+    errors.extend(validate_untranslated_english(root))
     errors.extend(validate_protected_snippets(root))
     return errors
 

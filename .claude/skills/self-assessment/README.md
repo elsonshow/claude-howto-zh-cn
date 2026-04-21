@@ -2,7 +2,7 @@
 
 > 这是一个完整的 Claude Code 熟练度自测 skill，不只是“问几个问题”，而是会对 10 个能力域做结构化评估，并给出个性化学习路径。
 
-## Highlights
+## 亮点
 
 - 两种模式：Quick（约 2 分钟）和 Deep（约 5 分钟）
 - 覆盖 10 个主题：Slash Commands、Memory、Skills、Hooks、MCP、Subagents、Checkpoints、Advanced Features、Plugins、CLI

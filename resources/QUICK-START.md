@@ -1,4 +1,4 @@
-# Quick Start - Brand Assets
+# 品牌资源快速开始
 
 ## 复制资源
 

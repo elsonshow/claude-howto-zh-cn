@@ -3,7 +3,7 @@
   <img alt="Claude How To" src="resources/logos/claude-howto-logo.svg">
 </picture>
 
-# Contributing
+# 参与贡献
 
 欢迎为这个中文本土化仓库继续贡献内容。
 

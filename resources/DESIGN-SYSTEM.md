@@ -1,4 +1,4 @@
-# Design System
+# 设计系统
 
 本文件说明项目 logo、icon 与颜色体系的基本规则。
 
