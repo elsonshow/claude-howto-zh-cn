@@ -1,14 +1,12 @@
 ---
 name: Test Coverage Check
-description: Verify test coverage and quality
+description: 检查测试覆盖率和测试质量
 ---
 
-# Test Coverage Check
+# Test Coverage Check / 测试覆盖检查
 
-Analyze test coverage and quality:
-
-1. Check test coverage percentage
-2. Identify untested code paths
-3. Review test quality
-4. Suggest missing test cases
-5. Verify edge cases are covered
+1. 查看覆盖率
+2. 找出未覆盖路径
+3. 判断测试质量
+4. 补边界情况建议
+5. 检查关键路径是否有测试

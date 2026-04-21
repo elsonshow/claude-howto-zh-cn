@@ -5,31 +5,15 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import subprocess  # nosec B404
+import subprocess  # nosec B404 - used only for local shell syntax validation
 import sys
 from pathlib import Path
 
 import yaml
 
 MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
-UPSTREAM_EXAMPLE_LINKS = {
-    (
-        Path("03-skills/README.md"),
-        "templates/review-checklist.md",
-    ),
-    (Path("03-skills/README.md"), "templates/"),
-    (Path("03-skills/README.md"), "references/code-smells.md"),
-    (
-        Path("03-skills/README.md"),
-        "references/refactoring-catalog.md",
-    ),
-    (Path("03-skills/README.md"), "references/api-spec.md"),
-    (Path("03-skills/README.md"), "reference.md"),
-    (Path("03-skills/README.md"), "examples.md"),
-}
 LINK_VALIDATION_PATHS = [
     Path("README.md"),
-    Path("zh/README.md"),
     Path("UPSTREAM.md"),
     Path("LOCALIZATION-STYLE.md"),
     Path("LEARNING-ROADMAP.md"),
@@ -55,14 +39,8 @@ PROTECTED_SNIPPETS = {
         "## Table of Contents",
         "## Contributing",
         "## License",
-        "Language / Ngôn ngữ / 语言 / Мова",
-        "[中文](zh/README.md)",
-    ],
-    Path("zh/README.md"): [
-        "## 目录",
-        "## 许可证",
-        "[English](../README.md)",
-        "[中文](README.md)",
+        "UPSTREAM.md",
+        "LOCALIZATION-STYLE.md",
     ],
     Path("01-slash-commands/pr.md"): [
         "allowed-tools:",
@@ -120,9 +98,6 @@ def validate_markdown_links(root: Path) -> list[str]:
             if "://" in target or target.startswith(("mailto:", "javascript:")):
                 continue
             target_path = target.split("#", 1)[0]
-            relative_file = path.relative_to(root)
-            if (relative_file, target_path) in UPSTREAM_EXAMPLE_LINKS:
-                continue
             resolved = (path.parent / target_path).resolve()
             if not resolved.exists():
                 errors.append(f"{path}: broken relative link '{target}'")
@@ -181,8 +156,8 @@ def validate_shell_scripts(root: Path) -> list[str]:
     for path in root.rglob("*.sh"):
         if ".venv" in path.parts or "node_modules" in path.parts:
             continue
-        # Validate repo-local shell files with `bash -n`.
-        result = subprocess.run(  # nosec B603,B607
+        # nosec B603,B607: validating repo-local shell files with `bash -n`
+        result = subprocess.run(
             ["bash", "-n", str(path)],
             capture_output=True,
             text=True,

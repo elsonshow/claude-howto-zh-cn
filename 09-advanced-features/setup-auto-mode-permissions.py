@@ -65,7 +65,6 @@ CORE_PERMISSIONS = [
     "Bash(git stash list:*)",
 ]
 
-# Optional but still local: file edits and task bookkeeping.
 EDITING_PERMISSIONS = [
     "Edit(*)",
     "Write(*)",
@@ -74,8 +73,6 @@ EDITING_PERMISSIONS = [
     "TaskUpdate(*)",
 ]
 
-# Optional dev/test commands. These can still execute arbitrary project scripts,
-# so keep them opt-in rather than part of the default baseline.
 TEST_AND_BUILD_PERMISSIONS = [
     "Bash(npm test:*)",
     "Bash(cargo test:*)",
@@ -86,8 +83,6 @@ TEST_AND_BUILD_PERMISSIONS = [
     "Bash(cmake:*)",
 ]
 
-# Optional local git write operations. History-rewriting commands stay out of
-# the default baseline because they are easy to misuse.
 GIT_WRITE_PERMISSIONS = [
     "Bash(git add:*)",
     "Bash(git commit:*)",
@@ -97,8 +92,6 @@ GIT_WRITE_PERMISSIONS = [
     "Bash(git tag:*)",
 ]
 
-# Optional dependency/package commands. These are intentionally excluded from
-# the default baseline because they can execute project hooks or fetch code.
 PACKAGE_MANAGER_PERMISSIONS = [
     "Bash(npm ci:*)",
     "Bash(npm install:*)",
@@ -106,12 +99,10 @@ PACKAGE_MANAGER_PERMISSIONS = [
     "Bash(pip3 install:*)",
 ]
 
-# Optional GitHub CLI write access.
 GITHUB_WRITE_PERMISSIONS = [
     "Bash(gh pr create:*)",
 ]
 
-# Optional extra GitHub CLI read access.
 GITHUB_READ_PERMISSIONS = [
     "Bash(gh pr view:*)",
     "Bash(gh pr list:*)",

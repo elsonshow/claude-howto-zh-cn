@@ -3,17 +3,17 @@
   <img alt="Claude How To" src="../../resources/logos/claude-howto-logo.svg">
 </picture>
 
-# Documentation Plugin
+# Documentation 插件
 
-Comprehensive documentation generation and maintenance for your project.
+用于把 API 文档、README 生成、文档同步和文档校验打包成一套方案。
 
 ## Features
 
-✅ API documentation generation
-✅ README creation and updates
-✅ Documentation synchronization
-✅ Code comment improvements
-✅ Example generation
+- API 文档生成
+- README 创建与更新
+- 文档同步
+- 代码注释改进
+- 示例生成
 
 ## Installation
 
@@ -23,97 +23,64 @@ Comprehensive documentation generation and maintenance for your project.
 
 ## What's Included
 
-### Slash Commands
-- `/generate-api-docs` - Generate API documentation
-- `/generate-readme` - Create or update README
-- `/sync-docs` - Sync docs with code changes
-- `/validate-docs` - Validate documentation
+### Commands
 
-### Subagents
-- `api-documenter` - API documentation specialist
-- `code-commentator` - Code comment improvements
-- `example-generator` - Code example creation
+- `/generate-api-docs`
+- `/generate-readme`
+- `/sync-docs`
+- `/validate-docs`
 
-### Templates
-- `api-endpoint.md` - API endpoint documentation template
-- `function-docs.md` - Function documentation template
-- `adr-template.md` - Architecture Decision Record template
+### Agents
 
-### MCP Servers
-- GitHub integration for documentation syncing
+- `api-documenter`
+- `code-commentator`
+- `example-generator`
 
-## Usage
+## 适合什么项目
 
-### Generate API Documentation
+- API 或 SDK 项目
+- README 常年落后的项目
+- 示例代码和实际实现经常不同步的项目
+
+## 最小使用流程
+
+### 1. 安装 plugin
+
+```text
+/plugin install documentation
 ```
+
+### 2. 从一个具体入口开始
+
+例如：
+
+```text
 /generate-api-docs
 ```
 
-### Create README
-```
+或者：
+
+```text
 /generate-readme
 ```
 
-### Sync Documentation
-```
-/sync-docs
-```
+### 3. Claude 通常会做什么
 
-### Validate Documentation
-```
-/validate-docs
-```
+1. 扫描代码结构
+2. 分配给相关文档 agents
+3. 生成或更新文档
+4. 检查链接、示例与结构是否一致
 
-## Requirements
+## 常见坑
 
-- Claude Code 1.0+
-- GitHub access (optional)
+### 1. 以为它能自动理解一切上下文
 
-## Example Workflow
+如果代码结构混乱、注释缺失，这个 plugin 也需要更多人工引导。
 
-```
-User: /generate-api-docs
+### 2. 文档生成后不做验证
 
-Claude:
-1. Scans all API endpoints in /src/api/
-2. Delegates to api-documenter subagent
-3. Extracts function signatures and JSDoc
-4. Organizes by module/endpoint
-5. Uses api-endpoint.md template
-6. Generates comprehensive markdown docs
-7. Includes curl, JavaScript, and Python examples
+生成不等于正确，最好配合 `/validate-docs` 使用。
 
-Result:
-✅ API documentation generated
-📄 Files created:
-   - docs/api/users.md
-   - docs/api/auth.md
-   - docs/api/products.md
-📊 Coverage: 23/23 endpoints documented
-```
+### 3. 只更新 README，不更新 API 文档
 
-## Templates Usage
-
-### API Endpoint Template
-Use for documenting REST API endpoints with full examples.
-
-### Function Documentation Template
-Use for documenting individual functions/methods.
-
-### ADR Template
-Use for documenting architectural decisions.
-
-## Configuration
-
-Set up GitHub token for documentation syncing:
-```bash
-export GITHUB_TOKEN="your_github_token"
-```
-
-## Best Practices
-
-- Keep documentation close to code
-- Update docs with code changes
-- Include practical examples
-- Validate regularly
-- Use templates for consistency
+文档类 plugin 的核心价值之一，就是帮助你保持多个文档入口的一致性。

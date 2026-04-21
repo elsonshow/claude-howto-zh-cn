@@ -1,39 +1,36 @@
-# ADR [Number]: [Title]
+# ADR [Number]: [Title] / 架构决策记录
 
 ## Status
+
 [Proposed | Accepted | Deprecated | Superseded]
 
 ## Context
-What is the issue that we're seeing that is motivating this decision or change?
+
+这个决定要解决什么问题？
 
 ## Decision
-What is the change that we're proposing and/or doing?
+
+我们决定采用什么方案？
 
 ## Consequences
-What becomes easier or more difficult to do because of this change?
+
+这个决定带来哪些影响？
 
 ### Positive
+
 - Benefit 1
 - Benefit 2
 
 ### Negative
+
 - Drawback 1
 - Drawback 2
 
 ### Neutral
+
 - Consideration 1
 - Consideration 2
 
 ## Alternatives Considered
-What other options were considered and why were they not chosen?
 
-### Alternative 1
-Description and reason for not choosing.
-
-### Alternative 2
-Description and reason for not choosing.
-
-## References
-- Related ADRs
-- External documentation
-- Discussion links
+还考虑过哪些方案？为什么没选？

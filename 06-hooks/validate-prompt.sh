@@ -39,7 +39,7 @@ done
 # Check for production deployments
 if echo "$PROMPT" | grep -qiE "(deploy|push).*production"; then
   if [ ! -f ".deployment-approved" ]; then
-    echo '{"decision": "block", "reason": "Production deployment requires approval. Create .deployment-approved file to proceed."}'
+    printf '{"decision": "block", "reason": "Production deployment requires approval"}'
     exit 0
   fi
 fi
@@ -47,7 +47,7 @@ fi
 # Check for required context in certain operations
 if echo "$PROMPT" | grep -qi "refactor"; then
   if [ ! -d "tests" ] && [ ! -d "test" ]; then
-    printf '{"additionalContext": "Warning: Refactoring without tests may be risky. Consider writing tests first."}'
+    printf '{"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": "Warning: refactor request detected but no tests/ or test/ directory was found. Please double-check your rollback and verification strategy."}}'
   fi
 fi
 

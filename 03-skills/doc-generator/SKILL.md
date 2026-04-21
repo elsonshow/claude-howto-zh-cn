@@ -1,76 +1,31 @@
 ---
-name: api-documentation-generator
-description: Generate comprehensive, accurate API documentation from source code. Use when creating or updating API documentation, generating OpenAPI specs, or when users mention API docs, endpoints, or documentation.
+name: doc-generator
+description: 从源码生成准确、完整的 API 文档和技术说明。Use when creating or updating API docs, generating endpoint documentation, or when users mention API docs, endpoints, or documentation.
 ---
 
-# API Documentation Generator Skill
+# API Documentation Generator Skill / API 文档技能
 
 ## Generates
 
-- OpenAPI/Swagger specifications
-- API endpoint documentation
-- SDK usage examples
-- Integration guides
-- Error code references
-- Authentication guides
+- OpenAPI / Swagger 文档
+- endpoint 文档
+- SDK 示例
+- 集成指南
+- 错误码说明
+- 鉴权说明
 
-## Documentation Structure
+## For Each Endpoint
 
-### For Each Endpoint
+输出尽量包含：
 
-```markdown
-## GET /api/v1/users/:id
+- Description
+- Parameters
+- Response
+- Errors
+- cURL / JavaScript / Python 示例
 
-### Description
-Brief explanation of what this endpoint does
+要求：
 
-### Parameters
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| id | string | Yes | User ID |
-
-### Response
-
-**200 Success**
-```json
-{
-  "id": "usr_123",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "created_at": "2025-01-15T10:30:00Z"
-}
-```
-
-**404 Not Found**
-```json
-{
-  "error": "USER_NOT_FOUND",
-  "message": "User does not exist"
-}
-```
-
-### Examples
-
-**cURL**
-```bash
-curl -X GET "https://api.example.com/api/v1/users/usr_123" \
-  -H "Authorization: Bearer YOUR_TOKEN"
-```
-
-**JavaScript**
-```javascript
-const user = await fetch('/api/v1/users/usr_123', {
-  headers: { 'Authorization': 'Bearer token' }
-}).then(r => r.json());
-```
-
-**Python**
-```python
-response = requests.get(
-    'https://api.example.com/api/v1/users/usr_123',
-    headers={'Authorization': 'Bearer token'}
-)
-user = response.json()
-```
-```
+- 文档结构清晰
+- 示例可复制
+- 与源码保持一致

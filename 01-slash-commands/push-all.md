@@ -1,155 +1,86 @@
 ---
-description: Stage all changes, create commit, and push to remote (use with caution)
+description: 暂存全部改动、提交并推送到远端（高风险操作，谨慎使用）
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git push:*), Bash(git diff:*), Bash(git log:*), Bash(git pull:*)
 ---
 
-# Commit and Push Everything
+# Commit and Push Everything / 全量提交并推送
 
-⚠️ **CAUTION**: Stage ALL changes, commit, and push to remote. Use only when confident all changes belong together.
+⚠️ **CAUTION**：这个命令会把当前工作区里的全部改动一起提交并推送。只有在你确认这些改动应该放在同一个 commit 里时才使用。
 
 ## Workflow
 
-### 1. Analyze Changes
-Run in parallel:
-- `git status` - Show modified/added/deleted/untracked files
-- `git diff --stat` - Show change statistics
-- `git log -1 --oneline` - Show recent commit for message style
+### 1. 先分析改动
 
-### 2. Safety Checks
+并行查看：
 
-**❌ STOP and WARN if detected:**
-- Secrets: `.env*`, `*.key`, `*.pem`, `credentials.json`, `secrets.yaml`, `id_rsa`, `*.p12`, `*.pfx`, `*.cer`
-- API Keys: Any `*_API_KEY`, `*_SECRET`, `*_TOKEN` variables with real values (not placeholders like `your-api-key`, `xxx`, `placeholder`)
-- Large files: `>10MB` without Git LFS
-- Build artifacts: `node_modules/`, `dist/`, `build/`, `__pycache__/`, `*.pyc`, `.venv/`
-- Temp files: `.DS_Store`, `thumbs.db`, `*.swp`, `*.tmp`
+- `git status`
+- `git diff --stat`
+- `git log -1 --oneline`
 
-**API Key Validation:**
-Check modified files for patterns like:
-```bash
-OPENAI_API_KEY=sk-proj-xxxxx  # ❌ Real key detected!
-AWS_SECRET_KEY=AKIA...         # ❌ Real key detected!
-STRIPE_API_KEY=sk_live_...    # ❌ Real key detected!
+### 2. 安全检查
 
-# ✅ Acceptable placeholders:
-API_KEY=your-api-key-here
-SECRET_KEY=placeholder
-TOKEN=xxx
-API_KEY=<your-key>
-SECRET=${YOUR_SECRET}
-```
+如果发现下面这些问题，必须停止并明确警告：
 
-**✅ Verify:**
-- `.gitignore` properly configured
-- No merge conflicts
-- Correct branch (warn if main/master)
-- API keys are placeholders only
+- secrets：`.env*`、`*.key`、`*.pem`、`credentials.json`、`id_rsa`
+- 真正的 API key / token
+- 大文件（例如 >10MB）
+- 构建产物：`node_modules/`、`dist/`、`build/`、`.venv/`
+- 临时文件：`.DS_Store`、`*.tmp`、`*.swp`
 
-### 3. Request Confirmation
+### 3. 请求确认
 
-Present summary:
-```
-📊 Changes Summary:
-- X files modified, Y added, Z deleted
-- Total: +AAA insertions, -BBB deletions
+在真正执行前，先给出摘要并等待用户明确输入 `yes`。
 
-🔒 Safety: ✅ No secrets | ✅ No large files | ⚠️ [warnings]
-🌿 Branch: [name] → origin/[name]
+### 4. 执行
 
-I will: git add . → commit → push
-
-Type 'yes' to proceed or 'no' to cancel.
-```
-
-**WAIT for explicit "yes" before proceeding.**
-
-### 4. Execute (After Confirmation)
-
-Run sequentially:
 ```bash
 git add .
-git status  # Verify staging
+git status
 ```
 
-### 5. Generate Commit Message
+### 5. 生成提交信息
 
-Analyze changes and create conventional commit:
+使用 conventional commits，格式如下：
 
-**Format:**
-```
-[type]: Brief summary (max 72 characters)
+```text
+[type]: Brief summary
 
 - Key change 1
 - Key change 2
 - Key change 3
 ```
 
-**Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `build`, `ci`
-
-**Example:**
-```
-docs: Update concept README files with comprehensive documentation
-
-- Add architecture diagrams and tables
-- Include practical examples
-- Expand best practices sections
-```
-
-### 6. Commit and Push
+### 6. 提交并推送
 
 ```bash
-git commit -m "$(cat <<'EOF'
-[Generated commit message]
-EOF
-)"
-git push  # If fails: git pull --rebase && git push
-git log -1 --oneline --decorate  # Verify
+git commit -m "..."
+git push
 ```
 
-### 7. Confirm Success
+如推送失败，可提示：
 
-```
-✅ Successfully pushed to remote!
+- `git pull --rebase && git push`
+- `git push -u origin [branch]`
 
-Commit: [hash] [message]
-Branch: [branch] → origin/[branch]
-Files changed: X (+insertions, -deletions)
-```
+### 7. 确认成功
 
-## Error Handling
+输出：
 
-- **git add fails**: Check permissions, locked files, verify repo initialized
-- **git commit fails**: Fix pre-commit hooks, check git config (user.name/email)
-- **git push fails**:
-  - Non-fast-forward: `git pull --rebase && git push`
-  - No remote branch: `git push -u origin [branch]`
-  - Protected branch: Use PR workflow instead
+- commit hash
+- branch
+- files changed
 
 ## When to Use
 
-✅ **Good:**
-- Multi-file documentation updates
-- Feature with tests and docs
-- Bug fixes across files
-- Project-wide formatting/refactoring
-- Configuration changes
+✅ 适合：
 
-❌ **Avoid:**
-- Uncertain what's being committed
-- Contains secrets/sensitive data
-- Protected branches without review
-- Merge conflicts present
-- Want granular commit history
-- Pre-commit hooks failing
+- 文档大改
+- 一次完整功能交付
+- 明确属于同一主题的多文件修改
 
-## Alternatives
+❌ 不适合：
 
-If user wants control, suggest:
-1. **Selective staging**: Review/stage specific files
-2. **Interactive staging**: `git add -p` for patch selection
-3. **PR workflow**: Create branch → push → PR (use `/pr` command)
-
-**⚠️ Remember**: Always review changes before pushing. When in doubt, use individual git commands for more control.
-
----
-**Last Updated**: April 9, 2026
+- 改动来源不清
+- 有 secrets 风险
+- 你其实想要更细粒度 commit
+- 当前分支是受保护分支

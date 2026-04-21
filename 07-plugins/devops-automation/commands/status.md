@@ -1,15 +1,13 @@
 ---
 name: System Status
-description: Check overall system health and status
+description: 查看整体系统健康状态
 ---
 
-# System Status Check
+# System Status Check / 系统状态检查
 
-Check system health across all services:
-
-1. Query Kubernetes pod status
-2. Check database connections
-3. Monitor API response times
-4. Review error rates
-5. Check resource utilization
-6. Report overall health
+1. 查询 pod 状态
+2. 检查数据库连接
+3. 监控 API 响应时间
+4. 查看错误率
+5. 检查资源使用
+6. 输出整体健康判断

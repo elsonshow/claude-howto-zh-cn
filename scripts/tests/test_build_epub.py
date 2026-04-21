@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -14,10 +14,11 @@ from build_epub import (
     BuildState,
     ChapterCollector,
     EPUBConfig,
-    MermaidRenderer,
-    MermaidRenderError,
     ValidationError,
+    create_cover_image,
     create_chapter_html,
+    prepare_root_readme_for_epub,
+    extract_markdown_h1,
     extract_all_mermaid_blocks,
     get_chapter_order,
     sanitize_mermaid,
@@ -38,6 +39,7 @@ class TestBuildState:
         assert state.mermaid_counter == 0
         assert len(state.mermaid_cache) == 0
         assert len(state.mermaid_added_to_book) == 0
+        assert len(state.embedded_assets) == 0
         assert len(state.path_to_chapter) == 0
 
     def test_state_modification(self, state: BuildState) -> None:
@@ -45,11 +47,13 @@ class TestBuildState:
         state.mermaid_counter = 5
         state.mermaid_cache["key"] = (b"data", "file.png")
         state.mermaid_added_to_book.add("file.png")
+        state.embedded_assets.add("logo.png")
         state.path_to_chapter["README.md"] = "chap_01.xhtml"
 
         assert state.mermaid_counter == 5
         assert state.mermaid_cache["key"] == (b"data", "file.png")
         assert "file.png" in state.mermaid_added_to_book
+        assert "logo.png" in state.embedded_assets
         assert state.path_to_chapter["README.md"] == "chap_01.xhtml"
 
     def test_reset(self, state: BuildState) -> None:
@@ -57,6 +61,7 @@ class TestBuildState:
         state.mermaid_counter = 5
         state.mermaid_cache["key"] = (b"data", "file.png")
         state.mermaid_added_to_book.add("file.png")
+        state.embedded_assets.add("logo.png")
         state.path_to_chapter["README.md"] = "chap_01.xhtml"
 
         state.reset()
@@ -64,6 +69,7 @@ class TestBuildState:
         assert state.mermaid_counter == 0
         assert len(state.mermaid_cache) == 0
         assert len(state.mermaid_added_to_book) == 0
+        assert len(state.embedded_assets) == 0
         assert len(state.path_to_chapter) == 0
 
 
@@ -90,11 +96,13 @@ class TestEPUBConfig:
             root_path=tmp_path,
             output_path=tmp_path / "out.epub",
         )
-        assert config.identifier == "claude-howto-guide"
-        assert config.title == "Claude Code How-To Guide"
-        assert config.language == "en"
-        assert config.author == "Claude Code Community"
-        assert config.mmdc_path == "mmdc"
+        assert config.identifier == "claude-howto-zh-cn-guide"
+        assert config.title == "Claude Code 中文全面上手指南"
+        assert config.language == "zh"
+        assert config.author == "claude-howto-zh-cn contributors"
+        assert config.request_timeout == 30.0
+        assert config.max_concurrent_requests == 10
+        assert config.max_retries == 3
 
     def test_custom_values(self, tmp_path: Path) -> None:
         """Test that custom values override defaults."""
@@ -102,10 +110,12 @@ class TestEPUBConfig:
             root_path=tmp_path,
             output_path=tmp_path / "out.epub",
             title="Custom Title",
-            mmdc_path="/usr/local/bin/mmdc",
+            request_timeout=60.0,
+            max_concurrent_requests=5,
         )
         assert config.title == "Custom Title"
-        assert config.mmdc_path == "/usr/local/bin/mmdc"
+        assert config.request_timeout == 60.0
+        assert config.max_concurrent_requests == 5
 
 
 # =============================================================================
@@ -162,6 +172,28 @@ class TestValidation:
         )
         with pytest.raises(ValidationError, match="Output directory does not exist"):
             validate_inputs(config, logger)
+
+
+class TestCoverGeneration:
+    """Tests for cover image generation."""
+
+    def test_create_cover_image_from_prebuilt_cover(
+        self, tmp_path: Path, logger: logging.Logger
+    ) -> None:
+        cover_path = tmp_path / "cover.png"
+        from PIL import Image as PILImage
+
+        PILImage.new("RGB", (1200, 1800), color=(240, 240, 240)).save(cover_path, "PNG")
+
+        config = EPUBConfig(
+            root_path=tmp_path,
+            output_path=tmp_path / "out.epub",
+            cover_image_path=cover_path,
+        )
+
+        cover_bytes = create_cover_image(config, logger)
+
+        assert len(cover_bytes) > 0
 
 
 # =============================================================================
@@ -255,7 +287,7 @@ class TestChapterCollector:
 
         assert len(chapters) == 1
         assert chapters[0].file_path == readme
-        assert chapters[0].display_name == "Introduction"
+        assert chapters[0].display_name == "Test"
         assert chapters[0].chapter_filename == "chap_01.xhtml"
         assert state.path_to_chapter["README.md"] == "chap_01.xhtml"
 
@@ -266,7 +298,8 @@ class TestChapterCollector:
 
         assert len(chapters) == 2  # README.md and section.md
         assert chapters[0].is_folder_overview is True
-        assert chapters[0].folder_name == "Test Chapter"
+        assert chapters[0].folder_name == "Chapter Overview"
+        assert chapters[0].file_title == "概览"
         assert chapters[1].is_folder_overview is False
 
     def test_path_mapping(self, tmp_project: Path, state: BuildState) -> None:
@@ -297,13 +330,15 @@ class TestHTMLGeneration:
         html = create_chapter_html(
             display_name="Introduction",
             file_title="Introduction",
-            html_content="<p>Content</p>",
+            html_content="<h1>Introduction</h1><h2>Table of Contents</h2><p>Content</p>",
             is_overview=True,
         )
 
         assert "<!DOCTYPE html>" in html
         assert '<html xmlns="http://www.w3.org/1999/xhtml"' in html
-        assert "<h1>Introduction</h1>" in html
+        assert 'lang="zh"' in html
+        assert html.count("<h1>Introduction</h1>") == 1
+        assert "<h2>目录</h2>" in html
         assert "<p>Content</p>" in html
 
     def test_create_chapter_html_section(self) -> None:
@@ -311,12 +346,42 @@ class TestHTMLGeneration:
         html = create_chapter_html(
             display_name="Chapter",
             file_title="Section",
-            html_content="<p>Content</p>",
+            html_content="<h1>Section</h1><h2>Best Practices</h2><p>Content</p>",
             is_overview=False,
         )
 
         assert "<h2>Section</h2>" in html
-        assert "<h1>" not in html
+        assert "<h1>Section</h1>" not in html
+        assert "<h2>最佳实践</h2>" in html
+
+
+class TestMarkdownPreprocessing:
+    """Tests for markdown preprocessing helpers."""
+
+    def test_prepare_root_readme_for_epub_replaces_hero_block(self) -> None:
+        content = """<picture>old</picture>
+
+[![Badge](https://example.com/badge.svg)](https://example.com)
+
+# Claude Code 中文全面上手指南
+
+导语内容
+
+---
+
+## 目录
+
+正文内容
+"""
+
+        processed = prepare_root_readme_for_epub(content)
+
+        assert "<picture>" not in processed
+        assert "follow-qr.jpg" in processed
+        assert "luongnv89/claude-howto" in processed
+        assert processed.startswith("# Claude Code 中文全面上手指南")
+        assert "导语内容" not in processed
+        assert "## 目录" in processed
 
     def test_html_escaping(self) -> None:
         """Test that HTML special characters are escaped."""
@@ -345,13 +410,33 @@ class TestChapterOrder:
         order = get_chapter_order()
 
         assert len(order) > 0
-        assert order[0] == ("README.md", "Introduction")
+        assert order[0] == ("README.md", "首页")
 
         # Check that all expected chapters are present
         chapter_names = [name for name, _ in order]
         assert "01-slash-commands" in chapter_names
         assert "02-memory" in chapter_names
+        assert "10-cli" in chapter_names
         assert "resources.md" in chapter_names
+
+
+class TestMarkdownTitleExtraction:
+    """Tests for extracting markdown H1 titles."""
+
+    def test_extract_markdown_h1(self, tmp_path: Path) -> None:
+        md = tmp_path / "sample.md"
+        md.write_text("# 中文标题\n\n正文\n", encoding="utf-8")
+
+        assert extract_markdown_h1(md) == "中文标题"
+
+    def test_extract_markdown_h1_ignores_code_blocks(self, tmp_path: Path) -> None:
+        md = tmp_path / "sample.md"
+        md.write_text(
+            "```md\n# fake\n```\n\n# Real Title\n",
+            encoding="utf-8",
+        )
+
+        assert extract_markdown_h1(md) == "Real Title"
 
 
 # =============================================================================
@@ -374,110 +459,6 @@ class TestLogging:
 
 
 # =============================================================================
-# MermaidRenderer Tests
-# =============================================================================
-
-
-class TestMermaidRenderer:
-    """Tests for local MermaidRenderer."""
-
-    def _make_renderer(
-        self, tmp_path: Path, state: BuildState, logger: logging.Logger
-    ) -> MermaidRenderer:
-        config = EPUBConfig(
-            root_path=tmp_path,
-            output_path=tmp_path / "out.epub",
-            mmdc_path="mmdc",
-        )
-        return MermaidRenderer(config, state, logger)
-
-    def test_render_all_success(
-        self, tmp_path: Path, state: BuildState, logger: logging.Logger
-    ) -> None:
-        """Test that render_all uses mmdc and caches results."""
-        fake_png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
-        renderer = self._make_renderer(tmp_path, state, logger)
-
-        with (
-            patch("shutil.which", return_value="/usr/bin/mmdc"),
-            patch("subprocess.run") as mock_run,
-            patch("pathlib.Path.exists", return_value=True),
-            patch("pathlib.Path.read_bytes", return_value=fake_png),
-        ):
-            mock_run.return_value = MagicMock(returncode=0, stderr="")
-            results = renderer.render_all([(1, "graph TD\n  A --> B")])
-
-        assert len(results) == 1
-        png_bytes, img_name = next(iter(results.values()))
-        assert png_bytes == fake_png
-        assert img_name.startswith("mermaid_")
-        assert img_name.endswith(".png")
-
-    def test_render_all_mmdc_not_found(
-        self, tmp_path: Path, state: BuildState, logger: logging.Logger
-    ) -> None:
-        """Test that missing mmdc raises MermaidRenderError."""
-        renderer = self._make_renderer(tmp_path, state, logger)
-
-        with (
-            patch("shutil.which", return_value=None),
-            pytest.raises(MermaidRenderError, match="mmdc not found"),
-        ):
-            renderer.render_all([(1, "graph TD\n  A --> B")])
-
-    def test_render_all_mmdc_failure(
-        self, tmp_path: Path, state: BuildState, logger: logging.Logger
-    ) -> None:
-        """Test that mmdc non-zero exit raises MermaidRenderError."""
-        renderer = self._make_renderer(tmp_path, state, logger)
-
-        with (
-            patch("shutil.which", return_value="/usr/bin/mmdc"),
-            patch("subprocess.run") as mock_run,
-        ):
-            mock_run.return_value = MagicMock(returncode=1, stderr="parse error")
-            with pytest.raises(MermaidRenderError, match="mmdc failed"):
-                renderer.render_all([(1, "graph TD\n  A --> B")])
-
-    def test_render_all_deduplication(
-        self, tmp_path: Path, state: BuildState, logger: logging.Logger
-    ) -> None:
-        """Test that identical diagrams are only rendered once."""
-        fake_png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
-        renderer = self._make_renderer(tmp_path, state, logger)
-        same_code = "graph TD\n  A --> B"
-
-        with (
-            patch("shutil.which", return_value="/usr/bin/mmdc"),
-            patch("subprocess.run") as mock_run,
-            patch("pathlib.Path.exists", return_value=True),
-            patch("pathlib.Path.read_bytes", return_value=fake_png),
-        ):
-            mock_run.return_value = MagicMock(returncode=0, stderr="")
-            results = renderer.render_all([(1, same_code), (2, same_code)])
-
-        # mmdc should only be called once for duplicate diagrams
-        assert mock_run.call_count == 1
-        # Both entries map to the same cached result
-        assert len(results) == 1
-
-    def test_render_all_timeout(
-        self, tmp_path: Path, state: BuildState, logger: logging.Logger
-    ) -> None:
-        """Test that a hung mmdc process raises MermaidRenderError."""
-        import subprocess as _subprocess
-
-        renderer = self._make_renderer(tmp_path, state, logger)
-
-        with (
-            patch("shutil.which", return_value="/usr/bin/mmdc"),
-            patch("subprocess.run", side_effect=_subprocess.TimeoutExpired("mmdc", 60)),
-            pytest.raises(MermaidRenderError, match="timed out"),
-        ):
-            renderer.render_all([(1, "graph TD\n  A --> B")])
-
-
-# =============================================================================
 # Integration Tests
 # =============================================================================
 
@@ -485,7 +466,8 @@ class TestMermaidRenderer:
 class TestIntegration:
     """Integration tests for the full build process."""
 
-    def test_build_without_mermaid(
+    @pytest.mark.asyncio
+    async def test_build_without_mermaid(
         self, tmp_project: Path, logger: logging.Logger
     ) -> None:
         """Test building an EPUB without Mermaid diagrams."""
@@ -500,7 +482,7 @@ class TestIntegration:
         with patch("build_epub.get_chapter_order") as mock_order:
             mock_order.return_value = [("README.md", "Introduction")]
 
-            result = build_epub_async(config, logger)
+            result = await build_epub_async(config, logger)
 
             assert result.exists()
             assert result.suffix == ".epub"

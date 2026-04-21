@@ -1,28 +1,32 @@
 ---
 name: Expand Unit Tests
-description: Increase test coverage by targeting untested branches and edge cases
+description: 针对未覆盖分支、边界情况和错误路径补全测试
 tags: testing, coverage, unit-tests
 ---
 
-# Expand Unit Tests
+# Expand Unit Tests / 扩展单元测试
 
-Expand existing unit tests adapted to project's testing framework:
+请根据项目现有测试框架扩展单元测试覆盖：
 
-1. **Analyze coverage**: Run coverage report to identify untested branches, edge cases, and low-coverage areas
-2. **Identify gaps**: Review code for logical branches, error paths, boundary conditions, null/empty inputs
-3. **Write tests** using project's framework:
-   - Jest/Vitest/Mocha (JavaScript/TypeScript)
-   - pytest/unittest (Python)
-   - Go testing/testify (Go)
-   - Rust test framework (Rust)
-4. **Target specific scenarios**:
-   - Error handling and exceptions
-   - Boundary values (min/max, empty, null)
-   - Edge cases and corner cases
-   - State transitions and side effects
-5. **Verify improvement**: Run coverage again, confirm measurable increase
+1. **先分析覆盖率**：识别未覆盖分支、边界情况和低覆盖区域
+2. **找出缺口**：
+   - 逻辑分支
+   - 错误路径
+   - 边界值
+   - 空值 / 空集合 / null 输入
+3. **按项目现有框架补测试**：
+   - Jest / Vitest / Mocha
+   - pytest / unittest
+   - Go testing / testify
+   - Rust test framework
+4. **重点覆盖**：
+   - 错误处理
+   - 边界值
+   - corner cases
+   - 状态变化和副作用
+5. **再次验证**：重新跑覆盖率并确认提升
 
-Present new test code blocks only. Follow existing test patterns and naming conventions.
+输出要求：
 
----
-**Last Updated**: April 9, 2026
+- 只输出新增测试代码块或明确的测试文件改动
+- 遵循项目现有测试风格和命名习惯

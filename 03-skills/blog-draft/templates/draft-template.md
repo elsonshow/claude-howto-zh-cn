@@ -1,58 +1,50 @@
-# [Blog Post Title]
+# [博客标题]
 
-*[Subtitle or tagline - optional]*
+*[副标题，可选]*
 
-**[Author Name]** | [Date]
-
----
-
-[Opening hook - grab attention immediately]
-
-[Context and background - why this matters]
-
-[Thesis statement - what this post will cover]
+**[作者]** | [日期]
 
 ---
 
-## [Section 1 Title]
+[开头 hook：一句能抓住读者注意力的话]
 
-[Section content with clear, engaging prose]
+[背景与上下文：为什么这个主题值得看]
 
-[Include evidence, examples, or data to support points]
-
-> "Relevant quote from research" - Source
-
-[Transition to next section]
+[文章主旨：这篇文章会讲什么]
 
 ---
 
-## [Section 2 Title]
+## [第一部分标题]
 
-[Continue with main content]
+[正文内容]
 
-**Key takeaway:** [Highlight important points in bold or callout boxes]
+[用事实、例子或数据支持观点]
 
-[More supporting content]
-
----
-
-## [Section 3 Title]
-
-[Additional sections as needed]
-
-### Subsection (if needed)
-
-[Subsection content]
+> “可引用的关键句子” —— Source
 
 ---
 
-## Conclusion
+## [第二部分标题]
 
-[Summarize the key points covered]
+[继续展开]
 
-[Reinforce the main takeaway]
+**Key takeaway:** [这一部分最重要的结论]
 
-[Call to action or thought-provoking final statement]
+---
+
+## [第三部分标题]
+
+[需要时继续加小节]
+
+---
+
+## 总结
+
+[总结关键观点]
+
+[重申主旨]
+
+[行动建议或结尾思考]
 
 ---
 
@@ -61,7 +53,3 @@
 1. [Source Title](#)
 2. [Source Title](#)
 3. [Source Title](#)
-
----
-
-*[Optional: Author bio or related posts suggestion]*
