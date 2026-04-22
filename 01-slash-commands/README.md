@@ -38,18 +38,26 @@ Claude Code 里的 slash commands 大致分四类：
 | `/config` | 查看或编辑设置 |
 | `/context` | 看上下文使用情况 |
 | `/model` | 切换模型 |
+| `/effort [low|medium|high|xhigh|max|auto]` | 用交互滑杆调整思考强度；Opus 4.7 默认是 `xhigh` |
 | `/agents` | 查看可用 agents |
 | `/skills` | 查看可用 skills |
 | `/hooks` | 查看 hooks |
 | `/mcp` | 管理 MCP |
 | `/plugin` | 管理 plugins |
 | `/plan` | 进入 planning mode |
+| `/focus` | 切换 focus view，减少长任务时的视觉干扰 |
+| `/less-permission-prompts` | 分析常见 Bash / MCP 调用，帮你生成更合理的 allowlist |
+| `/proactive` | `/loop` 的别名 |
+| `/recap` | 回来继续 session 时，快速看一眼刚刚做了什么 |
 | `/sandbox` | 切换 sandbox 模式 |
 | `/powerup` | 用交互式 lesson 了解内建能力 |
 | `/rewind` | 回退到 checkpoint |
+| `/undo` | `/rewind` 的别名 |
 | `/resume` | 恢复以前的 session |
 | `/team-onboarding` | 生成一份适合新同事的 Claude Code 上手说明 |
+| `/tui` | 切换全屏 TUI（Text User Interface）模式 |
 | `/ultraplan` | 先产出详细计划，再在浏览器中审阅 |
+| `/ultrareview` | 用云端多代理做一轮更重的综合代码审查 |
 | `/usage` | 查看 plan 用量与限流状态 |
 
 这些命令不用安装，开箱即用。
@@ -148,6 +156,15 @@ cp 01-slash-commands/optimize.md .claude/commands/
 - `/pr-comments` 已移除；现在更推荐直接让 Claude 查看 PR 评论
 - `/vim` 已移除；编辑器模式改从 `/config` 里设置
 - `/powerup` 新增，用交互式 lesson 带你认识 Claude Code 的能力
+- `/tui` 新增，适合 tmux / 全屏终端里的无闪烁 TUI 模式
+- `/focus` 新增，用来切换只显示重点输出的 focus view
+- `/recap` 新增，适合回来继续旧 session 时快速补上下文
+- `/undo` 新增，作为 `/rewind` 的别名
+- `/proactive` 新增，作为 `/loop` 的别名
+- `/ultrareview` 新增，用云端多代理做综合代码审查
+- `/less-permission-prompts` 新增，会分析常见 Bash / MCP 调用并帮你减少重复权限提示
+- `/effort` 现在多了 `xhigh`，在 Opus 4.7 上成为默认档位
+- Max 用户在 Opus 4.7 上使用 Auto Mode 时，不再强依赖 `--enable-auto-mode`
 - `/team-onboarding` 新增，适合自动生成团队上手说明
 - `/ultraplan` 新增，适合端到端计划工作流
 - `/schedule` 更偏向 Cloud scheduled tasks，不再只是本地提醒

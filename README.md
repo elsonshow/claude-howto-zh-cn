@@ -20,14 +20,13 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-04-14
-- **本轮参考范围**：`561c6cb` -> `9c224ff`
+- **最近同步日期**：2026-04-22
+- **本轮参考范围**：`9c224ff` -> `cf92e8e`
 - **本次同步内容**：
-  - 把 `memory` 章节同步到最新行为：`# ...` inline memory 快捷写法已停用，改为 `/memory` 或自然语言更新
-  - 修正 `05-mcp/README.md` 中仍保留的 `WebSocket transport` 旧说法，统一回到当前官方主线强调的 `http` / `stdio`
-  - 同步 `/team-onboarding`、更完整的 `/ultraplan` 说明，以及 `Monitor Tool` 相关入口
-  - 修复 `06-hooks/pre-tool-check.sh` 的输出通道和误拦截问题，补上审计日志与回归测试
-  - 保留中文主线仓库结构；**未直接照搬** 上游 README 的乌克兰语入口和 `uk/` 本地化目录
+  - 同步 Claude Code `v2.1.110` / `v2.1.112` 的关键变化：TUI、session recap、push notifications、Opus 4.7、`xhigh`
+  - 补上 `/tui`、`/focus`、`/recap`、`/undo`、`/proactive`、`/ultrareview`、`/less-permission-prompts`
+  - 更新 `09-advanced-features`、`10-cli`、`CATALOG` 等核心入口中的新能力说明
+  - 保持中文根目录主线，不把上游英文 README 直接覆盖到默认入口
 
 ---
 

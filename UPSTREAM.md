@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`9c224ff71b383a4cb1a37884a9319496da6623cb`
+- 最近检查到的上游 commit：`cf92e8e2c14dbe78714c51a6813d3c14aeb0dd93`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,20 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-04-22
+
+- Reviewed upstream range: `9c224ff` → `cf92e8e`
+- 重点上游变化：
+  - 上游同步到 Claude Code `v2.1.110` / `v2.1.112`
+  - 新增或明确 `/tui`、`/focus`、`/recap`、`/undo`、`/proactive`、`/ultrareview`、`/less-permission-prompts`
+  - advanced features 补充了 TUI、session recap、push notifications、Auto Mode 新访问方式
+  - CLI / docs 切到 Opus 4.7，并引入 `xhigh` effort
+  - plugins 章节新增 background monitors 说明
+- Chinese fork actions:
+  - 把本轮新增能力同步到中文根目录主线文档
+  - 保留中文默认入口，不采用上游英文 README 和 `uk/` / `zh/` 目录结构
+  - 更新本地化校验，拦截明显未翻译的英文标题和英文模板段落
 
 ### 上游同步 — 2026-04-14
 

@@ -2,6 +2,25 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-04-22
+
+### 上游审阅
+
+- 核对上游范围：`9c224ff` → `cf92e8e`
+- 上游这轮重点：
+  - 同步 Claude Code `v2.1.110` / `v2.1.112`
+  - 新增 `/tui`、`/focus`、`/recap`、`/undo`、`/proactive`、`/ultrareview`、`/less-permission-prompts`
+  - `09-advanced-features` 补充 TUI、session recap、push notifications、Auto Mode 新访问方式
+  - CLI / docs 切到 Opus 4.7，并引入 `xhigh` effort
+  - plugins 文档新增 background monitors 说明
+
+### 中文 fork 处理
+
+- 把这轮新增能力同步到中文根目录主线文档
+- 更新 `README.md` 和 `UPSTREAM.md` 的最近同步记录
+- 保留中文默认入口，不采用上游英文 README 和多语言目录结构
+- 增强本地化校验，拦截明显未翻译的英文标题和英文模板段落
+
 ## 中文版同步 — 2026-04-08
 
 ### 上游审阅

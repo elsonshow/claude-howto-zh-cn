@@ -249,6 +249,39 @@ plugin 里经常带有：
 
 ---
 
+## Background Monitors（后台监控）
+
+上游在 v2.1.105 把 plugin 的 background monitors 说明得更清楚了。你可以把它理解成：
+
+- plugin 启动后自动挂一个后台观察器
+- 它盯住某个命令的 stdout
+- 一旦有事件发生，Claude 就能及时反应，而不是傻等轮询
+
+manifest 顶层可以加一个 `monitors` 字段，例如：
+
+```json
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "monitors": [
+    {
+      "command": "tail -f /var/log/app.log",
+      "trigger": "session_start"
+    }
+  ]
+}
+```
+
+`trigger` 目前常见有两类：
+
+- `session_start`：会话启动时自动挂起监控
+- `skill_invoke`：调用 plugin skill 时再挂起监控
+
+对中国用户来说，一个实用理解是：<br>
+**如果你的 plugin 需要持续盯日志、长任务输出或外部事件流，这一层会比手写轮询更自然。**
+
+---
+
 ## 常见坑
 
 ### 1. 只改 README，不检查 manifest

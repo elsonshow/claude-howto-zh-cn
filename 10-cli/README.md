@@ -77,11 +77,12 @@ cat error.log | claude -p "explain this error"
 | `-n, --name` | 给 session 起名 |
 | `-w, --worktree` | 在 worktree 中启动 |
 | `--model` | 指定模型 |
-| `--effort` | 指定思考强度 |
+| `--effort` | 指定思考强度；现在支持 `xhigh` |
 | `--permission-mode` | 指定权限模式 |
 | `--bare` | 以最小模式启动 |
 | `--add-dir` | 加额外目录到工作上下文 |
 | `--tmux` | 给 worktree / 多任务场景创建 tmux 会话 |
+| `--exclude-dynamic-system-prompt-sections` | 排除系统提示中的动态段落，帮助 prompt cache 更稳定命中 |
 
 ---
 
@@ -138,6 +139,14 @@ claude --append-system-prompt "Always explain tradeoffs" "review this plan"
 ```
 
 如果你要长期使用 Claude Code，把模型、权限、输出格式这些参数理解清楚，会直接影响效率和成本。
+
+### 这轮 CLI / 平台更新里值得知道的变化
+
+- Opus 主线已经切到 **Opus 4.7**
+- `--effort` 新增 `xhigh`，并成为 Opus 4.7 的默认档位
+- Windows 侧正在逐步拿到更专门的 PowerShell tool
+- 主题里新增了更贴近终端外观的 Auto 模式
+- 只读型 Bash / Glob 调用的权限提示比以前更安静
 
 ---
 

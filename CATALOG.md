@@ -46,10 +46,17 @@ slash commands 是用户在 Claude Code 里主动输入的快捷操作，例如 
 | `/mcp` | 查看或管理 MCP servers |
 | `/plugin` | 管理 plugins |
 | `/plan` | 进入 planning mode |
+| `/proactive` | `/loop` 的别名 |
+| `/recap` | 返回旧 session 时快速回顾上下文 |
 | `/rewind` | 回退到 checkpoint |
 | `/resume` | 恢复之前的 session |
 | `/team-onboarding` | 根据当前项目配置生成新人上手说明 |
+| `/tui` | 切换全屏 TUI 模式 |
+| `/focus` | 切换 focus view |
+| `/undo` | `/rewind` 的别名 |
 | `/ultraplan` | 把计划起草交给浏览器里的云端会话 |
+| `/ultrareview` | 云端多代理代码审查 |
+| `/less-permission-prompts` | 分析调用记录并建议 allowlist |
 | `/branch` | 从当前对话分叉（某些版本中 `/fork` 仍可能可用） |
 
 ### 仓库里的示例命令
@@ -270,6 +277,13 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 
 - Auto Mode
 - Monitor Tool
+- `/tui`
+- `/focus`
+- `/recap`
+- `/undo`
+- `/proactive`
+- `/ultrareview`
+- `/less-permission-prompts`
 - `/team-onboarding`
 - `/ultraplan`
 - Voice Dictation
