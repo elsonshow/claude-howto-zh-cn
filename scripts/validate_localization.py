@@ -36,6 +36,14 @@ ALLOWED_ENGLISH_HEADING_RE = [
     ]
 ]
 
+ALLOWED_ENGLISH_HEADINGS_BY_PATH = {
+    Path("README.md"): {
+        "## Table of Contents",
+        "## Contributing",
+        "## License",
+    }
+}
+
 FORBIDDEN_UNTRANSLATED_SNIPPETS = [
     "## Table of Contents",
     "## Contributing",
@@ -79,9 +87,9 @@ LINK_VALIDATION_PATHS = [
 
 PROTECTED_SNIPPETS = {
     Path("README.md"): [
-        "## 目录",
-        "## 参与贡献",
-        "## 许可证",
+        "## Table of Contents",
+        "## Contributing",
+        "## License",
         "UPSTREAM.md",
         "LOCALIZATION-STYLE.md",
     ],
@@ -255,12 +263,12 @@ def validate_untranslated_english(root: Path) -> list[str]:
     errors: list[str] = []
 
     for path in iter_markdown_files(root):
+        relative_path = path.relative_to(root)
+        allowed_headings = ALLOWED_ENGLISH_HEADINGS_BY_PATH.get(relative_path, set())
         content = read_text(path)
-        errors.extend(
-            f"{path}: untranslated protected text '{snippet}'"
-            for snippet in FORBIDDEN_UNTRANSLATED_SNIPPETS
-            if snippet in content
-        )
+        for snippet in FORBIDDEN_UNTRANSLATED_SNIPPETS:
+            if snippet in content and snippet not in allowed_headings:
+                errors.append(f"{path}: untranslated protected text '{snippet}'")
 
         in_fence = False
         in_frontmatter = False
@@ -283,6 +291,8 @@ def validate_untranslated_english(root: Path) -> list[str]:
                 continue
 
             if line.startswith("#") and not CJK_RE.search(line):
+                if line in allowed_headings:
+                    continue
                 if ENGLISH_WORD_RE.search(line) and not is_allowed_english_heading(
                     line
                 ):

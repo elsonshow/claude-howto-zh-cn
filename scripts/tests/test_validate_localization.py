@@ -58,7 +58,12 @@ def test_validate_shell_scripts_detects_syntax_error(tmp_path: Path) -> None:
 
 def test_validate_protected_snippets_detects_missing_tokens(tmp_path: Path) -> None:
     files = {
-        "README.md": "## 目录\n## 参与贡献\n## 许可证\nUPSTREAM.md\n",
+        "README.md": (
+            "## Table of Contents\n"
+            "## Contributing\n"
+            "## License\n"
+            "UPSTREAM.md\n"
+        ),
         "01-slash-commands/pr.md": "allowed-tools:\nBash(git add:*)\n",
         "03-skills/code-review/SKILL.md": "name: code-review-specialist\n## 审查模板\n",
         "04-subagents/code-reviewer.md": "name: code-reviewer\n",
@@ -97,6 +102,25 @@ def test_validate_untranslated_english_allows_protected_terms(
         "## MCP (外部工具协议)\n\n"
         "### `/optimize`\n\n"
         "`GITHUB_TOKEN` 和 `.mcp.json` 这些标识不要翻译。\n",
+        encoding="utf-8",
+    )
+
+    errors = validate_untranslated_english(tmp_path)
+
+    assert errors == []
+
+
+def test_validate_untranslated_english_allows_required_root_readme_headings(
+    tmp_path: Path,
+) -> None:
+    readme = tmp_path / "README.md"
+    readme.write_text(
+        "## Table of Contents\n\n"
+        "中文目录说明。\n\n"
+        "## Contributing\n\n"
+        "欢迎继续贡献。\n\n"
+        "## License\n\n"
+        "本项目使用 MIT License。\n",
         encoding="utf-8",
     )
 

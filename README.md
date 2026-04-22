@@ -30,7 +30,7 @@
 
 ---
 
-## 目录
+## Table of Contents
 
 - [最近同步](#最近同步)
 - [这是什么项目](#这是什么项目)
@@ -42,8 +42,8 @@
 - [15 分钟快速开始](#-15-分钟快速开始)
 - [你能用它搭什么](#你能用它搭什么)
 - [常见问题](#常见问题)
-- [参与贡献](#参与贡献)
-- [许可证](#许可证)
+- [参与贡献](#contributing)
+- [许可证](#license)
 
 ---
 
@@ -296,7 +296,7 @@ uv run scripts/build_epub.py
 
 ---
 
-## 参与贡献
+## Contributing
 
 欢迎继续把这个中文 fork 做得更适合中文用户，但请遵循两个底线：
 
@@ -311,7 +311,7 @@ uv run python scripts/validate_localization.py
 
 ---
 
-## 许可证
+## License
 
 本仓库沿用上游项目的 [MIT License](LICENSE)。
 
