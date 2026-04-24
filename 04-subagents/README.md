@@ -202,6 +202,39 @@ cp 04-subagents/code-reviewer.md .claude/agents/
 
 ---
 
+## main-thread agent 这轮更新最值得知道什么
+
+上游最近把一个容易忽略的点写清楚了：
+
+- 当 agent 是通过 `claude --agent <name>` 这种方式，直接作为主线程 agent 启动时
+- 一些 frontmatter 字段现在会真正生效
+
+尤其值得注意的是：
+
+- `mcpServers`
+- `permissionMode`
+- `tools` / `disallowedTools`
+
+这意味着你不能再把 agent frontmatter 简单理解成“只是描述信息”。<br>
+在主线程用法下，它已经更接近真正的行为配置。
+
+## forked subagents（fork 上下文子代理）
+
+上游也把 `context: fork` 的定位讲得更清楚了：
+
+- 默认 subagent 更像“新开一个干净上下文”
+- `context: fork` 则会继承父上下文
+
+它特别适合：
+
+- 探索另一种实现路线
+- 保留当前推理链再分叉
+- 长任务里做 A/B 方案对比
+
+如果你的目标是“保留主线上下文，再开一条支线试试”，就该优先考虑 forked subagents。
+
+---
+
 ## 推荐下一步
 
 - 想让 Claude 连接外部系统：看 [05-mcp](../05-mcp/)

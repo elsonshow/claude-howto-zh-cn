@@ -20,12 +20,12 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-04-22
-- **本轮参考范围**：`9c224ff` -> `cf92e8e`
+- **最近同步日期**：2026-04-24
+- **本轮参考范围**：`cf92e8e` -> `d17d515`
 - **本次同步内容**：
-  - 同步 Claude Code `v2.1.110` / `v2.1.112` 的关键变化：TUI、session recap、push notifications、Opus 4.7、`xhigh`
-  - 补上 `/tui`、`/focus`、`/recap`、`/undo`、`/proactive`、`/ultrareview`、`/less-permission-prompts`
-  - 更新 `09-advanced-features`、`10-cli`、`CATALOG` 等核心入口中的新能力说明
+  - 同步 Claude Code `v2.1.119` 的关键变化：native binary、docs host 迁移、hooks `mcp_tool`、28 个事件、`/usage` 聚合视图
+  - 补上 `disableSkillShellExecution`、`cleanupPeriodDays` 新范围、forked subagents、plugin marketplace 管控与 `claude plugin tag`
+  - 更新 `01-slash-commands`、`02-memory`、`03-skills`、`04-subagents`、`06-hooks`、`07-plugins`、`08-checkpoints`、`09-advanced-features`、`10-cli` 等中文说明
   - 保持中文根目录主线，不把上游英文 README 直接覆盖到默认入口
 
 ---

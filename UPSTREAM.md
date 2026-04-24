@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`cf92e8e2c14dbe78714c51a6813d3c14aeb0dd93`
+- 最近检查到的上游 commit：`d17d5155b53087bb2658c95d5b7b4c1c15ee4242`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,21 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-04-24
+
+- Reviewed upstream range: `cf92e8e` → `d17d515`
+- 重点上游变化：
+  - 上游同步到 Claude Code `v2.1.119`
+  - slash commands 补充 `/cost` / `/stats` / `/usage` 的新关系，以及 `/doctor`、`/theme`、`/btw` 的新版说明
+  - hooks 补充 `mcp_tool`、28 个事件、`duration_ms`、PowerShell auto-approve
+  - CLI / advanced features 补充 native binary、docs host 迁移、Opus 4.7 细节、Auto Mode 与 settings 新行为
+  - skills / memory / subagents / checkpoints / plugins 文档补充一批配置与行为说明
+- Chinese fork actions:
+  - 只把影响中文用户理解和实际使用的变化同步到中文根目录主线
+  - 保持中文默认入口，不采用上游英文 README 和多语言目录结构
+  - 对新增配置和命令做中文解释，同时保留可执行标识原样
+  - 本地化校验与测试通过后再推送到 origin/main
 
 ### 上游同步 — 2026-04-22
 

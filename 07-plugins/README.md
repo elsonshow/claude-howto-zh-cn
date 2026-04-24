@@ -282,6 +282,42 @@ manifest 顶层可以加一个 `monitors` 字段，例如：
 
 ---
 
+## Marketplace 管控和 plugin tag
+
+这轮上游在 plugins 侧还补了两类更偏“团队治理”的能力：
+
+### 1. marketplace 管控更严格了
+
+除了原本的 `strictKnownMarketplaces`，现在还要注意：
+
+- `blockedMarketplaces`
+- `hostPattern`
+- `pathPattern`
+
+这意味着团队可以更细粒度地限制：
+
+- 哪些 marketplace 根本不能装
+- 哪些 host / path 模式直接拦掉
+
+如果你只是个人用户，这一块可以先知道它存在；<br>
+如果你要在团队里推广插件，这些策略迟早会碰到。
+
+### 2. `claude plugin tag`（插件发布打标）
+
+上游在 `v2.1.118` 明确增加了：
+
+```bash
+claude plugin tag v0.3.0
+```
+
+它的价值在于：
+
+- 帮你校验版本号
+- 顺手创建对应 git tag
+- 更适合拿来做 plugin 发布流程
+
+如果你未来要把自己的 plugin 真正分发出去，这会比手敲 tag 更稳一点。
+
 ## 常见坑
 
 ### 1. 只改 README，不检查 manifest

@@ -200,6 +200,28 @@ Claude 就不知道什么时候该用它，或者会误触发。
 
 ---
 
+## 新增的安全护栏：禁用 skill 里的 shell 替换
+
+skill 里支持 ``!`command` `` 这种写法：Claude 在真正读取 skill 前，会先执行 shell 命令，把输出拼进 prompt。
+
+这很强，但在更敏感的环境里也会带来风险。上游现在给了一个更明确的总开关：
+
+```json
+{
+  "disableSkillShellExecution": true
+}
+```
+
+开启后：
+
+- ``!`command` `` 不再执行
+- 会被当作普通文本保留
+- skill 还能继续用，但少了一层 shell 注入面
+
+如果你是在团队、CI 或更受控的环境里推广 skills，这个设置很值得知道。
+
+---
+
 ## 推荐下一步
 
 - 想让任务分工更专业：看 [04-subagents](../04-subagents/)
