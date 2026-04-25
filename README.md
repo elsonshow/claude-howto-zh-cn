@@ -20,13 +20,13 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-04-24
-- **本轮参考范围**：`cf92e8e` -> `d17d515`
+- **最近同步日期**：2026-04-25
+- **本轮参考范围**：`d17d515` -> `eff5bd2`
 - **本次同步内容**：
-  - 同步 Claude Code `v2.1.119` 的关键变化：native binary、docs host 迁移、hooks `mcp_tool`、28 个事件、`/usage` 聚合视图
-  - 补上 `disableSkillShellExecution`、`cleanupPeriodDays` 新范围、forked subagents、plugin marketplace 管控与 `claude plugin tag`
-  - 更新 `01-slash-commands`、`02-memory`、`03-skills`、`04-subagents`、`06-hooks`、`07-plugins`、`08-checkpoints`、`09-advanced-features`、`10-cli` 等中文说明
-  - 保持中文根目录主线，不把上游英文 README 直接覆盖到默认入口
+  - 同步上游 `v2.1.119` 后续修复：`security-reviewer` 的无效 `diff` 工具改为 `bash`
+  - 引入 `scripts/check_cross_references.py` 及对应测试，补上 repo-root 边界校验
+  - 固定 `scripts/requirements.txt` 到已验证版本，减少构建与校验漂移
+  - 修正本仓库已有的几个 Markdown 断锚，保证新脚本在中文仓库里能直接通过
 
 ---
 

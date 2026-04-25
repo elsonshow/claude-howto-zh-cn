@@ -8,7 +8,7 @@
 > 适合“先建立全局地图，再进入某个模块”的读者。
 
 **快速导航**：  
-[Slash Commands](#slash-commands) | [Permission Modes](#permission-modes) | [Subagents](#subagents) | [Skills](#skills) | [Plugins](#plugins) | [MCP](#mcp) | [Hooks](#hooks) | [Memory](#memory) | [新功能提示](#新功能提示)
+[Slash Commands](#slash-commands快捷命令) | [Permission Modes](#permission-modes权限模式) | [Subagents](#subagents子代理) | [Skills](#skills技能) | [Plugins](#plugins插件) | [MCP](#mcp外部工具协议) | [Hooks](#hooks钩子) | [Memory](#memory记忆) | [新功能提示](#新功能提示)
 
 ---
 

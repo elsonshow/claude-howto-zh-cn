@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`d17d5155b53087bb2658c95d5b7b4c1c15ee4242`
+- 最近检查到的上游 commit：`eff5bd29d52cb62461bd76d69468825b1f38f2e4`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,20 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-04-25
+
+- Reviewed upstream range: `d17d515` → `eff5bd2`
+- 重点上游变化：
+  - 修复 `security-reviewer` agent 中无效的 `diff` 工具配置，改为 `bash`
+  - 新增 `scripts/check_cross_references.py` 的 repo-root 边界处理
+  - 新增 `scripts/tests/test_check_cross_references.py` 覆盖该脚本边界场景
+  - 将 `scripts/requirements.txt` 固定到已验证版本
+- Chinese fork actions:
+  - 把 agent 工具修正同步到中文仓库
+  - 引入交叉引用检查脚本和测试，并修正中文仓库现有断锚，确保脚本能本地通过
+  - 固定脚本依赖版本，减少环境差异导致的校验波动
+  - 保持中文根目录主线，不引入上游多语言目录结构
 
 ### 上游同步 — 2026-04-24
 
