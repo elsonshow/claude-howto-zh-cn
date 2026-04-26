@@ -318,6 +318,49 @@ claude plugin tag v0.3.0
 
 如果你未来要把自己的 plugin 真正分发出去，这会比手敲 tag 更稳一点。
 
+### marketplace update 和 plugin update 不是一回事
+
+这次上游还把一个很容易混淆的点写清楚了：
+
+```bash
+claude plugin marketplace update [name]
+claude plugin update <name>
+```
+
+两者区别是：
+
+- `marketplace update`：刷新 marketplace 目录，更新“现在有哪些插件可安装”
+- `plugin update`：更新你本机已经安装的某个 plugin
+
+对中国用户来说，一个简单判断方法是：
+
+- 你是在更新“插件市场目录”？
+- 还是在更新“自己已经装过的插件”？
+
+别把这两个动作混在一起。
+
+### Auto-Update（自动更新）
+
+上游也补了 marketplace / plugin 自动更新机制：
+
+- 官方 marketplace 默认更偏自动更新
+- 第三方 / 本地 marketplace 默认更保守
+
+如果你想整体关闭自动更新：
+
+```bash
+export DISABLE_AUTOUPDATER=1
+```
+
+如果你想保留 plugin 自动更新、但不想让 Claude Code 本体自动更新：
+
+```bash
+export DISABLE_AUTOUPDATER=1
+export FORCE_AUTOUPDATE_PLUGINS=1
+```
+
+这个设置对团队环境特别重要，因为很多人以为“只是在关主程序更新”，实际上也可能顺手把 plugin 自动更新关掉。
+
 ## 常见坑
 
 ### 1. 只改 README，不检查 manifest

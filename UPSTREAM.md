@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`eff5bd29d52cb62461bd76d69468825b1f38f2e4`
+- 最近检查到的上游 commit：`a7a0ea2eb4104a54b33d37ea2a8d9b06b6b6e3a2`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,19 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-04-26
+
+- Reviewed upstream range: `eff5bd2` → `a7a0ea2`
+- 重点上游变化：
+  - skills 文档把加载流程图的命名讲得更清楚
+  - plugins 文档新增 marketplace update / plugin update 区分，以及 auto-update 说明
+  - advanced features 修正 effort level 的模型支持范围，明确 `xhigh` 仅属于 Opus 4.7
+- Chinese fork actions:
+  - 只同步会影响中文用户理解和使用的说明性变化
+  - 在中文文档里补上 marketplace 更新与 plugin 更新的区别
+  - 修正 effort level 支持范围的中文表述，避免误导
+  - 保持中文根目录主线，不引入上游多语言目录结构
 
 ### 上游同步 — 2026-04-25
 

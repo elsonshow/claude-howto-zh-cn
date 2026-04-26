@@ -20,13 +20,12 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-04-25
-- **本轮参考范围**：`d17d515` -> `eff5bd2`
+- **最近同步日期**：2026-04-26
+- **本轮参考范围**：`eff5bd2` -> `a7a0ea2`
 - **本次同步内容**：
-  - 同步上游 `v2.1.119` 后续修复：`security-reviewer` 的无效 `diff` 工具改为 `bash`
-  - 引入 `scripts/check_cross_references.py` 及对应测试，补上 repo-root 边界校验
-  - 固定 `scripts/requirements.txt` 到已验证版本，减少构建与校验漂移
-  - 修正本仓库已有的几个 Markdown 断锚，保证新脚本在中文仓库里能直接通过
+  - 同步上游 `v2.1.119` 后续文档修正：skills 加载流程图更清楚、plugins 的 marketplace / plugin update 区分、advanced features 的 effort level 支持范围纠正
+  - 补充自动更新相关环境变量说明：`DISABLE_AUTOUPDATER`、`FORCE_AUTOUPDATE_PLUGINS`
+  - 明确 `xhigh` 只属于 Opus 4.7，避免中文文档继续把支持范围写宽
 
 ---
 
