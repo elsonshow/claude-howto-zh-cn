@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`8143e37d1b265e6225b9e28be1a795ee6f00e836`
+- 最近检查到的上游 commit：`6b9ce6463f96d5556a0f3c92aaaf80123ec42100`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,27 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-06-26
+
+- Reviewed upstream range: `8143e37` → `6b9ce64`
+- 重点上游变化：
+  - Claude Code 教程覆盖更新到 `v2.1.187`
+  - `/review <pr>` 现在用于审查 GitHub PR，并复用 `/code-review medium` 的 review engine；本地工作区 diff 仍用 `/code-review`
+  - settings 新增 / 补充 `attribution.sessionUrl` 与 `respondToBashCommands`
+  - MCP CLI 新增 `claude mcp login <name>` / `claude mcp logout <name>`，并支持 `--no-browser`
+  - Agent Teams 增加 `--teammate-mode iterm2`，依赖 `it2` CLI
+  - Auto Mode 增加内置 intent-based protection，默认拦截一批破坏性命令
+  - `!` bash 命令输出会自动发给 Claude 并触发回复，可用 `respondToBashCommands=false` 回到旧行为
+  - sandbox 补充 `sandbox.credentials`、`sandbox.allowAppleEvents`
+  - `/config key=value` 可直接设置单个配置项
+  - CLI 环境变量新增或强调 `CLAUDE_CLIENT_PRESENCE_FILE`、`CLAUDE_CODE_MAX_RETRIES`、`CLAUDE_CODE_RETRY_WATCHDOG`、`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
+- Chinese fork actions:
+  - 将 slash command、memory settings、subagents、MCP、advanced features 与 CLI 变化改写进中文主线文档
+  - 保留 `/review <pr>`、`/code-review medium`、`attribution.sessionUrl`、`respondToBashCommands`、`claude mcp login`、`--no-browser`、`--teammate-mode iterm2`、`it2`、`sandbox.credentials`、`/config key=value` 等可执行标识原文
+  - 同步 `CATALOG.md`、`QUICK_REFERENCE.md`、`resources.md`、`claude_concepts_guide.md`，让入口页也能看到 `v2.1.187` 新能力
+  - 不引入上游英文根 README，不改变中文首页结构
+  - 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
 
 ### 上游同步 — 2026-06-18
 

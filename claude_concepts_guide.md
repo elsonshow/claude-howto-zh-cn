@@ -14,7 +14,7 @@
 
 可复用、可自动触发的能力，适合沉淀稳定工作流。
 
-`v2.1.179` 这轮同步后，特别值得关注这些 bundled skills、plugin 和排障入口：
+`v2.1.187` 这轮同步后，特别值得关注这些 bundled skills、plugin 和排障入口：
 
 - `/run`：启动当前项目，确认改动能真实运行
 - `/verify`：构建、运行并观察应用，确认修复不是只停留在测试通过
@@ -27,6 +27,7 @@
 - `/plugin list --enabled` / `--disabled`：按启用状态查看 installed plugins
 - `/doctor`：诊断安装、配置和 plugin 健康状态；`v2.1.178+` 起界面是 flat tree 布局
 - `/bug`：提交反馈；`v2.1.178+` 起必须填写描述
+- `/review <pr>`：审查 GitHub PR；`v2.1.186+` 起复用 `/code-review medium` 的 review engine，本地 diff 仍用 `/code-review [effort]`
 
 ## 4. Subagents（子代理）
 
@@ -36,9 +37,13 @@
 
 从 `v2.1.178+` 起，嵌套 `.claude/agents/` 里的同名 agent 会按“离当前工作目录最近者优先”加载；workflow 和 output-style 定义也遵循这个规则。
 
+Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 teammate 放进 iTerm2 pane；该模式依赖 `it2` CLI。
+
 ## 5. MCP（外部工具协议）
 
 让 Claude 连接外部工具和实时数据的协议。
+
+从 `v2.1.186+` 起，`claude mcp login <name>` / `claude mcp logout <name>` 可以直接在 CLI 中处理 MCP server 登录状态；`--no-browser` 适合 SSH 或 headless session。
 
 ## 6. Hooks（钩子）
 
@@ -79,3 +84,7 @@ Claude Code 的核心使用入口，也是自动化、脚本化和 CI/CD 的关�
 `--safe-mode` / `CLAUDE_CODE_SAFE_MODE=1` 适合排查自定义配置问题；`fallbackModel` 适合给主模型不可用时准备有序 fallback。
 
 `wheelScrollAccelerationEnabled`、`footerLinksRegexes`、`language` 是 settings.json 里的 key，说明文字可以中文化，但 key 本身不要翻译。
+
+`respondToBashCommands` 控制 `!` bash 命令输出后是否自动让 Claude 回复；默认 `true`，设为 `false` 可回到只把输出放进上下文的旧行为。
+
+`CLAUDE_CLIENT_PRESENCE_FILE`、`CLAUDE_CODE_MAX_RETRIES`、`CLAUDE_CODE_RETRY_WATCHDOG`、`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` 是环境变量标识，不要翻译。`sandbox.credentials`、`sandbox.allowAppleEvents` 和 `/config key=value` 属于配置 / 命令口径，也要保持原文。

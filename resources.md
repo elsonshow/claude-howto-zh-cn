@@ -49,5 +49,13 @@
 | `Tool(param:value)` | permission rule 按工具输入参数继续细化匹配 | [CLI Guide](10-cli/) |
 | 嵌套 `.claude/agents/` 最近目录优先 | monorepo 中同名 agent 采用离当前目录最近的定义 | [Subagents Guide](04-subagents/) |
 | remote session plugin loading | remote session 里的 plugin 加载性能在 `v2.1.179+` 改进 | [Plugins Guide](07-plugins/) |
+| `/review <pr>` | 审查 GitHub PR；本地 diff 仍用 `/code-review [effort]` | [Slash Commands](01-slash-commands/) |
+| `claude mcp login/logout` | 在 CLI 中处理 MCP server OAuth 登录状态，`--no-browser` 适合 SSH / headless session | [MCP Guide](05-mcp/) |
+| `--teammate-mode iterm2` | 让 teammate 进入 iTerm2 pane，依赖 `it2` CLI | [Subagents Guide](04-subagents/) |
+| `respondToBashCommands` | 控制 `!` bash 命令输出后是否自动让 Claude 回复 | [Advanced Features](09-advanced-features/) |
+| Auto Mode 内置意图保护 | 默认拦截一批破坏性命令，除非当前 session 明确要求 | [Advanced Features](09-advanced-features/) |
+| `sandbox.credentials` | 阻止 sandboxed commands 读取凭证文件和 secret 环境变量 | [Advanced Features](09-advanced-features/) |
+| `/config key=value` | 直接从 prompt 设置单个配置项 | [Advanced Features](09-advanced-features/) |
+| `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` | 调整 remote MCP tool 无响应 abort 超时 | [CLI Guide](10-cli/) |
 
 这些名称都是可执行标识或协议字段，不要翻译成中文 key。

@@ -52,6 +52,7 @@ Claude Code 里的 slash commands 大致分四类：
 | `/goal <目标>` | 给当前 session 注册一个持续追踪的完成目标 |
 | `/less-permission-prompts` | 分析常见 Bash / MCP 调用，帮你生成更合理的 allowlist |
 | `/code-review [effort]` | 审查当前 diff 的正确性缺陷；可传入 `/code-review high` 这类 effort 参数 |
+| `/review <pr>` | 审查 GitHub PR；`v2.1.186+` 起使用和 `/code-review medium` 相同的 review engine，本地 diff 仍优先用 `/code-review` |
 | `/proactive` | `/loop` 的别名 |
 | `/recap` | 回来继续 session 时，快速看一眼刚刚做了什么 |
 | `/sandbox` | 切换 sandbox 模式 |
@@ -190,6 +191,7 @@ cp 01-slash-commands/optimize.md .claude/commands/
 - `/simplify` 在 `v2.1.154+` 后重新成为独立的清理型命令；如果要找正确性缺陷，仍然用 `/code-review`
 - `/doctor` 在 `v2.1.178+` 刷新为 flat tree 布局，状态图标更容易扫读
 - `/bug` 在 `v2.1.178+` 需要先写描述，避免空反馈误提交
+- `/review <pr>` 在 `v2.1.186+` 起不再按“已废弃”理解；它用于审查 GitHub PR，并复用 `/code-review medium` 的 review engine。要审查当前本地工作区 diff，继续用 `/code-review [effort]`
 
 ---
 

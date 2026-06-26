@@ -20,14 +20,13 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-06-18
-- **本轮参考范围**：`ae656f6` -> `8143e37`
+- **最近同步日期**：2026-06-26
+- **本轮参考范围**：`8143e37` -> `6b9ce64`
 - **本次同步内容**：
-  - 同步 Claude Code `v2.1.179` 口径，覆盖 `v2.1.178` 到 `v2.1.179` 的增量文档
-  - 补充 `/doctor` flat tree 布局刷新、`/bug` 必须填写描述、嵌套 `.claude/` 最近目录优先规则
-  - 说明 permission rule 的 `Tool(param:value)` 参数匹配，以及 remote session 里 plugin 加载性能改进
-  - 同步网站构建脚本的 single-parse 性能优化，并为 GitHub Pages 构建加入 uv / vendor assets 缓存
-  - 保留中文 fork 自己的 Pages 首页验证护栏，不直接覆盖成上游 workflow
+  - 同步 Claude Code `v2.1.187` 口径，覆盖 `v2.1.183` 到 `v2.1.187` 的增量文档
+  - 补充 `/review <pr>`、`claude mcp login/logout`、`--teammate-mode iterm2` 和 `/config key=value` 的新行为
+  - 说明 `!` bash 命令输出会自动发给 Claude，可用 `respondToBashCommands=false` 回到只进上下文的旧行为
+  - 补充 Auto Mode 内置破坏性命令保护、sandbox 新设置、MCP idle timeout 与 retry / presence 相关环境变量
   - 继续保持根目录中文主线，不把上游英文 README 覆盖到中文首页
 
 ---

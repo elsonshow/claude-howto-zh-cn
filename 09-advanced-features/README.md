@@ -304,6 +304,18 @@ python3 09-advanced-features/setup-auto-mode-permissions.py --include-gh-read --
 
 如果你在团队里推 auto mode，这个设置比“口头提醒大家别乱用危险命令”靠谱得多。
 
+### Auto Mode 现在还有内置意图保护
+
+从 `v2.1.183+` 起，除了你自己配置的 `autoMode.hard_deny`，Claude Code 还会默认拦住一批破坏性命令，除非你在当前 session 明确要求它这么做。
+
+典型例子包括：
+
+- `git reset --hard`、`git checkout -- .`、`git clean -fd`、`git stash drop`
+- 不是本轮 agent 创建的 commit 上执行 `git commit --amend`
+- `terraform destroy`、`pulumi destroy`、`cdk destroy`
+
+这属于内置 intent-based protection，不需要你手工把这些命令都塞进 `hard_deny`。但团队里仍建议把真正不可接受的组织规则写进 `autoMode.hard_deny`，两层保护不要混为一谈。
+
 ### 明确不会自动加进去的危险操作
 
 脚本明确不会帮你加入这些类型：
@@ -510,6 +522,20 @@ claude -p "Run tests and summarize failures"
 cat error.log | claude -p "Explain this error"
 ```
 
+### `!` bash 命令现在会触发回复
+
+在交互式 session 里用 `!` 直接执行 shell 命令时，`v2.1.186+` 起命令输出会自动发给 Claude，并让 Claude 根据输出继续回应。
+
+如果你想回到旧行为，也就是“只把输出放进上下文，不立刻要 Claude 回答”，在 `settings.json` 里设置：
+
+```json
+{
+  "respondToBashCommands": false
+}
+```
+
+`respondToBashCommands` 是 settings key，不要翻译。这个开关适合你把 `!npm test`、`!pytest` 当成临时上下文采集，而不是每次都希望 Claude 立刻分析时使用。
+
 ### Safe Mode：先隔离自定义配置
 
 如果 Claude Code 行为突然很怪，先别急着怀疑项目代码。`v2.1.169+` 提供了 `--safe-mode`：
@@ -712,6 +738,13 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 - `sandbox.bwrapPath`
 - `sandbox.socatPath`
 
+`v2.1.181+` / `v2.1.187+` 又补了两个更细的 sandbox 设置：
+
+- `sandbox.allowAppleEvents`：macOS 上显式允许 sandboxed commands 发送 Apple Events
+- `sandbox.credentials`：阻止 sandboxed commands 读取 credential files 和 secret environment variables
+
+如果你在公司设备或含有生产凭证的机器上跑自动化，优先关注 `sandbox.credentials`；它不是“中文化字段”，必须按原 key 写。
+
 ---
 
 ## configuration 与环境变量
@@ -733,6 +766,17 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 
 如果你想长期高效使用 Claude Code，这一步绕不过去。
 
+### `/config` 可以直接写 `key=value`
+
+从 `v2.1.181+` 起，除了打开交互菜单，你也可以在 prompt 里直接写：
+
+```bash
+/config thinking=false
+/config --help
+```
+
+`/config --help` 会列出可用 shorthand keys。`key=value` 形式在普通交互、`-p` 和 Remote Control 场景里都能用；它适合临时调整单个设置，少走一层菜单。
+
 常见环境变量里，最近更值得注意的是：
 
 - `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
@@ -742,6 +786,10 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 - `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE=1`（让 Homebrew / WinGet 安装具备后台升级能力）
 - `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`（在设置了 `ANTHROPIC_BASE_URL` 时，显式开启网关 `/v1/models` 发现）
 - `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1`（退出全屏 alternate-screen 渲染，保留普通终端滚动历史）
+- `CLAUDE_CLIENT_PRESENCE_FILE`（指向一个本机 marker file，在你人在电脑前时抑制 mobile push notifications）
+- `CLAUDE_CODE_MAX_RETRIES`（控制 API retry 次数；`v2.1.186+` 起最多 15 次）
+- `CLAUDE_CODE_RETRY_WATCHDOG`（适合无人值守 session 的 retry 控制，不建议一味抬高 `CLAUDE_CODE_MAX_RETRIES`）
+- `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`（覆盖 remote MCP tool 5 分钟无响应 abort 的默认值，适合排查长时间挂起的 MCP 调用）
 
 这里还有两个这轮很值得知道的行为修正：
 

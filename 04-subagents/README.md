@@ -184,6 +184,12 @@ cp 04-subagents/code-reviewer.md .claude/agents/
 对绝大多数中国小白用户来说，先掌握 subagents 就足够了。  
 `Agent Teams` 依然是实验性能力，更适合复杂协作场景，细节放在 [09-advanced-features](../09-advanced-features/) 里看。
 
+### Agent Teams 的 iTerm2 显示模式
+
+从 `v2.1.186+` 起，teammate mode 可以使用 `--teammate-mode iterm2`，让 teammate 分别进入独立的 iTerm2 pane。它依赖 `it2` CLI；如果你用 `--teammate-mode auto` 但本机找不到 `it2`，新版会给出提示。
+
+这里的 `--teammate-mode iterm2`、`--teammate-mode auto`、`it2` 都是命令或工具标识，不要翻译。
+
 ---
 
 ## 如何决定要不要拆成 subagents

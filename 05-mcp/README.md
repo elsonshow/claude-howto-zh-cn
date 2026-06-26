@@ -79,6 +79,16 @@ claude mcp add --transport http notion https://mcp.notion.com/mcp
 claude mcp add --transport stdio myserver -- npx @myorg/mcp-server
 ```
 
+### 登录或登出 MCP server
+
+```bash
+claude mcp login github
+claude mcp login github --no-browser
+claude mcp logout github
+```
+
+从 `v2.1.186+` 起，`claude mcp login <name>` / `claude mcp logout <name>` 可以在 CLI 里完成某个 MCP server 的登录或登出，不必先打开 `/mcp` 菜单。`--no-browser` 适合 SSH、服务器或无浏览器环境，它会把 OAuth 流程转到 stdin。
+
 从 `v2.1.139+` 开始，stdio MCP server 启动时会自动带上：
 
 ```text
@@ -204,12 +214,15 @@ MCP 配置是高风险文件，以下内容默认不要翻：
 
 在 session 里直接输入 `/mcp`，可以快速查看已连接的 MCP server、触发 OAuth 流程，以及检查当前连接状态。
 
-这轮上游同步后有两个很实用的变化：
+这轮上游同步后有几个很实用的变化：
 
 - 自 `v2.1.121` 起，MCP 初次连接遇到瞬时错误时会自动重试最多 3 次
 - 自 `v2.1.128` 起，`/mcp` 会显示每个 server 的工具数量；如果某个 server 报告 `0 tools`，界面会更明显地标出来
+- 自 `v2.1.186` 起，可以直接用 `claude mcp login <name>` / `claude mcp logout <name>` 处理 OAuth 登录状态
 
 对中文用户来说，这意味着排查“为什么连上了但看起来不能用”时，先跑一次 `/mcp` 往往比盲猜配置更快。
+
+这里的 `login`、`logout`、`--no-browser` 都是 CLI 标识，不要翻译。
 
 ### 这轮 MCP 生命周期修复值得知道
 

@@ -2,6 +2,30 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-06-26
+
+### 上游审阅
+
+- 核对上游范围：`8143e37` → `6b9ce64`
+- 上游这轮重点：
+  - 同步 Claude Code `v2.1.187`，覆盖 `v2.1.183` 到 `v2.1.187` 的新增文档
+  - `/review <pr>` 用于审查 GitHub PR，并复用 `/code-review medium` 的 review engine；本地 diff 仍用 `/code-review`
+  - `attribution.sessionUrl`、`respondToBashCommands`、`sandbox.credentials`、`sandbox.allowAppleEvents` 等 settings 口径更新
+  - `claude mcp login <name>` / `logout <name>` 支持在 CLI 里处理 MCP server 登录状态，`--no-browser` 支持 headless OAuth
+  - Agent Teams 增加 `--teammate-mode iterm2`
+  - Auto Mode 增加内置 intent-based protection，默认拦截一批破坏性命令
+  - `!` bash 命令输出默认会自动发给 Claude 并触发回复
+  - `/config key=value` 支持直接设置单个配置项
+  - 新增或强调 retry、presence、MCP idle timeout 相关环境变量
+
+### 中文 fork 处理
+
+- 将影响真实使用的 slash command、memory settings、subagents、MCP、advanced features 和 CLI 变化写入中文主线
+- 保留 `/review <pr>`、`/code-review medium`、`claude mcp login`、`--no-browser`、`--teammate-mode iterm2`、`respondToBashCommands`、`sandbox.credentials`、`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` 等标识原文
+- 同步总表、速查卡、资源索引和概念总览，确保入口文档也能看到 `v2.1.187` 新能力
+- 不引入上游英文根 README，不改变中文首页结构
+- 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
+
 ## 中文版同步 — 2026-06-18
 
 ### 上游审阅

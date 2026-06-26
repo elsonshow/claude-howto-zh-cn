@@ -166,6 +166,9 @@ claude --append-system-prompt "Always explain tradeoffs" "review this plan"
 - `claude auth login` 在浏览器 callback 打不回 localhost 时，可以把 OAuth code 粘回终端继续登录
 - `/doctor` 在 `v2.1.178+` 改成 flat tree 布局，状态图标更清晰
 - `/bug` 在 `v2.1.178+` 必须填写描述后才能提交
+- `/review <pr>` 在 `v2.1.186+` 起用于审查 GitHub PR，并复用 `/code-review medium` 的 review engine；当前本地 diff 仍用 `/code-review [effort]`
+- `claude mcp login <name>` / `claude mcp logout <name>` 可直接处理 MCP server 登录状态，`--no-browser` 适合 SSH 或 headless session
+- `!` bash 命令输出会自动发给 Claude 并触发回复；如果只想把输出放进上下文，把 `respondToBashCommands` 设为 `false`
 
 ### settings.json 里新增的几个 key
 
@@ -176,6 +179,7 @@ claude --append-system-prompt "Always explain tradeoffs" "review this plan"
 | `wheelScrollAccelerationEnabled` | 从 `v2.1.174+` 起可设为 `false`，关闭全屏 renderer 里的鼠标滚轮加速 |
 | `footerLinksRegexes` | 从 `v2.1.176+` 起可配置正则数组，把匹配到的链接显示成 footer badges |
 | `language` | 设置 Claude Code 偏好的回复语言和语音听写语言；从 `v2.1.176+` 起，自动生成的 session title 也会按这个语言固定 |
+| `respondToBashCommands` | 从 `v2.1.186+` 起控制 `!` bash 命令输出后是否自动让 Claude 回复；默认 `true`，设为 `false` 可回到只进上下文的旧行为 |
 
 示例：
 
@@ -183,7 +187,8 @@ claude --append-system-prompt "Always explain tradeoffs" "review this plan"
 {
   "wheelScrollAccelerationEnabled": false,
   "language": "french",
-  "footerLinksRegexes": [".*jira\\.example\\.com/.*"]
+  "footerLinksRegexes": [".*jira\\.example\\.com/.*"],
+  "respondToBashCommands": false
 }
 ```
 
@@ -318,6 +323,8 @@ claude --add-dir ../frontend ../backend ../shared "find all API endpoints"
 
 - `claude mcp`
 - `claude mcp serve`
+- `claude mcp login <name>`
+- `claude mcp logout <name>`
 - `claude plugin`
 - `claude plugin init <name>`
 - `claude plugin prune`
@@ -330,6 +337,9 @@ claude --add-dir ../frontend ../backend ../shared "find all API endpoints"
 ```bash
 claude mcp
 claude mcp serve
+claude mcp login github
+claude mcp login github --no-browser
+claude mcp logout github
 claude plugin init my-plugin
 claude plugin install my-plugin
 claude plugin prune
@@ -427,6 +437,10 @@ claude ultrareview 1234 --json > review.json
 | `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN` | 设为 `1` 后，停留在普通终端滚动历史里，而不是 fullscreen alternate-screen 渲染 |
 | `CLAUDE_CODE_SESSION_ID` | 每个 Bash tool 子进程都会带上这个 session UUID，可用来和 hooks / telemetry 对日志 |
 | `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` | 在 OTEL 环境下重新打开 Anthropic 的会话质量问卷 |
+| `CLAUDE_CLIENT_PRESENCE_FILE` | 指向一个本机 marker file，人在电脑前时抑制 mobile push notifications；变量名不是 `CLAUDE_CODE_CLIENT_PRESENCE_FILE` |
+| `CLAUDE_CODE_MAX_RETRIES` | API retry 最大次数；`v2.1.186+` 起上限为 15 |
+| `CLAUDE_CODE_RETRY_WATCHDOG` | 面向无人值守 session 的 retry 控制，比盲目提高 `CLAUDE_CODE_MAX_RETRIES` 更稳 |
+| `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` | 覆盖 remote MCP tool 5 分钟无响应 abort 的默认值 |
 
 这些名字属于可执行标识，不要翻译。
 

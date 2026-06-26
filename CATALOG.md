@@ -63,6 +63,7 @@ slash commands 是用户在 Claude Code 里主动输入的快捷操作，例如 
 | `/workflows` | 查看正在运行和已完成的 dynamic workflows |
 | `/usage` | 查看 plan 用量、限流状态和成本；`v2.1.149+` 起成本视图会按 skills、subagents、plugins、MCP server 等类别拆分，`v2.1.174+` 的 VSCode Account & usage 视图还会显示 cache miss、long-context cost、subagents 以及 per-skill / per-agent / per-plugin / per-MCP 归因 |
 | `/usage-credits` | 配置额外用量额度；`/extra-usage` 仍可作为 alias（别名）使用 |
+| `/review <pr>` | 审查 GitHub PR；`v2.1.186+` 起复用 `/code-review medium` 的 review engine，本地 diff 仍用 `/code-review` |
 | `/branch` | 从当前对话分叉（某些版本中 `/fork` 仍可能可用） |
 
 ### 仓库里的示例命令
@@ -96,6 +97,8 @@ permission modes 决定 Claude Code 在使用工具时需要多大授权。
 | `auto` | 根据分类器自动决定 | 高自动化流程（需要谨慎） |
 
 中国用户在刚上手时，优先理解 `default`、`acceptEdits`、`plan`、`dontAsk` 这四个就足够了。
+
+从 `v2.1.183+` 起，Auto Mode 还带有内置 intent-based protection，会默认拦住 `git reset --hard`、`git clean -fd`、`git commit --amend`、`terraform destroy` 这类高风险动作，除非你在当前 session 明确要求。
 
 ---
 
@@ -351,6 +354,17 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `Tool(param:value)` permission rule 参数匹配
 - 嵌套 `.claude/agents/` 最近目录优先
 - remote session plugin loading performance 改进
+- `/review <pr>` 审查 GitHub PR；本地 diff 审查仍用 `/code-review [effort]`
+- `claude mcp login <name>` / `claude mcp logout <name>`，`--no-browser` 适合 SSH / headless session
+- `--teammate-mode iterm2`，依赖 `it2` CLI
+- `respondToBashCommands`
+- `sandbox.credentials`
+- `sandbox.allowAppleEvents`
+- `/config key=value`
+- `CLAUDE_CLIENT_PRESENCE_FILE`
+- `CLAUDE_CODE_MAX_RETRIES`
+- `CLAUDE_CODE_RETRY_WATCHDOG`
+- `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
 - `claude plugin init <name>`
 - `CLAUDE_CODE_ENABLE_AUTO_MODE=1`
 - `EnterWorktree`

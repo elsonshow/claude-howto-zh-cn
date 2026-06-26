@@ -243,8 +243,11 @@ Claude Code 不会把整个 auto memory 目录一次性全塞进上下文。最�
 
 - `attribution.commit`
 - `attribution.pr`
+- `attribution.sessionUrl`
 - `voice.enabled`
 - `prUrlTemplate`
+
+其中 `attribution.sessionUrl` 是 `v2.1.183+` 新增的细分项，用来在 web / Remote Control session 创建 commit 或 PR 时省略 `claude.ai` session 链接。它只是 settings key，不要翻译成中文字段。
 
 如果你还在旧资料里看到：
 

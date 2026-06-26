@@ -64,6 +64,11 @@ export DATABASE_URL="postgresql://..."
 # 项目级 MCP 配置
 cp 05-mcp/github-mcp.json .mcp.json
 
+# CLI 登录 / 登出 MCP server
+claude mcp login github
+claude mcp login github --no-browser
+claude mcp logout github
+
 # 或者写进用户级配置 ~/.claude.json
 ```
 
@@ -109,6 +114,7 @@ claude plugin init my-plugin
 /usage-credits       # `/extra-usage` 仍可作为兼容 alias（别名）
 /usage               # v2.1.149+ 成本视图会按类别拆分
 /code-review high    # 正确性缺陷审查
+/review <pr>         # 审查 GitHub PR；本地 diff 仍用 /code-review
 /simplify            # 清理型审查并应用修复，不负责找 bug
 /doctor              # 诊断安装、配置和 plugin 健康
 /bug "描述问题"      # v2.1.178+ 必须填写描述
@@ -117,8 +123,12 @@ claude plugin init my-plugin
 /cd ../backend       # 切换工作目录并尽量保留 prompt cache
 /plugin              # marketplace 浏览界面可用搜索栏过滤 plugin
 ultracode            # 触发 dynamic workflows 的关键词，裸词 workflow 不再触发
+/config thinking=false  # 直接设置单个配置项
+!npm test            # v2.1.186+ 起输出会自动发给 Claude 并触发回复
 export CLAUDE_CODE_ENABLE_AUTO_MODE=1  # Bedrock / Vertex / Foundry 上显式启用 Auto Mode
 CLAUDE_CODE_SAFE_MODE=1 claude          # 禁用自定义项后排查配置问题
+export CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT=600
+export CLAUDE_CODE_RETRY_WATCHDOG=1
 
 # 常见 permission mode
 claude --permission-mode default
