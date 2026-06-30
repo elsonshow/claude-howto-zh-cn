@@ -219,10 +219,12 @@ MCP 配置是高风险文件，以下内容默认不要翻：
 - 自 `v2.1.121` 起，MCP 初次连接遇到瞬时错误时会自动重试最多 3 次
 - 自 `v2.1.128` 起，`/mcp` 会显示每个 server 的工具数量；如果某个 server 报告 `0 tools`，界面会更明显地标出来
 - 自 `v2.1.186` 起，可以直接用 `claude mcp login <name>` / `claude mcp logout <name>` 处理 OAuth 登录状态
+- 自 `v2.1.193` 起，启动时会提示哪些 MCP server 仍需要认证，避免“配置看起来有了、实际还没登录”的 server 静默失效
+- 自 `v2.1.193` 起，如果你用 `headersHelper` 提供动态认证头，server 返回 HTTP 401 / 403 时会自动重新调用 helper 刷新凭证，不需要手动断开重连
 
 对中文用户来说，这意味着排查“为什么连上了但看起来不能用”时，先跑一次 `/mcp` 往往比盲猜配置更快。
 
-这里的 `login`、`logout`、`--no-browser` 都是 CLI 标识，不要翻译。
+这里的 `login`、`logout`、`--no-browser`、`headersHelper`、HTTP 401 / 403 都是 CLI / 协议标识，不要翻译。
 
 ### 这轮 MCP 生命周期修复值得知道
 

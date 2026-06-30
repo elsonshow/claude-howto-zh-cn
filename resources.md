@@ -57,5 +57,13 @@
 | `sandbox.credentials` | 阻止 sandboxed commands 读取凭证文件和 secret 环境变量 | [Advanced Features](09-advanced-features/) |
 | `/config key=value` | 直接从 prompt 设置单个配置项 | [Advanced Features](09-advanced-features/) |
 | `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` | 调整 remote MCP tool 无响应 abort 超时 | [CLI Guide](10-cli/) |
+| MCP 认证启动提醒 / `headersHelper` 自动刷新 | 启动时提示仍需认证的 MCP server；HTTP 401 / 403 后动态认证头会自动刷新 | [MCP Guide](05-mcp/) |
+| hook `matcher` 逗号列表 | `"Write,Edit"` 这类 matcher 会匹配任一列出的工具，并按更精确规则匹配工具名 | [Hooks Guide](06-hooks/) |
+| `/plugin` unused plugins 提示 | `/plugin` 会提示不再使用的 plugins；plugin name 和 marketplace entry name 不一致时仍能 enable / disable | [Plugins Guide](07-plugins/) |
+| `/rewind` 跨 `/clear` | `/clear` 不再是硬边界，可以回到更早 checkpoint | [Checkpoints Guide](08-checkpoints/) |
+| `autoMode.classifyAllShell` | 让所有 Bash / PowerShell 命令都经过 Auto Mode 分类器 | [Advanced Features](09-advanced-features/) |
+| `claude_code.assistant_response` | OpenTelemetry log event，用于记录模型回复文本 | [Advanced Features](09-advanced-features/) |
+| `!` bash mode 路径自动补全 | 输入 `!` shell 命令时支持 live file-path autocomplete | [Advanced Features](09-advanced-features/) |
+| `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` | 禁用 fullscreen mode 的 mouse click / drag / hover，wheel scroll 仍可用 | [CLI Guide](10-cli/) |
 
 这些名称都是可执行标识或协议字段，不要翻译成中文 key。

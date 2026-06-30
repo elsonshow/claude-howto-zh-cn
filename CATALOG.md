@@ -100,6 +100,8 @@ permission modes 决定 Claude Code 在使用工具时需要多大授权。
 
 从 `v2.1.183+` 起，Auto Mode 还带有内置 intent-based protection，会默认拦住 `git reset --hard`、`git clean -fd`、`git commit --amend`、`terraform destroy` 这类高风险动作，除非你在当前 session 明确要求。
 
+从 `v2.1.193+` 起，`autoMode.classifyAllShell` 可以让所有 Bash / PowerShell 命令都走 Auto Mode 分类器；拒绝原因会显示在 transcript、toast 和 `/permissions` 的 recently-denied 列表。
+
 ---
 
 ## Subagents（子代理）
@@ -222,6 +224,8 @@ plugin-name/
 
 从 `v2.1.179+` 起，remote session 里的 plugin loading performance 有改进。
 
+从 `v2.1.187+` 起，`/plugin` 会提示 unused plugins；从 `v2.1.195+` 起，plugin 的 `plugin.json` `name` 和 marketplace entry name 不一致时，enable / disable 也能正确处理。
+
 ---
 
 ## MCP（外部工具协议）
@@ -242,6 +246,7 @@ MCP（Model Context Protocol）用于让 Claude Code 连接外部工具、服务
 - `npx` 首次安装 MCP server 时很慢
 - GitHub Token 没权限或没导出
 - Windows / WSL 环境下 shell 和路径行为不同
+- `v2.1.193+` 起，启动时会提示仍需认证的 MCP server；`headersHelper` 遇到 HTTP 401 / 403 会自动刷新动态认证头
 
 ### 高风险提醒
 
@@ -284,6 +289,8 @@ hooks 是事件驱动的自动化动作。适合这些场景：
 - `agent`
 
 这些类型名同样不要翻成中文字段。
+
+`v2.1.191+` 起，`matcher` 支持 `"Write,Edit"` 这类逗号列表；`v2.1.195+` 起，工具名匹配更精确，带连字符的 MCP tool name 不会再误触发其他工具。
 
 ---
 
@@ -334,12 +341,14 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `/cd <path>`
 - `/plugin list --enabled`
 - `/plugin list --disabled`
+- unused plugins 提示
 - `--safe-mode`
 - `CLAUDE_CODE_SAFE_MODE=1`
 - `fallbackModel`
 - `disableBundledSkills`
 - `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1`
 - `hookSpecificOutput.additionalContext`
+- hook `matcher` 逗号列表和精确匹配
 - `CLAUDE_CODE_SESSION_ID`
 - `claude-fable-5`
 - `Agent(agent_type)` 限制 subagent 可 spawn 类型，subagent 最多 5 层嵌套
@@ -365,6 +374,10 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `CLAUDE_CODE_MAX_RETRIES`
 - `CLAUDE_CODE_RETRY_WATCHDOG`
 - `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`
+- `CLAUDE_CODE_DISABLE_MOUSE_CLICKS`
+- `autoMode.classifyAllShell`
+- `claude_code.assistant_response`
+- `!` bash mode live file-path autocomplete
 - `claude plugin init <name>`
 - `CLAUDE_CODE_ENABLE_AUTO_MODE=1`
 - `EnterWorktree`

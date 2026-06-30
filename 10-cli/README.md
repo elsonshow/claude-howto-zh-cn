@@ -441,6 +441,7 @@ claude ultrareview 1234 --json > review.json
 | `CLAUDE_CODE_MAX_RETRIES` | API retry 最大次数；`v2.1.186+` 起上限为 15 |
 | `CLAUDE_CODE_RETRY_WATCHDOG` | 面向无人值守 session 的 retry 控制，比盲目提高 `CLAUDE_CODE_MAX_RETRIES` 更稳 |
 | `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` | 覆盖 remote MCP tool 5 分钟无响应 abort 的默认值 |
+| `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` | 设为 `1` 后禁用 fullscreen mode 里的 mouse click / drag / hover；wheel scroll 仍可用（`v2.1.195+`） |
 
 这些名字属于可执行标识，不要翻译。
 

@@ -20,13 +20,15 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-06-26
-- **本轮参考范围**：`8143e37` -> `6b9ce64`
+- **最近同步日期**：2026-06-30
+- **本轮参考范围**：`6b9ce64` -> `d4243d9`
 - **本次同步内容**：
-  - 同步 Claude Code `v2.1.187` 口径，覆盖 `v2.1.183` 到 `v2.1.187` 的增量文档
-  - 补充 `/review <pr>`、`claude mcp login/logout`、`--teammate-mode iterm2` 和 `/config key=value` 的新行为
-  - 说明 `!` bash 命令输出会自动发给 Claude，可用 `respondToBashCommands=false` 回到只进上下文的旧行为
-  - 补充 Auto Mode 内置破坏性命令保护、sandbox 新设置、MCP idle timeout 与 retry / presence 相关环境变量
+  - 同步 Claude Code `v2.1.195` 口径，覆盖 `v2.1.191` 到 `v2.1.195` 的增量文档
+  - 补充 MCP 启动认证提醒、`headersHelper` 遇到 HTTP 401 / 403 后自动刷新认证头的行为
+  - 说明 hook `matcher` 现在支持 `"Write,Edit"` 逗号列表，并按更精确的规则匹配工具名
+  - 补充 `/plugin` unused plugins 提示、plugin name / marketplace entry name 不一致时的 enable / disable 修复
+  - 说明 `/rewind` 可以跨过 `/clear` 找回更早 checkpoint，Auto Mode 可用 `autoMode.classifyAllShell` 检查所有 shell 命令
+  - 补充 `claude_code.assistant_response` OTEL 事件、`!` bash 路径自动补全和 `CLAUDE_CODE_DISABLE_MOUSE_CLICKS`
   - 继续保持根目录中文主线，不把上游英文 README 覆盖到中文首页
 
 ---

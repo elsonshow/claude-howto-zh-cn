@@ -68,6 +68,7 @@ cp 05-mcp/github-mcp.json .mcp.json
 claude mcp login github
 claude mcp login github --no-browser
 claude mcp logout github
+# v2.1.193+ 启动时会提示仍需认证的 MCP server；headersHelper 遇到 HTTP 401 / 403 会自动刷新
 
 # 或者写进用户级配置 ~/.claude.json
 ```
@@ -95,6 +96,7 @@ claude plugin init my-plugin
 
 ```bash
 # checkpoints 默认自动创建
+# v2.1.191+ 起 /rewind 可以跨过 /clear 回到更早 checkpoint
 /rewind
 ```
 
@@ -125,7 +127,9 @@ claude plugin init my-plugin
 ultracode            # 触发 dynamic workflows 的关键词，裸词 workflow 不再触发
 /config thinking=false  # 直接设置单个配置项
 !npm test            # v2.1.186+ 起输出会自动发给 Claude 并触发回复
+!cat src/index.ts    # v2.1.193+ 起 ! bash mode 支持路径自动补全
 export CLAUDE_CODE_ENABLE_AUTO_MODE=1  # Bedrock / Vertex / Foundry 上显式启用 Auto Mode
+export CLAUDE_CODE_DISABLE_MOUSE_CLICKS=1  # 禁用 fullscreen mode 的 click / drag / hover
 CLAUDE_CODE_SAFE_MODE=1 claude          # 禁用自定义项后排查配置问题
 export CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT=600
 export CLAUDE_CODE_RETRY_WATCHDOG=1
@@ -156,6 +160,12 @@ git worktree prune     # 清理已解锁且不再使用的 worktree
 
 # permission rule 参数匹配示意（语法不要翻译）
 # Tool(param:value)
+
+# hook matcher 组合示意（matcher key 和工具名不要翻译）
+# "matcher": "Write,Edit"
+
+# Auto Mode 严格 shell 分类示意（settings key 不要翻译）
+# "autoMode": { "classifyAllShell": true }
 ```
 
 ---

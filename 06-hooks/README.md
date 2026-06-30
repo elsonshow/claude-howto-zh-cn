@@ -73,7 +73,7 @@ hooks 最大的价值，是把“你本来每次都要手动做的检查”变�
 | 字段 | 作用 | 示例 |
 |------|------|------|
 | `hooks` | hook 顶层配置入口 | `{ "PreToolUse": [...] }` |
-| `matcher` | 匹配工具名或模式 | `"Write"`、`"Edit|Write"`、`"*"` |
+| `matcher` | 匹配工具名或模式 | `"Write"`、`"Edit|Write"`、`"Write,Edit"`、`"*"` |
 | `type` | hook 类型 | `"command"`、`"http"`、`"mcp_tool"`、`"prompt"`、`"agent"` |
 | `command` | 执行的 shell 命令 | `"$CLAUDE_PROJECT_DIR/.claude/hooks/format.sh"` |
 | `timeout` | 超时秒数 | `30` |
@@ -136,8 +136,11 @@ hooks 最大的价值，是把“你本来每次都要手动做的检查”变�
 |------|------|------|
 | 精确匹配 | 只匹配某个工具 | `"Write"` |
 | 正则匹配 | 匹配多个工具 | `"Edit|Write"` |
+| 逗号列表 | 匹配任一列出的工具；`v2.1.191+` 起生效 | `"Write,Edit"` |
 | 全匹配 | 匹配全部工具 | `"*"` 或 `""` |
 | MCP 工具模式 | 匹配 MCP 工具 | `"mcp__memory__.*"` |
+
+从 `v2.1.195+` 起，matcher 会按更精确的规则匹配工具名。带连字符的 MCP tool name 不会再因为子串重叠而误触发另一个工具；`"Write,Edit"` 这类逗号列表会按“任一工具命中”处理，而不是像旧版本那样静默不触发。
 
 如果你配的是 `InstructionsLoaded`，它还有几种常见 matcher 值：
 

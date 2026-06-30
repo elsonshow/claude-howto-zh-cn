@@ -316,6 +316,22 @@ python3 09-advanced-features/setup-auto-mode-permissions.py --include-gh-read --
 
 这属于内置 intent-based protection，不需要你手工把这些命令都塞进 `hard_deny`。但团队里仍建议把真正不可接受的组织规则写进 `autoMode.hard_deny`，两层保护不要混为一谈。
 
+### `autoMode.classifyAllShell`：让所有 shell 命令都过分类器
+
+从 `v2.1.193+` 起，可以用 `autoMode.classifyAllShell` 让所有 Bash / PowerShell 命令都经过 Auto Mode 分类器。这个开关适合更严格的团队环境：不是只检查看起来危险的命令，而是让每条 shell 命令都先被分类。
+
+```json
+{
+  "autoMode": {
+    "classifyAllShell": true
+  }
+}
+```
+
+同一版本还会在 Auto Mode 拒绝动作时显示 denial reason。你可以在 transcript、拒绝 toast，以及 `/permissions` 里的 recently-denied 列表看到原因，方便判断是规则太严、命令写法不清楚，还是任务本身需要先让用户确认。
+
+`autoMode.classifyAllShell`、Bash、PowerShell、`/permissions` 都是配置或界面标识，不要翻译成中文 key。
+
 ### 明确不会自动加进去的危险操作
 
 脚本明确不会帮你加入这些类型：
@@ -536,6 +552,8 @@ cat error.log | claude -p "Explain this error"
 
 `respondToBashCommands` 是 settings key，不要翻译。这个开关适合你把 `!npm test`、`!pytest` 当成临时上下文采集，而不是每次都希望 Claude 立刻分析时使用。
 
+从 `v2.1.193+` 起，`!` bash mode 支持 live file-path autocomplete。也就是说你在输入 `!cat src/...`、`!pytest tests/...` 这类命令时，可以直接在 prompt 里补全路径，少一点复制粘贴和输错目录的概率。
+
 ### Safe Mode：先隔离自定义配置
 
 如果 Claude Code 行为突然很怪，先别急着怀疑项目代码。`v2.1.169+` 提供了 `--safe-mode`：
@@ -564,6 +582,8 @@ CLAUDE_CODE_SAFE_MODE=1 claude
 如果你经常在多个 session 间切换，这个能力会很省脑子。
 
 > 如果你的组织开启了 OpenTelemetry，上游从 `v2.1.136+` 起允许用 `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL=1` 重新打开 Anthropic 的会话质量问卷；默认仍是关闭。
+>
+> 从 `v2.1.193+` 起，Claude Code 还会发出 `claude_code.assistant_response` OpenTelemetry log event，用于把模型回复文本纳入 telemetry pipeline。这个事件名和 `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` 一样属于可执行 / 观测标识，不要翻译。
 
 ### Push Notifications（推送通知）
 

@@ -65,6 +65,8 @@ checkpoints 是 Claude Code 新手最值得尽早掌握的安全机制之一。
 > 新版行为里还有一个很实用的小细节：  
 > 你在做 **Restore conversation** 或 **Summarize from here** 后，被选中位置的原始 prompt 会回到输入框里，方便你重新发送或改写。
 
+> 从 `v2.1.191+` 起，`/clear` 不再是 `/rewind` 的硬边界。也就是说，即使你已经清空过当前对话，仍可以用 `/rewind` 回到 `/clear` 之前创建的 checkpoint，找回更早的代码或上下文。
+
 ---
 
 ## checkpoints 默认就有

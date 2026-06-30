@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`6b9ce6463f96d5556a0f3c92aaaf80123ec42100`
+- 最近检查到的上游 commit：`d4243d9c7ba0d1e69ddb27570b18388ac9f4c937`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,27 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-06-30
+
+- Reviewed upstream range: `6b9ce64` → `d4243d9`
+- 重点上游变化：
+  - Claude Code 教程覆盖更新到 `v2.1.195`
+  - MCP 增加启动认证提醒；需要登录的 server 不再只是静默不可用
+  - `headersHelper` 在 MCP server 返回 HTTP 401 / 403 时会自动重新调用，用于刷新动态认证头
+  - hook `matcher` 支持 `"Write,Edit"` 逗号列表，并在 `v2.1.195+` 起按更精确的工具名规则匹配
+  - `/plugin` 界面会提示 unused plugins；plugin 的 `plugin.json` `name` 与 marketplace entry name 不一致时，enable / disable 仍可正确工作
+  - `/clear` 不再是 `/rewind` 的硬边界，可以回到 `/clear` 之前的 checkpoint
+  - `autoMode.classifyAllShell` 可让所有 Bash / PowerShell 命令都走 Auto Mode 分类器，拒绝原因会显示在 transcript、toast 和 `/permissions` 的 recently-denied 列表
+  - OpenTelemetry 增加 `claude_code.assistant_response` log event，用于记录模型回复文本
+  - `!` bash mode 支持 live file-path autocomplete
+  - CLI 环境变量新增 `CLAUDE_CODE_DISABLE_MOUSE_CLICKS`
+- Chinese fork actions:
+  - 将 MCP、hooks、plugins、checkpoints、advanced features 和 CLI 新行为改写进中文主线文档
+  - 保留 `headersHelper`、HTTP 401 / 403、`matcher`、`"Write,Edit"`、`plugin.json`、`autoMode.classifyAllShell`、Bash / PowerShell、`claude_code.assistant_response`、`CLAUDE_CODE_DISABLE_MOUSE_CLICKS` 等可执行标识原文
+  - 同步 `CATALOG.md`、`QUICK_REFERENCE.md`、`resources.md`、`claude_concepts_guide.md`，让入口页也能看到 `v2.1.195` 新能力
+  - 不引入上游英文根 README，不改变中文首页结构
+  - 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
 
 ### 上游同步 — 2026-06-26
 

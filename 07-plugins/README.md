@@ -212,6 +212,9 @@ claude --plugin-url https://example.com/releases/my-plugin-0.3.0.zip
 
 这对团队排查很有用：先确认“插件到底有没有安装、有没有启用”，再去看具体 command、skill 或 hook 为什么没生效。
 
+从 `v2.1.187+` 起，`/plugin` 界面还会提示 unused plugins，方便你清理不再使用的团队插件或试验插件。
+从 `v2.1.195+` 起，即使 `plugin.json` 里的 `name` 和 marketplace entry name 不一致，enable / disable 也能正确处理。排查插件开关状态时，仍要保留 `plugin.json`、`name` 和 marketplace 名称的原文，不要为了中文化改名。
+
 ---
 
 ## 依赖清理：`plugin prune`

@@ -2,6 +2,30 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-06-30
+
+### 上游审阅
+
+- 核对上游范围：`6b9ce64` → `d4243d9`
+- 上游这轮重点：
+  - 同步 Claude Code `v2.1.195`，覆盖 `v2.1.191` 到 `v2.1.195` 的新增文档
+  - MCP 启动时会提示仍需认证的 server，`headersHelper` 遇到 HTTP 401 / 403 会自动刷新动态认证头
+  - hook `matcher` 支持逗号列表，并按更精确的工具名规则匹配
+  - `/plugin` 会提示 unused plugins，并修复 plugin manifest name 与 marketplace entry name 不一致时的启用 / 禁用问题
+  - `/rewind` 可以跨过 `/clear` 回到更早 checkpoint
+  - `autoMode.classifyAllShell` 可让所有 shell 命令经过 Auto Mode 分类器，拒绝原因会显示在 `/permissions` 等位置
+  - OpenTelemetry 增加 `claude_code.assistant_response` log event
+  - `!` bash mode 支持 live file-path autocomplete
+  - 新增 `CLAUDE_CODE_DISABLE_MOUSE_CLICKS`
+
+### 中文 fork 处理
+
+- 将 MCP、hooks、plugins、checkpoints、advanced features 和 CLI 更新写入中文主线
+- 保留 `headersHelper`、HTTP 401 / 403、`matcher`、`"Write,Edit"`、`plugin.json`、`autoMode.classifyAllShell`、`claude_code.assistant_response`、`CLAUDE_CODE_DISABLE_MOUSE_CLICKS` 等标识原文
+- 同步总表、速查卡、资源索引和概念总览，确保入口文档也能看到 `v2.1.195` 新能力
+- 不引入上游英文根 README，不改变中文首页结构
+- 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
+
 ## 中文版同步 — 2026-06-26
 
 ### 上游审阅
