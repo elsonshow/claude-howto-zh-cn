@@ -20,15 +20,13 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-06-30
-- **本轮参考范围**：`6b9ce64` -> `d4243d9`
+- **最近同步日期**：2026-07-02
+- **本轮参考范围**：`d4243d9` -> `ce10c70`
 - **本次同步内容**：
-  - 同步 Claude Code `v2.1.195` 口径，覆盖 `v2.1.191` 到 `v2.1.195` 的增量文档
-  - 补充 MCP 启动认证提醒、`headersHelper` 遇到 HTTP 401 / 403 后自动刷新认证头的行为
-  - 说明 hook `matcher` 现在支持 `"Write,Edit"` 逗号列表，并按更精确的规则匹配工具名
-  - 补充 `/plugin` unused plugins 提示、plugin name / marketplace entry name 不一致时的 enable / disable 修复
-  - 说明 `/rewind` 可以跨过 `/clear` 找回更早 checkpoint，Auto Mode 可用 `autoMode.classifyAllShell` 检查所有 shell 命令
-  - 补充 `claude_code.assistant_response` OTEL 事件、`!` bash 路径自动补全和 `CLAUDE_CODE_DISABLE_MOUSE_CLICKS`
+  - 同步上游 `fix(pages): remove uv cache glob that broke on missing uv.lock`
+  - 在 Pages workflow 中移除 `astral-sh/setup-uv@v4` 的 uv cache 配置，避免缺少 `uv.lock` 时缓存步骤导致部署失败
+  - 保留中文 fork 的 Pages 发布后首页验证，继续检查线上页面包含 `Claude Code 中文全面上手指南`
+  - 本轮不改教程正文，不引入上游英文根 README
   - 继续保持根目录中文主线，不把上游英文 README 覆盖到中文首页
 
 ---

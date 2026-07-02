@@ -2,6 +2,21 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-07-02
+
+### 上游审阅
+
+- 核对上游范围：`d4243d9` → `ce10c70`
+- 上游这轮重点：
+  - 修复 Pages workflow，移除会在缺少 `uv.lock` 时出问题的 uv cache 配置
+
+### 中文 fork 处理
+
+- 同步 `.github/workflows/pages.yml` 的必要行为变化，删除 `setup-uv` 的 `enable-cache` / `cache-dependency-glob` 配置
+- 保留中文 fork 的 Pages 发布后首页验证，继续检查线上页面包含 `Claude Code 中文全面上手指南`
+- 不改教程正文，不引入上游英文根 README
+- 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
+
 ## 中文版同步 — 2026-06-30
 
 ### 上游审阅

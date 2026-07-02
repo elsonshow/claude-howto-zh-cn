@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`d4243d9c7ba0d1e69ddb27570b18388ac9f4c937`
+- 最近检查到的上游 commit：`ce10c700549d91afd3f22d1597337f9b3f58c6cc`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,18 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-07-02
+
+- Reviewed upstream range: `d4243d9` → `ce10c70`
+- 重点上游变化：
+  - 上游修复 Pages workflow：`fix(pages): remove uv cache glob that broke on missing uv.lock`
+  - `.github/workflows/pages.yml` 不再对 `astral-sh/setup-uv@v4` 启用 uv cache，避免仓库没有 `uv.lock` 时缓存 glob 触发构建失败
+- Chinese fork actions:
+  - 同步删除 `setup-uv` 的 `enable-cache` / `cache-dependency-glob` 配置
+  - 保留中文 fork 已有的 `actions/configure-pages@v5` 和发布后首页验证步骤，继续检查线上页面包含 `Claude Code 中文全面上手指南`
+  - 本轮只同步必要 workflow 行为变化，不改教程正文，不引入上游英文根 README
+  - 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
 
 ### 上游同步 — 2026-06-30
 
