@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`ce10c700549d91afd3f22d1597337f9b3f58c6cc`
+- 最近检查到的上游 commit：`0f3fe1d8487b02baf30538f486a6775352020671`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,22 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-07-11
+
+- Reviewed upstream range: `ce10c70` → `0f3fe1d`
+- 重点上游变化：
+  - `docs(skills): improve lesson-quiz skill to asm-eval grade A`
+  - `docs(skills): slim self-assessment skill for context efficiency`
+  - `/lesson-quiz` 明确固定使用 10 道题，禁止题库缺失时临时编题，并新增结果报告模板
+  - self-assessment 将 Deep Assessment 轮次、输出模板和主题建议拆到 `references/`，降低主 skill 的上下文占用
+- Chinese fork actions:
+  - 本地化更新 `.claude/skills/lesson-quiz/SKILL.md`，保持中文说明，同时保留 `allowed-tools`、`@file`、`disable-model-invocation`、`--add-dir`、`permissionMode`、`--debug`、`Ctrl+O` 等可执行标识原文
+  - 补齐中文题库中每个 lesson 的 Q9 / Q10，使 10 题流程与数据源一致，不在运行时编造题目
+  - 新增中文化的 `results-template.md`、`deep-assessment-rounds.md`、`output-templates.md`、`topic-recommendations.md`
+  - 更新 self-assessment 主文件，让它按需读取新增 reference 文件
+  - 不引入上游英文根 README，不改变 `Claude Code 中文全面上手指南` 的中文默认入口
+  - 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
 
 ### 上游同步 — 2026-07-02
 

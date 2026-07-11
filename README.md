@@ -20,13 +20,13 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-07-02
-- **本轮参考范围**：`d4243d9` -> `ce10c70`
+- **最近同步日期**：2026-07-11
+- **本轮参考范围**：`ce10c70` -> `0f3fe1d`
 - **本次同步内容**：
-  - 同步上游 `fix(pages): remove uv cache glob that broke on missing uv.lock`
-  - 在 Pages workflow 中移除 `astral-sh/setup-uv@v4` 的 uv cache 配置，避免缺少 `uv.lock` 时缓存步骤导致部署失败
-  - 保留中文 fork 的 Pages 发布后首页验证，继续检查线上页面包含 `Claude Code 中文全面上手指南`
-  - 本轮不改教程正文，不引入上游英文根 README
+  - 同步上游 lesson-quiz 与 self-assessment skill 文档更新
+  - 将 `/lesson-quiz` 升级为每课固定 10 题，并补齐中文题库中的 Q9 / Q10
+  - 新增中文化的 quiz 结果模板、Deep Assessment 题目轮次、输出模板和按主题学习建议
+  - 保留 `SKILL.md` frontmatter key、CLI flags、路径、slash command 和 skill / plugin / subagent 名称原文
   - 继续保持根目录中文主线，不把上游英文 README 覆盖到中文首页
 
 ---

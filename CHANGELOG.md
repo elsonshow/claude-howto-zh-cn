@@ -2,6 +2,25 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-07-11
+
+### 上游审阅
+
+- 核对上游范围：`ce10c70` → `0f3fe1d`
+- 上游这轮重点：
+  - 改进 `lesson-quiz` skill，明确每个 lesson 用 10 道题、5 轮出题，并禁止题库缺失时临时编题
+  - 新增 quiz 结果报告模板
+  - 精简 `self-assessment` 主 skill，把 Deep Assessment 轮次、输出模板和按主题建议拆到 `references/`
+
+### 中文 fork 处理
+
+- 将 `/lesson-quiz` 主流程本土化为中文说明，保留 `SKILL.md` frontmatter key、CLI flags、路径和 slash command 名称原文
+- 补齐中文题库中每个 lesson 的 Q9 / Q10，使固定 10 题流程有完整数据源
+- 新增中文化的 `results-template.md`、`deep-assessment-rounds.md`、`output-templates.md`、`topic-recommendations.md`
+- 在 `self-assessment` 中加入按需读取 reference 的说明，减少主说明上下文负担
+- 不引入上游英文根 README，不改变中文首页结构
+- 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
+
 ## 中文版同步 — 2026-07-02
 
 ### 上游审阅
@@ -493,7 +512,7 @@
 
 - 新增自适应学习路径、自测和课后测验相关 skills
   - `/self-assessment`：对 10 个能力域做交互式自测并给出个性化学习路径
-  - `/lesson-quiz [lesson]`：针对单个模块做 8-10 题知识检查
+  - `/lesson-quiz [lesson]`：针对单个模块做交互式知识检查
 
 ### 问题修复
 

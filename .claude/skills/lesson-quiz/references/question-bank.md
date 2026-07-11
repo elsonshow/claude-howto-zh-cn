@@ -1,6 +1,6 @@
 # 课程测验题库（Lesson Quiz Question Bank）
 
-每个 lesson 预置 8 道题。每题都包含：
+每个 lesson 预置 10 道题。每题都包含：
 
 - `category`
 - `question`
@@ -77,6 +77,22 @@
 - **Explanation**: `/pr` 用于在发 PR 前整理改动、跑测试、生成摘要。
 - **Review**: 本目录里的示例命令
 
+### Q9
+- **Category**: practical
+- **Question**: 你想限制某个 skill 能使用哪些工具，应该在 frontmatter 里加哪个字段？
+- **Options**: A) `tools: [Read, Grep]` | B) `allowed-tools: [Read, Grep]` | C) `permissions: [Read, Grep]` | D) `restrict-tools: [Read, Grep]`
+- **Correct**: B
+- **Explanation**: `SKILL.md` frontmatter 里的 `allowed-tools` 用来限制这个 command / skill 可以调用的工具范围。
+- **Review**: Frontmatter fields reference
+
+### Q10
+- **Category**: conceptual
+- **Question**: skill 里的 `@file` 语法主要用来做什么？
+- **Options**: A) 导入另一个 skill | B) 引用文件并把文件内容带入 prompt | C) 创建 symlink | D) 设置文件权限
+- **Correct**: B
+- **Explanation**: `@path/to/file` 会把目标文件内容纳入 prompt，适合按需引入模板、上下文或参考资料。
+- **Review**: File references section
+
 ---
 
 ## Lesson 02：Memory（记忆）
@@ -144,6 +160,22 @@
 - **Correct**: B
 - **Explanation**: 对中国用户和 Windows 用户来说，路径与 shell 差异是高频踩坑点。
 - **Review**: 中国用户特别注意
+
+### Q9
+- **Category**: conceptual
+- **Question**: 低优先级 memory 层级能覆盖高优先级层级里的规则吗？
+- **Options**: A) 可以，最新规则永远优先 | B) 不可以，高优先级层级始终优先 | C) 可以，只要低层级使用 `!important` | D) 取决于规则类型
+- **Correct**: B
+- **Explanation**: memory 优先级从 Managed Policy 等高层级向下生效，低层级（例如 Auto Memory）不能覆盖高层级规则。
+- **Review**: Memory hierarchy section
+
+### Q10
+- **Category**: practical
+- **Question**: 你同时跨两个仓库工作，希望 Claude 加载两个仓库里的 `CLAUDE.md`，应该用哪个 flag？
+- **Options**: A) `--multi-repo` | B) `--add-dir /path/to/other` | C) `--include /path/to/other` | D) `--merge-context /path/to/other`
+- **Correct**: B
+- **Explanation**: `--add-dir` 会加载额外目录中的 `CLAUDE.md`，适合多仓库上下文。
+- **Review**: Additional directories section
 
 ---
 
@@ -213,6 +245,22 @@
 - **Explanation**: 这能显著减少中国用户和 Windows 用户的实际踩坑。
 - **Review**: 中国用户特别注意
 
+### Q9
+- **Category**: conceptual
+- **Question**: Claude 查找 skills 时的优先级顺序是什么？
+- **Options**: A) User > Project > Enterprise | B) Enterprise > Personal > Project（plugin skill 使用 namespace） | C) Project > User > Enterprise | D) 按字母顺序
+- **Correct**: B
+- **Explanation**: skill 优先级是 Enterprise > Personal > Project；plugin skill 会带 namespace，避免和普通 skill 名称冲突。
+- **Review**: Skill types and locations section
+
+### Q10
+- **Category**: practical
+- **Question**: 如果你想阻止 Claude 自动调用某个 skill，但仍允许用户手动使用，应该怎么做？
+- **Options**: A) 设置 `user-invocable: false` | B) 设置 `disable-model-invocation: true` | C) 删除 `description` 字段 | D) 设置 `auto-invoke: false`
+- **Correct**: B
+- **Explanation**: `disable-model-invocation: true` 会阻止模型自动触发，但保留用户通过 `/` 菜单手动调用的能力。
+- **Review**: Controlling invocation section
+
 ---
 
 ## Lesson 04：Subagents（子代理）
@@ -280,6 +328,22 @@
 - **Correct**: B
 - **Explanation**: 路径、shell 语法和命令兼容性都会受运行环境影响。
 - **Review**: 中国用户特别注意
+
+### Q9
+- **Category**: conceptual
+- **Question**: subagent 支持哪些 `permissionMode` 值？
+- **Options**: A) 旧式权限词：read, write, admin | B) `default`、`acceptEdits`、`bypassPermissions`、`plan`、`dontAsk`、`auto` | C) 安全等级词：safe, normal, dangerous | D) 访问范围词：restricted, standard, elevated
+- **Correct**: B
+- **Explanation**: subagent 支持 `default`、`acceptEdits`、`bypassPermissions`、`plan`、`dontAsk`、`auto`；它们分别控制提示、自动接受编辑、跳过检查、只读计划、默认拒绝和自动分类。
+- **Review**: Configuration fields section
+
+### Q10
+- **Category**: practical
+- **Question**: 如果某个 subagent 上次运行返回了 `agentId`，要怎样继续这个 subagent？
+- **Options**: A) 使用 `/resume agent-id` | B) 调用 Task tool 时传入带 `agentId` 的 `resume` 参数 | C) 使用 `claude -r agent-id` | D) subagent 不能继续
+- **Correct**: B
+- **Explanation**: 可恢复的 subagent 通过 Task tool 的 `resume` 参数带上之前返回的 `agentId`，从而保留上下文继续执行。
+- **Review**: Resumable agents section
 
 ---
 
@@ -349,6 +413,22 @@
 - **Explanation**: Windows shell 兼容性是 MCP 配置中非常常见的差异点。
 - **Review**: 中国用户特别注意
 
+### Q9
+- **Category**: conceptual
+- **Question**: managed config 里 `allowedMcpServers` 和 `deniedMcpServers` 同时匹配一个 server 时，谁优先？
+- **Options**: A) allow 规则优先 | B) deny 规则优先 | C) 最后配置的规则优先 | D) 两者独立生效
+- **Correct**: B
+- **Explanation**: 在 managed MCP configuration 中，deny rules 始终优先于 allow rules。
+- **Review**: Managed MCP Configuration section
+
+### Q10
+- **Category**: practical
+- **Question**: 在对话里引用 MCP resource 应该使用什么语法？
+- **Options**: A) `/mcp resource-name` | B) `@server-name:protocol://resource/path` mention 语法 | C) `mcp.get("resource")` | D) resources 会自动加载
+- **Correct**: B
+- **Explanation**: MCP resources 通过 `@server-name:protocol://resource/path` 这类 mention 语法在对话中访问。
+- **Review**: MCP Resources section
+
 ---
 
 ## Lesson 06：Hooks（钩子）
@@ -416,6 +496,22 @@
 - **Correct**: A
 - **Explanation**: PowerShell、Git Bash、WSL 的差异会直接影响脚本兼容性。
 - **Review**: 中国用户特别注意
+
+### Q9
+- **Category**: conceptual
+- **Question**: Claude Code 一共支持多少种 hook events？
+- **Options**: A) 10 | B) 16 | C) 25 | D) 30
+- **Correct**: C
+- **Explanation**: Claude Code 支持 25 种 hook events：PreToolUse、PostToolUse、PostToolUseFailure、UserPromptSubmit、Stop、StopFailure、SubagentStop、SubagentStart、PermissionRequest、Notification、PreCompact、PostCompact、SessionStart、SessionEnd、WorktreeCreate、WorktreeRemove、ConfigChange、CwdChanged、FileChanged、TeammateIdle、TaskCompleted、TaskCreated、Elicitation、ElicitationResult、InstructionsLoaded。
+- **Review**: Hook events table
+
+### Q10
+- **Category**: practical
+- **Question**: 如果你想排查某个 hook 为什么没有触发，最佳做法是什么？
+- **Options**: A) 在 hook 脚本里加 print | B) 使用 `--debug` flag 和 `Ctrl+O` verbose mode | C) 查看系统日志 | D) hooks 没有调试工具
+- **Correct**: B
+- **Explanation**: `--debug` 和 `Ctrl+O` verbose mode 会展示 hook 执行细节，包括哪些 hook 被触发、输入和输出是什么。
+- **Review**: Debugging section
 
 ---
 
@@ -485,6 +581,22 @@
 - **Explanation**: 这直接决定中国用户能不能顺利安装和使用。
 - **Review**: 中国用户特别注意
 
+### Q9
+- **Category**: conceptual
+- **Question**: plugin 相比 standalone skills / hooks / MCP 的主要优势是什么？
+- **Options**: A) plugin 更快 | B) 单命令安装、可版本化、可通过 marketplace 分发，并能把多组件打包在一起 | C) plugin 权限更高 | D) plugin 一定离线可用
+- **Correct**: B
+- **Explanation**: plugin 可以把多个组件打包成一个可安装、可版本化、可更新的方案，比手工配置 standalone components 更适合团队分发。
+- **Review**: Standalone vs Plugin comparison section
+
+### Q10
+- **Category**: practical
+- **Question**: plugin 目录里的 hooks 配置通常放在哪里？
+- **Options**: A) `.claude-plugin/hooks.json` | B) `hooks/hooks.json` | C) `plugin.json` 的 hooks section | D) `.claude/settings.json`
+- **Correct**: B
+- **Explanation**: plugin hooks 通常配置在 plugin 目录结构里的 `hooks/hooks.json`。
+- **Review**: Plugin hooks section
+
 ---
 
 ## Lesson 08：Checkpoints（检查点）
@@ -552,6 +664,22 @@
 - **Correct**: A
 - **Explanation**: 高风险或多路线任务最能体现 checkpoint 的价值。
 - **Review**: 常见使用场景
+
+### Q9
+- **Category**: conceptual
+- **Question**: checkpoints 可以替代 git commit 吗？
+- **Options**: A) 可以，它更强大 | B) 不可以，它们互补：checkpoints 是 session-scoped 且会过期，git 是永久且可共享的记录 | C) 小项目可以完全替代 | D) 只有单人开发时可以
+- **Correct**: B
+- **Explanation**: checkpoints 临时、按 session 生效且不能共享；git commits 才是长期、可审计、可协作的记录。实际工作里两者应该配合使用。
+- **Review**: Integration with git section
+
+### Q10
+- **Category**: practical
+- **Question**: 如果你想比较两个不同实现方案，推荐的 checkpoint workflow 是什么？
+- **Options**: A) 开两个完全独立的 session | B) 在方案 A 前打 checkpoint，尝试 A，rewind 回去，再尝试 B，最后比较结果 | C) 只能用 git branch | D) 没有合适办法
+- **Correct**: B
+- **Explanation**: 常见 branching strategy 是在干净状态打 checkpoint，尝试方案 A 并记录结果，再 rewind 回同一 checkpoint 试方案 B。
+- **Review**: Workflow patterns section
 
 ---
 
@@ -621,6 +749,22 @@
 - **Explanation**: 这是最容易直接产生价值的一条主线。
 - **Review**: 最该先掌握哪几个
 
+### Q9
+- **Category**: conceptual
+- **Question**: `dontAsk` 和 `bypassPermissions` 两种模式有什么区别？
+- **Options**: A) 它们完全一样 | B) `dontAsk` 会自动拒绝未预先批准的请求；`bypassPermissions` 会跳过所有权限检查 | C) `dontAsk` 只用于文件，`bypassPermissions` 只用于命令 | D) `bypassPermissions` 更安全
+- **Correct**: B
+- **Explanation**: `dontAsk` 默认拒绝不匹配预批准规则的权限请求；`bypassPermissions` 则跳过安全检查，日常使用风险更高。
+- **Review**: Permission Modes section
+
+### Q10
+- **Category**: practical
+- **Question**: 如何把当前 CLI session 交给 desktop app 继续查看？
+- **Options**: A) 使用 `/export` command | B) 使用 `/desktop` command | C) 复制 session ID 到 app | D) CLI 和 desktop 之间不能交接 session
+- **Correct**: B
+- **Explanation**: `/desktop` 会把当前 CLI session 交给原生 desktop app，便于查看视觉 diff 或管理多个 session。
+- **Review**: Desktop App section
+
 ---
 
 ## Lesson 10：CLI（命令行）
@@ -688,3 +832,19 @@
 - **Correct**: A
 - **Explanation**: 这直接关系到命令兼容性与路径行为。
 - **Review**: 中国用户特别注意
+
+### Q9
+- **Category**: conceptual
+- **Question**: 用户已登录时，`claude auth status` 返回什么 exit code？
+- **Options**: A) 1 | B) 0 | C) 200 | D) 它不返回 exit code
+- **Correct**: B
+- **Explanation**: `claude auth status` 在已登录时返回 0，未登录时返回 1，因此适合脚本或 CI/CD 中做认证检查。
+- **Review**: CLI commands table
+
+### Q10
+- **Category**: practical
+- **Question**: 如果要用 Claude 批量处理多个文件，哪种方式更合适？
+- **Options**: A) `claude --batch *.md` | B) 使用 shell for loop：`for file in *.md; do claude -p "summarize: $(cat $file)" > ${file%.md}.json; done` | C) `claude -p --files *.md "summarize all"` | D) Claude 不支持批处理
+- **Correct**: B
+- **Explanation**: 批处理通常用 shell loop 配合 print mode，一个文件一次独立调用，并可输出结构化结果。
+- **Review**: Batch processing section

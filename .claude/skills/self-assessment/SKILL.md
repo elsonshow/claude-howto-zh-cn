@@ -8,6 +8,16 @@ description: Claude Code 中文自测与学习路径顾问。用于评估当前�
 
 这是一个完整的 Claude Code 交互式自测 skill，用来评估用户在 10 个能力域上的熟练度，并据此生成个性化学习路径。
 
+## 参考文件
+
+为节省上下文，较长的题目轮次、输出模板和按主题建议拆到了 `references/`：
+
+- `references/deep-assessment-rounds.md`：Deep Assessment 的 5 轮题目与评分映射
+- `references/output-templates.md`：Quick / Deep 结果和学习路径模板
+- `references/topic-recommendations.md`：按主题、按得分给出的具体学习建议
+
+执行时先按本文件确定流程；需要展示题目、生成最终报告或补齐主题建议时，再读取对应 reference。不要翻译或改名其中的路径、CLI flags、frontmatter key、JSON/YAML key。
+
 ## 使用说明
 
 ### Step 1: 先让用户选择评估模式
@@ -59,6 +69,8 @@ Options:
 ### Step 2B：Deep Assessment（深度评估）
 
 Deep 模式共 5 轮，每轮 1 个多选问题，每题最多 4 个选项，每轮覆盖 2 个主题。
+
+完整题面也见 `references/deep-assessment-rounds.md`。如果本文件与 reference 有冲突，以本文件里的评分规则为准。
 
 #### 第 1 轮：Slash Commands 与 Memory
 
@@ -140,6 +152,8 @@ Scoring:
 
 输出必须包含：
 
+可直接使用 `references/output-templates.md` 中的 Quick Assessment 结果模板。
+
 ```markdown
 ## Claude Code 自测结果
 
@@ -176,6 +190,8 @@ Scoring:
 ### Step 3B: Deep 模式结果输出
 
 Deep 模式要输出完整结果：
+
+可直接使用 `references/output-templates.md` 中的 Deep Assessment 结果模板。
 
 ```markdown
 ## Claude Code 自测结果
@@ -220,6 +236,8 @@ Deep 模式总体等级：
 ### Step 4: 生成个性化学习路径
 
 不要简单重复通用路线，要按短板动态生成。
+
+具体主题建议优先参考 `references/topic-recommendations.md`，但要根据用户实际勾选结果裁剪，不要把所有主题机械列出来。
 
 规则：
 
