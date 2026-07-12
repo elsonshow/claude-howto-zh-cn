@@ -110,7 +110,7 @@ model: inherit
 
 ---
 
-## frontmatter 里这些字段不要翻
+## 常用 frontmatter 字段
 
 - `name`
 - `description`
@@ -120,8 +120,14 @@ model: inherit
 - `permissionMode`
 - `skills`
 - `mcpServers`
+- `background`
+- `memory`
+- `isolation`
+- `maxTurns`
 
 如果你是做中文本地化，这些字段要保真；可以翻译的是下面真正给人看的 system prompt 正文。
+
+`background: true` 的含义也发生了变化：从 `v2.1.198+` 起，subagents 默认就在后台运行；显式写 `true` 是强制它始终后台运行，并阻止 inline execution。
 
 ---
 
@@ -143,6 +149,8 @@ model: inherit
 
 ## 如何安装
 
+`v2.1.198+` 起，`/agents` 不再打开交互式创建向导。推荐直接告诉 Claude“创建一个负责安全审查的 subagent”，让它生成 `.claude/agents/<name>.md`；也可以手动编辑这个路径中的 Markdown 文件。
+
 ```bash
 mkdir -p .claude/agents
 cp 04-subagents/*.md .claude/agents/
@@ -153,6 +161,12 @@ cp 04-subagents/*.md .claude/agents/
 ```bash
 cp 04-subagents/code-reviewer.md .claude/agents/
 ```
+
+安装后可以用 `ls .claude/agents/` 检查文件，也可以直接询问 Claude 当前 session 可用哪些 subagents。
+
+## 恢复已有 subagent
+
+可恢复的 subagent 会返回 `agentId`。后续调用 Task tool 时，把这个值传给 `resume` 参数，就能保留原上下文继续执行；不要把它误写成主 session 的 `claude -r`。
 
 ---
 
@@ -214,6 +228,17 @@ cp 04-subagents/code-reviewer.md .claude/agents/
 这对复杂任务有用，比如一个 `implementation-agent` 再把安全检查交给 `secure-reviewer`，把测试补齐交给 `test-engineer`。但也要控制边界，否则多层委派很容易让成本和上下文流向变得难追。
 
 如果你要限制某个 subagent 能 spawn 哪些子 agent，使用 `Agent(agent_type)` 这种权限限制语法。这里的 `Agent(agent_type)` 是可执行标识，不要翻译成中文字段。
+
+### `v2.1.198+` 的默认后台运行和模型继承
+
+- subagents 默认在后台运行，主对话可以继续工作，完成后会收到通知
+- built-in `Explore` 不再固定使用 Haiku，而是继承当前 session 模型，上限为 Opus；想控制成本可在自定义 agent 中写 `model: haiku`
+- subagents 和 context compaction 会继承当前 session 的 extended thinking 设置，没有单独的 per-subagent thinking 字段
+
+另外还有两个控制入口：
+
+- `CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS=1`：禁用 built-in `Explore` 和 `Plan` agents
+- `--append-subagent-system-prompt "<text>"`：在非交互 / print mode 中给每个 subagent 的 system prompt 追加内容（`v2.1.205+`）
 
 ### 推荐拆
 

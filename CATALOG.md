@@ -89,14 +89,14 @@ permission modes 决定 Claude Code 在使用工具时需要多大授权。
 
 | 模式 | 说明 | 适合什么时候 |
 |------|------|--------------|
-| `default` | 大多数风险操作前询问 | 日常交互 |
+| `manual` | 大多数风险操作前询问 | 日常交互；`v2.1.200+` 从 `default` 改名，旧名仍是 alias |
 | `acceptEdits` | 自动接受文件编辑，其他操作仍可能询问 | 较信任的本地编辑 |
 | `plan` | 只读分析，不做修改 | 方案设计、代码阅读 |
 | `dontAsk` | 跳过需要额外授权的动作 | 非交互脚本 |
 | `bypassPermissions` | 跳过权限检查 | 可信、受控的自动化环境 |
 | `auto` | 根据分类器自动决定 | 高自动化流程（需要谨慎） |
 
-中国用户在刚上手时，优先理解 `default`、`acceptEdits`、`plan`、`dontAsk` 这四个就足够了。
+中国用户在刚上手时，优先理解 `manual`、`acceptEdits`、`plan`、`dontAsk` 这四个就足够了。旧教程里的 `default` 仍能执行，但新文档优先写 `manual`。
 
 从 `v2.1.183+` 起，Auto Mode 还带有内置 intent-based protection，会默认拦住 `git reset --hard`、`git clean -fd`、`git commit --amend`、`terraform destroy` 这类高风险动作，除非你在当前 session 明确要求。
 
@@ -385,6 +385,15 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `claude agents --json`
 - `/model` 默认保存为后续 session 默认值；按 `s` 才只作用于当前 session
 - Opus 4.8 默认 effort 是 `high`
+- Sonnet 5（`claude-sonnet-5`）与 1M context window
+- `manual` permission mode（原 `default`，旧名仍可用）
+- `/dataviz` bundled skill
+- `${CLAUDE_PROJECT_DIR}` 与一次调用叠加多个 skills
+- subagents 默认后台运行、Explore 模型继承和 `--append-subagent-system-prompt`
+- MCP `roots/list`、`Pending approval` trust gate
+- `Summarize up to here`
+- `askUserQuestionTimeout`、`enableArtifact`
+- `CLAUDE_ENABLE_STREAM_WATCHDOG`
 - `claude agents` 里用 `Ctrl+T` 固定后台 session
 - `/usage` 按 skills、subagents、plugins、MCP server 等类别拆分成本
 - VSCode Account & usage 视图显示 cache miss、long-context cost、subagents 以及 per-skill / per-agent / per-plugin / per-MCP 归因

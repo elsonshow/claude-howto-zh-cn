@@ -20,12 +20,14 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-07-11
-- **本轮参考范围**：`ce10c70` -> `0f3fe1d`
+- **最近同步日期**：2026-07-12
+- **本轮参考范围**：`0f3fe1d` -> `a645ffe`
 - **本次同步内容**：
-  - 同步上游 lesson-quiz 与 self-assessment skill 文档更新
-  - 将 `/lesson-quiz` 升级为每课固定 10 题，并补齐中文题库中的 Q9 / Q10
-  - 新增中文化的 quiz 结果模板、Deep Assessment 题目轮次、输出模板和按主题学习建议
+  - 同步 Claude Code `v2.1.206`：Sonnet 5、`manual` permission mode、`/dataviz`、skill 叠加、subagent 默认后台运行、MCP `roots/list`、双向 checkpoint summarize 等
+  - 补齐 hooks、plugins、advanced settings 和 CLI 新字段，同时保留所有可执行标识原文
+  - 复查并修正上一轮课程评估内容：Lesson Quiz 统一为 5 轮，Deep Assessment 满分统一为 19，Hooks 题目更新为 30 个事件
+  - 将题目、结果模板和学习建议改成中文主线，并让 Q9 / Q10 的回看指针匹配真实中文章节
+  - 修复 EPUB 构建时把已嵌入 Mermaid 资源误报为本地缺图的问题，并增加回归测试
   - 保留 `SKILL.md` frontmatter key、CLI flags、路径、slash command 和 skill / plugin / subagent 名称原文
   - 继续保持根目录中文主线，不把上游英文 README 覆盖到中文首页
 

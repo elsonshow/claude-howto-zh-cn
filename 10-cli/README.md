@@ -31,6 +31,10 @@ Claude Code 的 CLI 是最核心的使用入口。
 
 如果你是新手，先熟悉 `claude`、`claude -p`、`claude -c`、`claude -r` 就已经很有价值。
 
+## 登录状态与 exit code
+
+`claude auth status` 不只给人看，也适合脚本判断认证状态：已登录时 exit code 为 `0`，未登录时为 `1`。在 CI/CD 中先检查这个返回值，可以比等到正式请求失败更早发现凭证问题。
+
 ---
 
 ## 交互模式 vs print mode
@@ -123,6 +127,18 @@ claude -r "auth-refactor" "finish this task"
 claude -p "Run tests and summarize failures" --permission-mode dontAsk
 ```
 
+### 批量处理文件
+
+批处理通常用 shell loop 配合 print mode，每个文件独立调用一次：
+
+```bash
+for file in *.md; do
+  claude -p "summarize: $(cat "$file")" > "${file%.md}.json"
+done
+```
+
+文件名、引号和输出路径要按当前 shell 调整；不要假设存在一个通用的 `--batch *.md` flag。
+
 ---
 
 ## 模型与配置
@@ -134,6 +150,7 @@ CLI 常见会和这些配置一起使用：
 - `--effort`
 - `--settings`
 - `--append-system-prompt`
+- `--append-subagent-system-prompt`
 
 示例：
 
@@ -141,13 +158,17 @@ CLI 常见会和这些配置一起使用：
 claude --model opus "design a caching strategy"
 claude -p --fallback-model sonnet "summarize this diff"
 claude --append-system-prompt "Always explain tradeoffs" "review this plan"
+claude -p --append-subagent-system-prompt "Cite sources" "review this project"
 ```
 
 如果你要长期使用 Claude Code，把模型、权限、输出格式这些参数理解清楚，会直接影响效率和成本。
 
 ### 这轮 CLI / 平台更新里值得知道的变化
 
+- **Sonnet 5**（`claude-sonnet-5`）提供原生 1M context window，并按订阅档位成为 Pro / Team Standard / Enterprise seats 的默认模型；Max、Team Premium、Enterprise pay-as-you-go 和 API 仍默认使用 Opus 4.8
 - Opus 主线已经切到 **Opus 4.8**
+- 组织管理员设置默认模型时，`/model` 会标注 `Org default`（或 `Role default`，`v2.1.196+`）
+- `--append-subagent-system-prompt` 可在非交互 / print mode 中给每个 subagent 的 system prompt 追加内容（`v2.1.205+`）
 - Opus 4.8 默认 effort 是 `high`；`xhigh` 适用于 Opus 4.8 / 4.7，`max` 适用于 Opus 4.8 / 4.7 / 4.6 和 Sonnet 4.6
 - `/model` 现在默认保存为后续 session 默认值；如果只想作用于当前 session，选中后按 `s`
 - Fast Mode 默认切到 Opus 4.8；`CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` 在 `v2.1.160` 起已经是 no-op
@@ -440,6 +461,7 @@ claude ultrareview 1234 --json > review.json
 | `CLAUDE_CLIENT_PRESENCE_FILE` | 指向一个本机 marker file，人在电脑前时抑制 mobile push notifications；变量名不是 `CLAUDE_CODE_CLIENT_PRESENCE_FILE` |
 | `CLAUDE_CODE_MAX_RETRIES` | API retry 最大次数；`v2.1.186+` 起上限为 15 |
 | `CLAUDE_CODE_RETRY_WATCHDOG` | 面向无人值守 session 的 retry 控制，比盲目提高 `CLAUDE_CODE_MAX_RETRIES` 更稳 |
+| `CLAUDE_ENABLE_STREAM_WATCHDOG` | streaming idle watchdog 默认对所有 provider 开启；连续 5 分钟没有 stream event 会 abort / retry，设为 `0` 可禁用（`v2.1.196+`） |
 | `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` | 覆盖 remote MCP tool 5 分钟无响应 abort 的默认值 |
 | `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` | 设为 `1` 后禁用 fullscreen mode 里的 mouse click / drag / hover；wheel scroll 仍可用（`v2.1.195+`） |
 

@@ -54,6 +54,7 @@ import zlib
 from dataclasses import dataclass, field
 from io import BytesIO
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import httpx
 import markdown
@@ -66,6 +67,9 @@ from tenacity import (
     stop_after_attempt,
     wait_exponential,
 )
+
+if TYPE_CHECKING:
+    from bs4.element import Tag
 
 # =============================================================================
 # Custom Exceptions
@@ -845,6 +849,12 @@ def handle_svg_image(src: str, alt: str, logger: logging.Logger) -> str:
     return placeholder
 
 
+def get_html_attribute(tag: Tag, name: str, default: str = "") -> str:
+    """Return a single-valued HTML attribute without leaking list values."""
+    value = tag.get(name)
+    return value if isinstance(value, str) else default
+
+
 def embed_local_raster_images(
     soup: BeautifulSoup,
     current_file: Path,
@@ -855,10 +865,15 @@ def embed_local_raster_images(
 ) -> None:
     """Embed local PNG/JPG images into the EPUB and rewrite their src."""
     for img in soup.find_all("img"):
-        src = img.get("src", "")
+        src = get_html_attribute(img, "src")
         if not src or src.startswith(("http://", "https://", "data:")):
             continue
         if src.endswith(".svg"):
+            continue
+        if (
+            src.startswith("images/")
+            and src.removeprefix("images/") in state.mermaid_added_to_book
+        ):
             continue
 
         source_path = (current_file.parent / src).resolve()
@@ -939,7 +954,7 @@ def convert_internal_links(
     soup = BeautifulSoup(html_content, "html.parser")
 
     for link in soup.find_all("a"):
-        href = link.get("href", "")
+        href = get_html_attribute(link, "href")
         if not href or href.startswith(("http://", "https://", "mailto:", "#")):
             continue
 
@@ -1014,9 +1029,9 @@ def md_to_html(
     # Clean up any SVG references (they won't work in EPUB)
     soup = BeautifulSoup(html_content, "html.parser")
     for img in soup.find_all("img"):
-        src = img.get("src", "")
+        src = get_html_attribute(img, "src")
         if src.endswith(".svg"):
-            alt = img.get("alt", "Image")
+            alt = get_html_attribute(img, "alt", "Image")
             placeholder = handle_svg_image(src, alt, logger)
             img.replace_with(BeautifulSoup(placeholder, "html.parser"))
 

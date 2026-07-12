@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from validate_localization import (
+    validate_curriculum_consistency,
     validate_data_files,
     validate_frontmatter,
     validate_markdown_links,
@@ -12,6 +13,8 @@ from validate_localization import (
     validate_shell_scripts,
     validate_untranslated_english,
 )
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_validate_markdown_links_detects_missing_file(tmp_path: Path) -> None:
@@ -59,10 +62,7 @@ def test_validate_shell_scripts_detects_syntax_error(tmp_path: Path) -> None:
 def test_validate_protected_snippets_detects_missing_tokens(tmp_path: Path) -> None:
     files = {
         "README.md": (
-            "## Table of Contents\n"
-            "## Contributing\n"
-            "## License\n"
-            "UPSTREAM.md\n"
+            "## Table of Contents\n## Contributing\n## License\nUPSTREAM.md\n"
         ),
         "01-slash-commands/pr.md": "allowed-tools:\nBash(git add:*)\n",
         "03-skills/code-review-specialist/SKILL.md": "name: code-review-specialist\n## 审查模板\n",
@@ -125,5 +125,11 @@ def test_validate_untranslated_english_allows_required_root_readme_headings(
     )
 
     errors = validate_untranslated_english(tmp_path)
+
+    assert errors == []
+
+
+def test_current_curriculum_is_semantically_consistent() -> None:
+    errors = validate_curriculum_consistency(REPO_ROOT)
 
     assert errors == []

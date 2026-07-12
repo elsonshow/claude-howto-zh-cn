@@ -1,9 +1,9 @@
 ---
 name: lesson-quiz
-version: 1.1.0
-description: 针对单个 Claude Code tutorial lesson（01-10）进行 10 题互动测验，评分并标出薄弱点。Use when asked to "quiz me on hooks", "test my knowledge of lesson 3", "lesson quiz", "practice quiz for MCP", "do I understand skills", or similar Chinese requests.
+description: 针对单个 Claude Code tutorial lesson（01-10）进行 10 题互动测验，评分并标出薄弱点。用于用户明确要求单课测验、lesson quiz 或 MCP / hooks / skills 等主题练习；不用于整套教程评估，也不用于只解释某个主题。
 effort: high
 metadata:
+  version: 1.1.0
   author: Luong NGUYEN
 ---
 
@@ -56,9 +56,9 @@ metadata:
 
 用 AskUserQuestion 询问用户当前是在：
 
-1. `Before (pre-test)`
-2. `During (progress check)`
-3. `After (mastery check)`
+1. `学前（pre-test）`
+2. `学习中（progress check）`
+3. `学后（mastery check）`
 
 不同 timing 会影响结果解读。
 
@@ -83,7 +83,7 @@ metadata:
 - `explanation`
 - `review`
 
-记录用户答案；每轮反馈不替代最终结果，所有 4 轮结束后仍要统一评分。
+记录用户答案；每轮反馈不替代最终结果，所有 5 轮结束后仍要统一评分。
 
 ---
 
@@ -127,10 +127,10 @@ metadata:
 
 最后再用 AskUserQuestion 让用户选择：
 
-1. `Retake this quiz`
-2. `Quiz another lesson`
-3. `Explain a topic I missed`
-4. `Done`
+1. `重新测本课`
+2. `测另一课`
+3. `解释我没掌握的主题`
+4. `结束`
 
 如果选第三项，先问错题编号，再读取该 lesson README 的相关部分，用中文解释并给例子。
 
@@ -144,7 +144,7 @@ metadata:
 - 已按 5 轮、每轮 2 题展示，并对每题选项随机打乱
 - 已按打乱后的真实正确位置计分，最终分数为 0-10 的整数
 - 最终报告包含 `Score: N/10`、10 行单题结果、每道错题的正确答案与复习建议
-- 已提供 `Retake this quiz` / `Quiz another lesson` / `Explain a topic I missed` / `Done` 后续选择
+- 已提供“重新测本课 / 测另一课 / 解释我没掌握的主题 / 结束”后续选择
 
 ## 边界情况
 

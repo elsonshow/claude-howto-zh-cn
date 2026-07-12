@@ -471,7 +471,7 @@ permission modes 决定 Claude 在本地能做什么，以及什么时候会请�
 
 ### 常见模式
 
-- `default`
+- `manual`（`v2.1.200+` 的交互默认名称；`default` 仍是可接受的 alias）
 - `acceptEdits`
 - `plan`
 - `dontAsk`
@@ -482,12 +482,14 @@ permission modes 决定 Claude 在本地能做什么，以及什么时候会请�
 
 | 模式 | 适合什么 |
 |------|----------|
-| `default` | 日常安全使用 |
+| `manual` | 日常安全使用；读取文件不提示，其他操作按规则询问 |
 | `acceptEdits` | 希望编辑流畅一些 |
 | `plan` | 只想分析，不想改 |
 | `dontAsk` | 非交互脚本 |
 | `bypassPermissions` | 可信环境中的强自动化 |
 | `auto` | 有更高自动化诉求、且明确接受风险 |
+
+从 `v2.1.200+` 起，CLI、`--help`、VS Code 和 JetBrains 中原来的交互 `default` 模式统一显示为 `manual`。兼容性没有被切断：`--permission-mode manual` 与 `--permission-mode default` 都能用，settings 中的 `"defaultMode": "manual"` 与 `"defaultMode": "default"` 也都能用。`v2.1.203+` 起，处于 Manual 时 footer 会显示灰色 `⏸` badge。
 
 从 `v2.1.160` 起，即使处在 `acceptEdits`，Claude Code 在写入 shell 启动文件和可能执行命令的构建配置前仍会提示确认。例如 `.zshenv`、`.zlogin`、`.bash_login`、`~/.config/git/`、`.npmrc`、`.yarnrc*`、`bunfig.toml`、`.bazelrc`、`.pre-commit-config.yaml`、`.devcontainer/`。
 
@@ -785,6 +787,15 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 - 环境变量
 
 如果你想长期高效使用 Claude Code，这一步绕不过去。
+
+### 两个新增的个人设置
+
+| setting | 用途 |
+|---------|------|
+| `askUserQuestionTimeout` | 给无人回答的 `AskUserQuestion` 设置空闲超时并自动继续。`v2.1.200+` 默认不再自动继续；只有显式配置这个 key 才恢复定时行为 |
+| `enableArtifact` | 按用户启用或禁用 Artifact tool（`v2.1.196+`） |
+
+这两个 key 可以放在 `~/.claude/settings.json` 或项目 settings 中，key 名不要翻译。
 
 ### `/config` 可以直接写 `key=value`
 

@@ -24,7 +24,7 @@ description: Claude Code 中文自测与学习路径顾问。用于评估当前�
 
 使用 AskUserQuestion 提供两个选项：
 
-- **Quick Assessment**：8 个问题，约 2 分钟，用于快速判断 Beginner / Intermediate / Advanced
+- **Quick Assessment**：用 2 道多选题检查 8 个能力项，约 2 分钟，用于快速判断 Beginner / Intermediate / Advanced
 - **Deep Assessment**：5 轮问题，约 5 分钟，用于分别评估 10 个主题的掌握情况
 
 如果用户选择 Quick Assessment，进入 Step 2A。  
@@ -36,25 +36,25 @@ description: Claude Code 中文自测与学习路径顾问。用于评估当前�
 
 使用两个多选问题完成快速自测，每个问题最多 4 个选项。
 
-**Question 1**（header: `Basics`）  
+**Question 1**（header: `基础`）
 Prompt:
-`Part 1/2: Which of these Claude Code skills do you already have?`
+`第 1/2 部分：下面哪些 Claude Code 基础能力你已经具备？`
 
 Options:
-1. `Start Claude Code and chat` — 我会运行 `claude` 并进入对话
-2. `Created/edited CLAUDE.md` — 我配置过项目或个人 memory
-3. `Used 3+ slash commands` — 例如 `/help`、`/compact`、`/model`
-4. `Created custom command/skill` — 写过 `SKILL.md` 或 `.claude/commands/`
+1. `启动 Claude Code 并对话` — 我会运行 `claude` 并进入对话
+2. `创建或编辑 CLAUDE.md` — 我配置过项目或个人 memory
+3. `使用过 3 个以上 slash commands` — 例如 `/help`、`/compact`、`/model`
+4. `创建过 command 或 skill` — 写过 `SKILL.md` 或 `.claude/commands/`
 
-**Question 2**（header: `Advanced`）  
+**Question 2**（header: `进阶`）
 Prompt:
-`Part 2/2: Which of these advanced skills do you have?`
+`第 2/2 部分：下面哪些 Claude Code 进阶能力你已经具备？`
 
 Options:
-1. `Configured an MCP server` — 配置过 GitHub、数据库或其他外部数据源
-2. `Set up hooks` — 配置过 `~/.claude/settings.json` 里的 hooks
-3. `Created/used subagents` — 使用过 `.claude/agents/`
-4. `Used print mode (claude -p)` — 用过非交互模式或 CI/CD 集成
+1. `配置过 MCP server` — 配置过 GitHub、数据库或其他外部数据源
+2. `设置过 hooks` — 配置过 `~/.claude/settings.json` 里的 hooks
+3. `创建或使用过 subagents` — 使用过 `.claude/agents/`
+4. `使用过 print mode（claude -p）` — 用过非交互模式或 CI/CD 集成
 
 **Quick 模式评分：**
 
@@ -74,15 +74,15 @@ Deep 模式共 5 轮，每轮 1 个多选问题，每题最多 4 个选项，每
 
 #### 第 1 轮：Slash Commands 与 Memory
 
-Header: `Commands`  
+Header: `命令`
 Prompt:
-`Which of these have you done? Select all that apply.`
+`下面哪些操作你做过？请选择所有符合的选项。`
 
 Options:
-1. `Created a custom slash command or skill` — 写过带 frontmatter 的 `SKILL.md` 或 `.claude/commands/` 文件
-2. `Used dynamic context in commands` — 用过 `$ARGUMENTS`、`$0`/`$1`、`!command`、`@file`
-3. `Set up project + personal memory` — 同时配置过项目级和个人级 `CLAUDE.md`
-4. `Used memory hierarchy features` — 理解层级优先级、用过 `.claude/rules/`、path-specific rules 或 `@import`
+1. `创建过 slash command 或 skill` — 写过带 frontmatter 的 `SKILL.md` 或 `.claude/commands/` 文件
+2. `在 command 中使用过动态上下文` — 用过 `$ARGUMENTS`、`$0`/`$1`、`!command`、`@file`
+3. `同时配置过项目和个人 memory` — 同时配置过项目级和个人级 `CLAUDE.md`
+4. `使用过 memory 层级功能` — 理解层级优先级、用过 `.claude/rules/`、path-specific rules 或 `@import`
 
 Scoring:
 - 1-2 映射到 Slash Commands（0-2）
@@ -90,13 +90,13 @@ Scoring:
 
 #### 第 2 轮：Skills 与 Hooks
 
-Header: `Automation`
+Header: `自动化`
 
 Options:
-1. `Installed and used an auto-invoked skill` — 使用过自动触发的 skill
-2. `Controlled skill invocation behavior` — 用过 `disable-model-invocation`、`user-invocable` 或 `context: fork`
-3. `Set up a PreToolUse or PostToolUse hook` — 配置过常见 hook
-4. `Used advanced hook features` — 用过 prompt hooks、component-scoped hooks、HTTP hooks、custom JSON output
+1. `安装并使用过自动触发的 skill` — 使用过会按 `description` 自动触发的 skill
+2. `控制过 skill 调用方式` — 用过 `disable-model-invocation`、`user-invocable` 或 `context: fork`
+3. `设置过 PreToolUse 或 PostToolUse hook` — 配置过常见 hook
+4. `使用过进阶 hook 功能` — 用过 prompt hooks、component-scoped hooks、HTTP hooks、custom JSON output
 
 Scoring:
 - 1-2 映射到 Skills（0-2）
@@ -104,13 +104,13 @@ Scoring:
 
 #### 第 3 轮：MCP 与 Subagents
 
-Header: `Integration`
+Header: `集成`
 
 Options:
-1. `Connected an MCP server and used its tools`
-2. `Used advanced MCP features` — project-scope `.mcp.json`、OAuth、Tool Search、`claude mcp serve`
-3. `Created or configured custom subagents`
-4. `Used advanced subagent features` — worktree 隔离、persistent memory、background tasks、agent allowlists、agent teams
+1. `连接过 MCP server 并使用其工具`
+2. `使用过进阶 MCP 功能` — project-scope `.mcp.json`、OAuth、Tool Search、`claude mcp serve`
+3. `创建或配置过自定义 subagents`
+4. `使用过进阶 subagent 功能` — worktree 隔离、persistent memory、background tasks、agent allowlists、agent teams
 
 Scoring:
 - 1-2 映射到 MCP（0-2）
@@ -118,13 +118,13 @@ Scoring:
 
 #### 第 4 轮：Checkpoints 与 Advanced Features
 
-Header: `Power User`
+Header: `高级`
 
 Options:
-1. `Used checkpoints for safe experimentation`
-2. `Used planning mode or extended thinking`
-3. `Configured permission modes`
-4. `Used remote/desktop/web features`
+1. `用 checkpoints 做过安全试验`
+2. `使用过 planning mode 或 extended thinking`
+3. `配置过 permission modes`
+4. `使用过 remote / desktop / web 功能`
 
 Scoring:
 - 1 映射到 Checkpoints（0-1）
@@ -132,13 +132,13 @@ Scoring:
 
 #### 第 5 轮：Plugins 与 CLI
 
-Header: `Mastery`
+Header: `综合`
 
 Options:
-1. `Installed or created a plugin`
-2. `Used plugin advanced features` — plugin hooks、plugin MCP、LSP、`--plugin-dir`
-3. `Used print mode in scripts or CI/CD`
-4. `Used advanced CLI features` — `-c/-r`、`--agents`、`--json-schema`、`--fallback-model`、`--from-pr`
+1. `安装或创建过 plugin`
+2. `使用过 plugin 进阶功能` — plugin hooks、plugin MCP、LSP、`--plugin-dir`
+3. `在脚本或 CI/CD 中使用过 print mode`
+4. `使用过进阶 CLI 功能` — `-c/-r`、`--agents`、`--json-schema`、`--fallback-model`、`--from-pr`
 
 Scoring:
 - 1-2 映射到 Plugins（0-2）
@@ -198,7 +198,7 @@ Deep 模式要输出完整结果：
 
 ### 整体等级：[Level 1 / Level 2 / Level 3]
 
-**总分：N/20**
+**总分：N/19**
 
 [一句鼓励性总结]
 
@@ -206,16 +206,16 @@ Deep 模式要输出完整结果：
 
 | 功能领域 | 得分 | 掌握程度 | 状态 |
 |-------------|-------|---------|--------|
-| Slash Commands | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Memory | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Skills | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Hooks | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| MCP | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Subagents | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Checkpoints | N/1 | None / Proficient（未掌握 / 熟练） | Learn / Mastered（学习 / 已掌握） |
-| Advanced Features | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Plugins | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| CLI | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
+| Slash Commands | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Memory | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Skills | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Hooks | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| MCP | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Subagents | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Checkpoints | N/1 | 未掌握 / 熟练（None / Proficient） | 学习 / 已掌握（Learn / Mastered） |
+| Advanced Features | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Plugins | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| CLI | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
 ```
 
 然后继续输出：
@@ -229,7 +229,7 @@ Deep 模式总体等级：
 
 - 0-6：Level 1
 - 7-13：Level 2
-- 14-20：Level 3
+- 14-19：Level 3
 
 ---
 
@@ -274,10 +274,10 @@ Deep 模式总体等级：
 
 结果给完后，再用 AskUserQuestion 让用户选择：
 
-1. `Start with my first gap`
-2. `Deep dive into a topic`
-3. `Set up a practice project`
-4. `Retake the assessment`
+1. `从第一个短板开始`
+2. `深入学习一个主题`
+3. `搭建练习项目`
+4. `重新评估`
 
 如果用户选第一项：直接进入第一个短板主题的学习建议。  
 如果用户选第二项：让用户选一个主题并解释。  

@@ -73,6 +73,12 @@ my-plugin/
 
 ---
 
+## plugin hooks 放在哪里
+
+plugin 自带的 hooks 通常放在 `hooks/hooks.json`，而不是 `.claude-plugin/hooks.json`，也不是把整个 hooks 配置直接塞进 `plugin.json`。hook 里的事件名、`matcher`、`type`、`command` 等 key 仍按 hooks 协议保留原样。
+
+---
+
 ## manifest 结构与高风险字段
 
 plugin manifest 采用 JSON 格式，位置是：
@@ -352,6 +358,14 @@ manifest 顶层可以加一个 `monitors` 字段，例如：
 - `blockedMarketplaces`
 - `hostPattern`
 - `pathPattern`
+
+marketplace entry 还支持这些可选字段：
+
+- `renames`：把旧 plugin `name` 映射到新名称；值为 `null` 时表示已移除（`v2.1.193+`）
+- `displayName`：只用于 UI 展示的易读名称，不参与查找（`v2.1.143+`）
+- `defaultEnabled`：设为 `false` 时，安装后默认禁用，等用户主动启用（`v2.1.154+`）
+
+`first-party-plugins` 和 `healthcare` 从 `v2.1.205+` 起是官方保留的 marketplace 名称，自定义 marketplace 不要占用。
 
 ### 2. `/plugin` marketplace 页面支持搜索
 

@@ -2,6 +2,29 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-07-12
+
+### 上游审阅
+
+- 核对上游范围：`0f3fe1d` → `a645ffe`
+- 上游这轮重点：
+  - 教程覆盖更新到 Claude Code `v2.1.206`，补充 Sonnet 5、`manual` permission mode 和 `/dataviz`
+  - skills 支持 `${CLAUDE_PROJECT_DIR}` 和一次调用叠加多个 skills
+  - subagents 默认后台运行，Explore 模型与 extended thinking 改为继承 session
+  - MCP 增加 `roots/list` 和未信任 workspace approval 规则
+  - hooks、plugin marketplace、checkpoints、settings 与 CLI 增加新字段和行为
+
+### 中文 fork 处理
+
+- 将 `v2.1.206` 变化写入中文教程、功能总表、速查卡、资源索引和概念总览
+- 修正上一轮 assessment 中的 5 轮 / 19 分 / 30 个 hook 事件等语义错误
+- 将用户可见题面、选项、结果模板和主题建议改为中文主线；保留协议 key、命令、路径和环境变量原文
+- 为每课 Q9 / Q10 补齐可匹配的中文回看章节，避免英文指针或不存在的标题
+- 扩展本地化校验，覆盖课程结构、跨文档事实和关键版本内容
+- 修复 EPUB 构建器重复查找已嵌入 Mermaid 图片造成的缺图误报，并新增回归测试
+- 不引入上游英文根 README，不改变 `Claude Code 中文全面上手指南` 默认入口
+- 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
+
 ## 中文版同步 — 2026-07-11
 
 ### 上游审阅

@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`0f3fe1d8487b02baf30538f486a6775352020671`
+- 最近检查到的上游 commit：`a645ffe6b027c2dfb56c4efcbba1c8051f0ff006`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,24 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-07-12
+
+- Reviewed upstream range: `0f3fe1d` → `a645ffe`
+- 重点上游变化：
+  - Claude Code 教程覆盖更新到 `v2.1.206`，新增 Sonnet 5（`claude-sonnet-5`）及其 1M context window 说明
+  - 交互 permission mode 从 `default` 改名为 `manual`，旧名继续作为 alias
+  - bundled skills 新增 `/dataviz`；`${CLAUDE_PROJECT_DIR}` 可用于 skill body / `allowed-tools`；一次调用可叠加最多 6 个开头的 skills
+  - subagents 默认后台运行，Explore 继承 session 模型与 extended thinking，并新增禁用 built-in agents 和追加 system prompt 的入口
+  - MCP 新增 `roots/list` / `notifications/roots/list_changed`，并收紧未信任 workspace 的 project MCP approval
+  - hooks、marketplace、checkpoints、settings 和 CLI 增加新 matcher、字段、双向摘要和 streaming watchdog
+- Chinese fork actions:
+  - 将上述行为本土化写入 01、03-10 模块和中文入口文档，不复制上游英文根 README
+  - 保留 `manual`、`claude-sonnet-5`、`/dataviz`、`${CLAUDE_PROJECT_DIR}`、`roots/list`、`renames`、`askUserQuestionTimeout`、`CLAUDE_ENABLE_STREAM_WATCHDOG` 等可执行标识原文
+  - 复查上一轮 assessment 内容，修正 5 轮 / 19 分 / 30 个 hook 事件等语义错误，翻译用户可见题面和结果模板，并校验 Q9 / Q10 回看指针
+  - 扩展 `scripts/validate_localization.py`，新增课程结构、跨文档事实、中文输出和本轮关键更新的语义一致性检查
+  - 修复 EPUB 构建器对已嵌入 Mermaid 图片的重复本地查找，消除误报并保护电子书图像输出
+  - 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
 
 ### 上游同步 — 2026-07-11
 

@@ -132,6 +132,34 @@ Claude 会根据你的描述，把内容写进合适的 `CLAUDE.md`。
 
 ---
 
+## memory 层级与优先级
+
+同一条规则在多个位置冲突时，高层级优先。当前教程按 8 层理解：
+
+1. Managed Policy
+2. Managed Drop-ins（`managed-settings.d/`）
+3. Project Memory（`./CLAUDE.md` 或 `./.claude/CLAUDE.md`）
+4. Project Rules（`./.claude/rules/*.md`）
+5. User Memory（`~/.claude/CLAUDE.md`）
+6. User Rules（`~/.claude/rules/*.md`）
+7. Local Project Memory（`./CLAUDE.local.md`）
+8. Auto Memory（`~/.claude/projects/<project>/memory/`）
+
+Managed Drop-ins 会按文件名字母顺序合并，方便组织把策略拆成多个文件。低层级 memory 不能用类似 `!important` 的写法覆盖高层级规则。
+
+## 用 --add-dir 加载额外目录
+
+monorepo 或多仓库协作时，可以让当前 session 同时读取额外目录中的 `CLAUDE.md`：
+
+```bash
+export CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1
+claude --add-dir /path/to/other/project
+```
+
+`--add-dir` 和 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` 都是可执行标识，不要翻译。额外目录只用于补充上下文，不会改变上面的优先级原则。
+
+---
+
 ## 写什么最有价值
 
 新手最容易把 `CLAUDE.md` 写成“泛泛而谈的项目介绍”，这价值并不大。更推荐写这些：

@@ -256,7 +256,7 @@ chmod +x ~/.claude/hooks/pre-commit.sh
 
 ### 建议重点理解
 
-- `default` / `acceptEdits` / `plan` / `dontAsk` / `bypassPermissions`
+- `manual`（原 `default`，旧名仍可用）/ `acceptEdits` / `plan` / `auto` / `dontAsk` / `bypassPermissions`
 - `claude -p` 在自动化里的边界
 - Auto Mode 适合什么，不适合什么
 

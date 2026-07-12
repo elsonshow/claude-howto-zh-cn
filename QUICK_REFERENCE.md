@@ -135,7 +135,7 @@ export CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT=600
 export CLAUDE_CODE_RETRY_WATCHDOG=1
 
 # 常见 permission mode
-claude --permission-mode default
+claude --permission-mode manual
 claude --permission-mode acceptEdits
 claude --permission-mode plan
 claude --permission-mode dontAsk

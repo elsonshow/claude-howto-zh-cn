@@ -263,6 +263,11 @@ hooks 最大的价值，是把“你本来每次都要手动做的检查”变�
 - `WorktreeCreate`
 - `WorktreeRemove`
 
+`Notification` 的 matcher 还新增了两个和后台 agent 有关的值（`v2.1.198+`）：
+
+- `agent_needs_input`：后台 agent 需要用户补充输入
+- `agent_completed`：后台 agent 已完成
+
 如果你是新手，不需要一上来把所有事件都学完。
 
 > 截至 `v2.1.152+`，上游已经明确写成 **30 个 hook 事件、5 种 hook 类型**。如果你还在参考旧资料里“25 个事件 / 4 种类型”“28 个事件”或“29 个事件”的说法，优先以现在这版为准。新增的 `MessageDisplay` 会在 assistant message text 显示过程中触发，适合转换或隐藏展示文本。
@@ -302,6 +307,8 @@ chmod +x ~/.claude/hooks/pre-commit.sh
 ### 输入
 
 hooks 通常通过 `stdin` 接收 JSON 输入。
+
+所有 hooks 都会收到 session、工作目录和事件等基础字段。`v2.1.196+` 起还会收到 `prompt_id`，它是当前 prompt 的 UUID，可与 OpenTelemetry 的 `prompt.id` 属性关联，用来串联一次用户输入、hook 日志和 telemetry。
 
 ### 输出
 

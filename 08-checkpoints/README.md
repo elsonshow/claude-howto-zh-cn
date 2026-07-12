@@ -60,7 +60,8 @@ checkpoints 是 Claude Code 新手最值得尽早掌握的安全机制之一。
 2. **Restore conversation**：只回退对话
 3. **Restore code**：只回退代码
 4. **Summarize from here**：从这一点开始压缩总结，释放上下文窗口
-5. **Never mind**：取消
+5. **Summarize up to here**：压缩所选位置之前的对话，保留这一点之后的消息；它和上一项组成双向、定点的上下文压缩
+6. **Never mind**：取消
 
 > 新版行为里还有一个很实用的小细节：  
 > 你在做 **Restore conversation** 或 **Summarize from here** 后，被选中位置的原始 prompt 会回到输入框里，方便你重新发送或改写。
@@ -137,9 +138,9 @@ Claude Code 会自动创建 checkpoints，所以你不需要手动先“存档�
 
 有时你只是想保留代码，但回退对话；或者相反。这个选择很有用。
 
-### 3. summarize from here 很适合长会话
+### 3. 两种 summarize 很适合长会话
 
-当上下文太长时，你可以用 summary 代替完整历史，减少上下文负担。
+当上下文太长时，`Summarize from here` 可以压缩所选位置之后的内容，`Summarize up to here` 可以压缩之前的内容。两者都只调整会话上下文，不会改磁盘文件。
 
 ### 4. 以为 rewind 一定会改磁盘文件
 
@@ -162,6 +163,10 @@ Claude Code 会自动创建 checkpoints，所以你不需要手动先“存档�
 
 如果你在本地化或改写示例文档时做大范围文本替换，checkpoints 也非常有用。  
 因为这类修改很容易“看起来都对，实际把命令名或字段名翻坏”，有 checkpoint 会安全很多。
+
+## checkpoints 和 Git 怎么配合
+
+checkpoints 只服务于当前 session，适合短期试错，而且会随清理周期过期；Git commit 是长期、可审计、可共享的历史。推荐先用 checkpoint 探索和回退，确定方案后再用 Git 固化结果，不要把 checkpoints 当成版本控制替代品。
 
 ---
 

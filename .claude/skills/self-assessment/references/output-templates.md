@@ -42,7 +42,7 @@
 
 ### 整体等级：Level 1 / Level 2 / Level 3
 
-**总分：N/20**
+**总分：N/19**
 
 [一句基于得分结构的具体总结]
 
@@ -50,16 +50,16 @@
 
 | 功能领域 | 得分 | 掌握程度 | 状态 |
 |----------|------|----------|------|
-| Slash Commands | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Memory | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Skills | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Hooks | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| MCP | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Subagents | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Checkpoints | N/1 | None / Proficient（未掌握 / 熟练） | Learn / Mastered（学习 / 已掌握） |
-| Advanced Features | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| Plugins | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
-| CLI | N/2 | None / Basic / Proficient（未掌握 / 基础 / 熟练） | Learn / Review / Mastered（学习 / 复习 / 已掌握） |
+| Slash Commands | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Memory | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Skills | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Hooks | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| MCP | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Subagents | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Checkpoints | N/1 | 未掌握 / 熟练（None / Proficient） | 学习 / 已掌握（Learn / Mastered） |
+| Advanced Features | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| Plugins | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
+| CLI | N/2 | 未掌握 / 基础 / 熟练（None / Basic / Proficient） | 学习 / 复习 / 已掌握（Learn / Review / Mastered） |
 
 **掌握程度说明**：0 = None（未掌握），1 = Basic（基础），2 = Proficient（熟练）
 

@@ -14,13 +14,16 @@
 
 可复用、可自动触发的能力，适合沉淀稳定工作流。
 
-`v2.1.195` 这轮同步后，特别值得关注这些 bundled skills、plugin 和排障入口：
+`v2.1.206` 这轮同步后，特别值得关注这些 bundled skills、plugin 和排障入口：
 
 - `/run`：启动当前项目，确认改动能真实运行
 - `/verify`：构建、运行并观察应用，确认修复不是只停留在测试通过
 - `/run-skill-generator`：为项目生成专属 run / verify skill
 - `/code-review [effort]`：审查当前 diff 的正确性缺陷
 - `/simplify`：清理型审查，关注复用、简化、效率和抽象层级，并应用修复
+- `/dataviz`：图表和 dashboard 设计指导，附带可运行的调色板校验器
+- `${CLAUDE_PROJECT_DIR}`：在 skill body 和 `allowed-tools` 中引用项目根目录绝对路径
+- 一次调用可叠加最多 6 个开头的 slash-skills，重复 skill 内容会去重
 - `/reload-skills`：重新扫描 skill 目录，不需要重启当前 session
 - `disableBundledSkills` / `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1`：隐藏内置 skills、workflows 和 commands
 - `claude plugin init <name>`：在 `.claude/skills` 中脚手架本地 plugin，放在该目录的 plugin 会自动加载
@@ -37,6 +40,8 @@
 
 从 `v2.1.178+` 起，嵌套 `.claude/agents/` 里的同名 agent 会按“离当前工作目录最近者优先”加载；workflow 和 output-style 定义也遵循这个规则。
 
+从 `v2.1.198+` 起，subagents 默认在后台运行，built-in `Explore` 会继承 session 模型（上限 Opus），extended thinking 也会继承。`CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS=1` 可禁用 built-in Explore / Plan，`--append-subagent-system-prompt` 可在 print mode 中追加统一提示。
+
 Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 teammate 放进 iTerm2 pane；该模式依赖 `it2` CLI。
 
 ## 5. MCP（外部工具协议）
@@ -46,6 +51,8 @@ Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 tea
 从 `v2.1.186+` 起，`claude mcp login <name>` / `claude mcp logout <name>` 可以直接在 CLI 中处理 MCP server 登录状态；`--no-browser` 适合 SSH 或 headless session。
 
 从 `v2.1.193+` 起，启动时会提示哪些 MCP server 仍需要认证；如果你用 `headersHelper` 提供动态认证头，遇到 HTTP 401 / 403 时会自动刷新。
+
+从 `v2.1.203+` 起，MCP server 可通过 `roots/list` 获得启动目录和 `--add-dir` / `additionalDirectories`，目录变化时会收到 `notifications/roots/list_changed`。未信任 workspace 中的 project MCP 会保持 `Pending approval`，不能靠 `enableAllProjectMcpServers` 自动绕过。
 
 ## 6. Hooks（钩子）
 
@@ -59,17 +66,23 @@ Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 tea
 
 这轮同步移除了上一版里关于 `Stop` / `SubagentStop` 可读取 `background_tasks`、`session_crons` 的说明；当前官方 hooks reference 没有列出这两个字段，写 hook 时不要依赖它们。
 
+`Notification` matcher 新增 `agent_needs_input` 和 `agent_completed`；hook 输入新增 `prompt_id`，可与 OpenTelemetry `prompt.id` 对齐。
+
 ## 7. Plugins（插件）
 
 把 commands、skills、MCP、hooks、subagents 打包成整套方案。
 
 从 `v2.1.187+` 起，`/plugin` 会提示 unused plugins；从 `v2.1.195+` 起，plugin 的 `plugin.json` `name` 和 marketplace entry name 不一致时，enable / disable 仍能正确工作。
 
+marketplace entry 还支持 `renames`、`displayName`、`defaultEnabled`；`first-party-plugins` 和 `healthcare` 是官方保留的 marketplace 名称。
+
 ## 8. Checkpoints（检查点）
 
 用于安全试错和回退。
 
 从 `v2.1.191+` 起，`/clear` 不再是 `/rewind` 的硬边界。需要时可以回到 `/clear` 之前创建的 checkpoint。
+
+`Summarize up to here` 可以压缩所选位置之前的对话，与 `Summarize from here` 组成双向定点压缩。
 
 ## 9. CLI（命令行）
 
@@ -94,6 +107,8 @@ Claude Code 的核心使用入口，也是自动化、脚本化和 CI/CD 的关�
 `wheelScrollAccelerationEnabled`、`footerLinksRegexes`、`language` 是 settings.json 里的 key，说明文字可以中文化，但 key 本身不要翻译。
 
 `respondToBashCommands` 控制 `!` bash 命令输出后是否自动让 Claude 回复；默认 `true`，设为 `false` 可回到只把输出放进上下文的旧行为。
+
+交互 permission mode 从 `v2.1.200+` 起显示为 `manual`，旧 `default` 仍是 alias。`askUserQuestionTimeout`、`enableArtifact`、`CLAUDE_ENABLE_STREAM_WATCHDOG` 和 Sonnet 5 的 `claude-sonnet-5` 都已进入当前口径。
 
 从 `v2.1.193+` 起，`!` bash mode 支持 live file-path autocomplete。`autoMode.classifyAllShell` 可以让所有 Bash / PowerShell 命令都过 Auto Mode 分类器，`claude_code.assistant_response` 可把模型回复文本写进 OpenTelemetry log event。
 

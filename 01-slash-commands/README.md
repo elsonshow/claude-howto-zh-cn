@@ -52,6 +52,7 @@ Claude Code 里的 slash commands 大致分四类：
 | `/goal <目标>` | 给当前 session 注册一个持续追踪的完成目标 |
 | `/less-permission-prompts` | 分析常见 Bash / MCP 调用，帮你生成更合理的 allowlist |
 | `/code-review [effort]` | 审查当前 diff 的正确性缺陷；可传入 `/code-review high` 这类 effort 参数 |
+| `/dataviz` | 图表和 dashboard 设计指导，并附带可运行的调色板校验器（`v2.1.198+`） |
 | `/review <pr>` | 审查 GitHub PR；`v2.1.186+` 起使用和 `/code-review medium` 相同的 review engine，本地 diff 仍优先用 `/code-review` |
 | `/proactive` | `/loop` 的别名 |
 | `/recap` | 回来继续 session 时，快速看一眼刚刚做了什么 |
@@ -135,6 +136,20 @@ cp 01-slash-commands/optimize.md .claude/commands/
 
 ---
 
+## 在 prompt 中引用文件
+
+在 command 或 skill 的 prompt 里写 `@path/to/file`，可以把目标文件内容按需带入上下文。适合引用模板、需求文档或局部代码，不必把整份内容复制进 command 文件。
+
+动态值同样要保留原样：
+
+- `$ARGUMENTS`、`$0`、`$1`：接收调用参数
+- ``!`command` ``：先执行 shell 命令，再把输出注入 prompt
+- `${CLAUDE_PROJECT_DIR}`：解析为项目根目录的绝对路径（`v2.1.196+`）
+
+这些写法是解析语法，不要翻译变量名、符号或路径。
+
+---
+
 ## 推荐你先用哪几个
 
 如果你是第一次认真用 Claude Code，优先试这几个：
@@ -192,6 +207,8 @@ cp 01-slash-commands/optimize.md .claude/commands/
 - `/doctor` 在 `v2.1.178+` 刷新为 flat tree 布局，状态图标更容易扫读
 - `/bug` 在 `v2.1.178+` 需要先写描述，避免空反馈误提交
 - `/review <pr>` 在 `v2.1.186+` 起不再按“已废弃”理解；它用于审查 GitHub PR，并复用 `/code-review medium` 的 review engine。要审查当前本地工作区 diff，继续用 `/code-review [effort]`
+- `/dataviz` 在 `v2.1.198+` 成为 bundled skill，用于图表、dashboard 和调色板设计
+- `${CLAUDE_PROJECT_DIR}` 在 `v2.1.196+` 可用于 command / skill prompt，表示项目根目录绝对路径
 
 ---
 

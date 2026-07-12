@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 import httpx
 import pytest
+from bs4 import BeautifulSoup
 from ebooklib import epub
 
 # Fixtures are imported from conftest.py automatically by pytest
@@ -20,6 +21,7 @@ from build_epub import (
     ValidationError,
     create_chapter_html,
     create_cover_image,
+    embed_local_raster_images,
     extract_all_mermaid_blocks,
     extract_markdown_h1,
     get_chapter_order,
@@ -305,6 +307,34 @@ graph TD
 
         assert "```mermaid" in processed
         assert "A --> B" in processed
+
+    def test_embedded_mermaid_image_does_not_log_missing_file(
+        self,
+        tmp_path: Path,
+        state: BuildState,
+        logger: logging.Logger,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Mermaid EPUB assets should not be re-read from the source tree."""
+        state.mermaid_added_to_book.add("mermaid_1.png")
+        soup = BeautifulSoup(
+            '<p><img alt="Diagram" src="images/mermaid_1.png"/></p>',
+            "html.parser",
+        )
+
+        with caplog.at_level(logging.WARNING):
+            embed_local_raster_images(
+                soup,
+                tmp_path / "README.md",
+                tmp_path,
+                epub.EpubBook(),
+                state,
+                logger,
+            )
+
+        assert "Local image not found" not in caplog.text
+        assert soup.img is not None
+        assert soup.img["src"] == "images/mermaid_1.png"
 
 
 # =============================================================================

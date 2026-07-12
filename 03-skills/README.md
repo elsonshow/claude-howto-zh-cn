@@ -103,13 +103,15 @@ skills 的一个核心优点是按需加载，而不是一上来把所有内容�
 
 ---
 
-## skills 放哪里
+## skill 类型、位置与优先级
 
 | 类型 | 路径 | 适合什么 |
 |------|------|----------|
 | 个人级 | `~/.claude/skills/<skill-name>/SKILL.md` | 个人工作流 |
 | 项目级 | `.claude/skills/<skill-name>/SKILL.md` | 团队共享 |
 | plugin 自带 | `<plugin>/skills/...` | 和 plugin 一起分发 |
+
+同名 skill 的优先级按 Enterprise > Personal > Project 理解；plugin 提供的 skill 带 namespace，避免和普通 skill 名称冲突。`skillOverrides` 不改变来源优先级，它只控制某个 skill 的可见性，见后文。
 
 ---
 
@@ -133,6 +135,7 @@ skills 的一个核心优点是按需加载，而不是一上来把所有内容�
 |-------|----------------|
 | `/batch` | 同一类改动要批量作用到很多文件时 |
 | `/claude-api` | 项目里用到 Anthropic / Claude API 或 SDK，需要加载参考资料时 |
+| `/dataviz` | 需要设计图表、dashboard 或校验调色板时（`v2.1.198+`） |
 | `/debug` | 当前 session 出错，需要读取 debug log 定位原因时 |
 | `/fewer-permission-prompts` | 想减少反复弹出的只读权限确认时 |
 | `/loop` | 需要按固定间隔重复执行一个 prompt 时 |
@@ -143,6 +146,20 @@ skills 的一个核心优点是按需加载，而不是一上来把所有内容�
 | `/verify` | 不只跑测试，还要构建、运行并观察修复是否真的生效时 |
 
 对中文用户来说，`/verify` 的价值很高：它把“测试通过”和“用户实际能用”分开看，能减少本地看似成功、线上或真实应用仍出错的问题。
+
+### 动态值与项目目录
+
+skill body 和 `allowed-tools` 都可以使用 `${CLAUDE_PROJECT_DIR}`，它会在运行时解析为项目根目录的绝对路径（`v2.1.196+`）。常用动态值还包括 `$ARGUMENTS`、`$0`、`${CLAUDE_SESSION_ID}`、`${CLAUDE_SKILL_DIR}` 和 `${CLAUDE_EFFORT}`。
+
+### 叠加多个 skills
+
+从 `v2.1.199+` 起，一次调用可以连续写多个位于开头的 slash-skills，例如：
+
+```text
+/code-review /fix-issue 123
+```
+
+Claude Code 会加载第一个 skill，再加载最多 5 个额外 skill，并把后面的参数传给每一个。`v2.1.202+` 起，同一个 skill 重复出现时会去重，不会把相同内容重复塞进上下文。
 
 ---
 
@@ -179,6 +196,7 @@ cp -r 03-skills/code-review-specialist .claude/skills/
 - `disallowed-tools`
 - `reloadSkills`
 - `${CLAUDE_EFFORT}`
+- `${CLAUDE_PROJECT_DIR}`
 
 同时，skill 名称本身也不要擅自中文化改名。
 
@@ -191,6 +209,16 @@ paths: "src/api/**/*.ts"
 ```
 
 如果你已经开始做团队级 skills，这个字段很值得用。
+
+## 控制 skill 的调用方式
+
+常见 frontmatter 控制项：
+
+- `disable-model-invocation: true`：禁止模型自动调用，但仍允许用户从 `/` 菜单手动触发
+- `user-invocable: false`：不在用户可调用列表中展示，保留给模型按场景调用
+- `context: fork`：在 forked context 中运行，可配合 `agent` 指定 subagent
+
+这些 key 会直接影响加载和调用行为，说明可以中文化，key 不能翻译。
 
 ---
 
@@ -287,25 +315,27 @@ export CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1
 
 ---
 
-## `skillOverrides`：控制项目 skill 和个人 skill 谁优先
+## `skillOverrides`：控制 skill 可见性
 
-默认情况下，如果项目里的 skill 和你个人目录里的 skill 同名，项目 skill 会优先生效。
-从 `v2.1.129+` 开始，可以用 `skillOverrides` 更细地调这个行为，把它写进 `~/.claude/settings.json` 或项目的 `.claude/settings.json`：
+从 `v2.1.129+` 开始，可以用 `skillOverrides` 隐藏或收缩某个 skill 的展示信息，而不修改它自己的 `SKILL.md`。`/skills` 菜单会把选择写入 `.claude/settings.local.json`：
 
 ```json
 {
-  "skillOverrides": "name-only"
+  "skillOverrides": {
+    "legacy-context": "name-only",
+    "deploy": "off"
+  }
 }
 ```
 
-可选值：
+每个 skill 名对应一种状态：
 
-- `"on"`：默认行为，项目 skill 可以覆盖同名个人 skill
-- `"off"`：完全禁用覆盖，个人 skill 永远优先
-- `"name-only"`：只按 skill 名称判断覆盖，不比较描述或来源
-- `"user-invocable-only"`：只有可由用户显式调用的 skill 才允许被覆盖；模型自动调用的 skill 仍使用原始位置
+- `"on"`：向 Claude 展示名称和 description，也出现在 `/` 菜单
+- `"name-only"`：只向 Claude 展示名称，仍出现在 `/` 菜单
+- `"user-invocable-only"`：不向 Claude 展示，但仍允许用户从 `/` 菜单手动调用
+- `"off"`：不向 Claude 展示，也不出现在 `/` 菜单
 
-如果你的团队很在意“仓库里的 skill 是否会压过我自己的 skill”，这个设置值得明确写进规范。
+未出现在 `skillOverrides` 中的 skill 按 `"on"` 处理。plugin skills 不受这个设置影响，应通过 `/plugin` 管理。它也不会把 Project skill 的优先级抬到 Personal skill 之上。
 
 ---
 

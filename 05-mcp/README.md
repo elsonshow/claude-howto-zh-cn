@@ -138,6 +138,30 @@ cp 05-mcp/multi-mcp.json .mcp.json
 
 ---
 
+## session 工作目录与 roots/list
+
+从 `v2.1.203+` 起，MCP server 可以通过 `roots/list` 获得当前 session 的工作目录，包括启动目录，以及所有 `--add-dir` / `additionalDirectories` 条目。目录集合变化时，Claude Code 会发送 `notifications/roots/list_changed`。
+
+同一版本还把 idle timeout 扩展到 stdio servers：默认空闲 30 分钟；单个 server 的 `timeout` 会作为空闲时间下限。这里的 `roots/list`、`notifications/roots/list_changed`、`timeout` 都是协议或配置标识，不能翻译。
+
+## 托管 MCP 配置
+
+项目提交的 `.mcp.json` 仍需要用户信任。未信任的 workspace 即使在 `.claude/settings.json` 中自行批准了 project MCP，`claude mcp list` / `get` 也不会自动启动它，而会显示 `⏸ Pending approval`。
+
+在这种未信任状态下，`enableAllProjectMcpServers` 会被忽略。先确认仓库来源并接受 trust dialog，再启用 project MCP；不要为了绕过提示修改或翻译这些 key。
+
+## 用 @ 引用 MCP resources
+
+MCP server 暴露的 resources 可以用 mention 语法带入对话，例如：
+
+```text
+@server-name:protocol://resource/path
+```
+
+server 名、protocol 和 resource path 都属于真实标识。中文说明可以改写，但 mention 本身必须保持原样。
+
+---
+
 ## `allowAllClaudeAiMcps`：组织级允许 claude.ai 云端 MCP connectors
 
 `v2.1.149+` 新增了一个托管设置：`allowAllClaudeAiMcps`。它面向企业或团队管理员，用来允许组织范围内加载 claude.ai 云端 MCP connectors。

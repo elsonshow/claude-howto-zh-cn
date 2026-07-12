@@ -30,6 +30,10 @@
 - `UPSTREAM.md`
 - `LOCALIZATION-STYLE.md`
 
+## 当前版本重点
+
+本仓库已按 Claude Code `v2.1.206` 更新中文主线。交互权限模式的新名称是 `manual`（旧 `default` 仍可用）；模型入口新增 Sonnet 5；`/dataviz`、subagent 默认后台运行、MCP `roots/list`、双向 checkpoint summarize 等变化已分别写入对应教程。
+
 ## 资源与脚本
 
 - `resources/`：品牌与视觉资源说明

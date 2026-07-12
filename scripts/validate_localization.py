@@ -270,9 +270,11 @@ def validate_untranslated_english(root: Path) -> list[str]:
         relative_path = path.relative_to(root)
         allowed_headings = ALLOWED_ENGLISH_HEADINGS_BY_PATH.get(relative_path, set())
         content = read_text(path)
-        for snippet in FORBIDDEN_UNTRANSLATED_SNIPPETS:
-            if snippet in content and snippet not in allowed_headings:
-                errors.append(f"{path}: untranslated protected text '{snippet}'")
+        errors.extend(
+            f"{path}: untranslated protected text '{snippet}'"
+            for snippet in FORBIDDEN_UNTRANSLATED_SNIPPETS
+            if snippet in content and snippet not in allowed_headings
+        )
 
         in_fence = False
         in_frontmatter = False
@@ -332,6 +334,301 @@ def validate_protected_snippets(root: Path) -> list[str]:
     return errors
 
 
+LESSON_DIRS = {
+    f"{number:02d}": directory
+    for number, directory in enumerate(
+        (
+            "01-slash-commands",
+            "02-memory",
+            "03-skills",
+            "04-subagents",
+            "05-mcp",
+            "06-hooks",
+            "07-plugins",
+            "08-checkpoints",
+            "09-advanced-features",
+            "10-cli",
+        ),
+        1,
+    )
+}
+
+V2_1_206_REQUIRED_SNIPPETS = {
+    Path("01-slash-commands/README.md"): ["/dataviz", "${CLAUDE_PROJECT_DIR}"],
+    Path("03-skills/README.md"): [
+        "/dataviz",
+        "${CLAUDE_PROJECT_DIR}",
+        "叠加多个 skills",
+        '"legacy-context": "name-only"',
+        '"deploy": "off"',
+    ],
+    Path("04-subagents/README.md"): [
+        "v2.1.198",
+        "CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS",
+        "--append-subagent-system-prompt",
+    ],
+    Path("05-mcp/README.md"): [
+        "roots/list",
+        "Pending approval",
+        "enableAllProjectMcpServers",
+    ],
+    Path("06-hooks/README.md"): [
+        "agent_needs_input",
+        "agent_completed",
+        "prompt_id",
+    ],
+    Path("07-plugins/README.md"): [
+        "renames",
+        "displayName",
+        "defaultEnabled",
+        "first-party-plugins",
+        "healthcare",
+    ],
+    Path("08-checkpoints/README.md"): ["Summarize up to here"],
+    Path("09-advanced-features/README.md"): [
+        "`manual`",
+        "askUserQuestionTimeout",
+        "enableArtifact",
+    ],
+    Path("10-cli/README.md"): [
+        "Org default",
+        "--append-subagent-system-prompt",
+        "CLAUDE_ENABLE_STREAM_WATCHDOG",
+        "claude-sonnet-5",
+    ],
+}
+
+
+def normalize_heading(value: str) -> str:
+    return re.sub(r"[`*_]", "", value).strip().casefold()
+
+
+def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
+    """Check cross-document facts that syntax and link checks cannot catch."""
+
+    errors: list[str] = []
+    required_paths = [
+        Path(".claude/skills/lesson-quiz/SKILL.md"),
+        Path(".claude/skills/lesson-quiz/references/question-bank.md"),
+        Path(".claude/skills/lesson-quiz/references/results-template.md"),
+        Path(".claude/skills/self-assessment/SKILL.md"),
+        Path(".claude/skills/self-assessment/references/deep-assessment-rounds.md"),
+        Path(".claude/skills/self-assessment/references/output-templates.md"),
+        Path(".claude/skills/self-assessment/references/topic-recommendations.md"),
+        Path("06-hooks/README.md"),
+    ]
+    missing = [path for path in required_paths if not (root / path).is_file()]
+    if missing:
+        return [f"{path}: required curriculum file is missing" for path in missing]
+
+    lesson_skill_path = root / required_paths[0]
+    question_bank_path = root / required_paths[1]
+    results_template_path = root / required_paths[2]
+    assessment_skill_path = root / required_paths[3]
+    deep_rounds_path = root / required_paths[4]
+    assessment_template_path = root / required_paths[5]
+    topic_recommendations_path = root / required_paths[6]
+    hooks_path = root / required_paths[7]
+
+    lesson_skill = read_text(lesson_skill_path)
+    question_bank = read_text(question_bank_path)
+    results_template = read_text(results_template_path)
+    assessment_skill = read_text(assessment_skill_path)
+    deep_rounds = read_text(deep_rounds_path)
+    assessment_template = read_text(assessment_template_path)
+    topic_recommendations = read_text(topic_recommendations_path)
+    hooks = read_text(hooks_path)
+
+    if (
+        "每轮 2 题，共 5 轮" not in lesson_skill  # noqa: RUF001
+        or "所有 4 轮" in lesson_skill
+    ):
+        errors.append(
+            f"{lesson_skill_path}: lesson quiz must consistently use 5 rounds"
+        )
+
+    frontmatter = split_frontmatter(lesson_skill)
+    loaded = yaml.safe_load(frontmatter) if frontmatter else {}
+    metadata = loaded.get("metadata", {}) if isinstance(loaded, dict) else {}
+    if not isinstance(metadata, dict) or metadata.get("version") != "1.1.0":
+        errors.append(
+            f"{lesson_skill_path}: version 1.1.0 must be stored as metadata.version"
+        )
+    if isinstance(loaded, dict) and "version" in loaded:
+        errors.append(f"{lesson_skill_path}: top-level version key is stale")
+    raw_description = loaded.get("description", "") if isinstance(loaded, dict) else ""
+    description = raw_description if isinstance(raw_description, str) else ""
+    if "整套教程" not in description or "解释" not in description:
+        errors.append(
+            f"{lesson_skill_path}: description must include negative trigger boundaries"
+        )
+
+    lesson_questions: dict[str, list[dict[str, str]]] = {}
+    current_lesson = ""
+    current_question: dict[str, str] | None = None
+    for line in question_bank.splitlines():
+        lesson_match = re.match(r"^## Lesson (\d{2})", line)
+        if lesson_match:
+            current_lesson = lesson_match.group(1)
+            lesson_questions[current_lesson] = []
+            current_question = None
+            continue
+        question_match = re.match(r"^### Q(\d+)$", line)
+        if question_match and current_lesson:
+            current_question = {"number": question_match.group(1)}
+            lesson_questions[current_lesson].append(current_question)
+            continue
+        if current_question is None:
+            continue
+        field_match = re.match(r"^- \*\*(Category|Correct|Review)\*\*: (.+)$", line)
+        if field_match:
+            current_question[field_match.group(1).lower()] = field_match.group(2)
+        if line.startswith("- **Options**: "):
+            current_question["options"] = line.removeprefix("- **Options**: ")
+        if line.startswith("- **Explanation**: "):
+            current_question["explanation"] = line.removeprefix("- **Explanation**: ")
+
+    for lesson_number, lesson_dir in LESSON_DIRS.items():
+        questions = lesson_questions.get(lesson_number, [])
+        if [item.get("number") for item in questions] != [str(i) for i in range(1, 11)]:
+            errors.append(
+                f"{question_bank_path}: lesson {lesson_number} must contain Q1-Q10"
+            )
+            continue
+        categories = [item.get("category") for item in questions]
+        if categories.count("conceptual") != 5 or categories.count("practical") != 5:
+            errors.append(
+                f"{question_bank_path}: lesson {lesson_number} must have 5 conceptual and 5 practical questions"
+            )
+
+        lesson_readme = root / lesson_dir / "README.md"
+        if not lesson_readme.is_file():
+            errors.append(f"{lesson_readme}: required lesson README is missing")
+            continue
+        headings = {
+            normalize_heading(match.group(1))
+            for line in read_text(lesson_readme).splitlines()
+            if (match := re.match(r"^#{2,6}\s+(.+)$", line))
+        }
+        for question in questions[8:10]:
+            review = question.get("review", "")
+            if normalize_heading(review) not in headings:
+                errors.append(
+                    f"{question_bank_path}: lesson {lesson_number} Q{question.get('number')} review pointer '{review}' does not match a localized heading"
+                )
+
+    hook_summary = re.search(r"\*\*(\d+) 个 hook 事件、(\d+) 种 hook 类型\*\*", hooks)
+    if not hook_summary:
+        errors.append(f"{hooks_path}: missing hook event/type summary")
+    else:
+        event_count, type_count = map(int, hook_summary.groups())
+        hook_questions = lesson_questions.get("06", [])
+        if len(hook_questions) < 9:
+            errors.append(f"{question_bank_path}: Hooks Q9 is missing")
+            hook_q9: dict[str, str] = {}
+        else:
+            hook_q9 = hook_questions[8]
+        option_values = {
+            letter: int(value)
+            for letter, value in re.findall(
+                r"([A-D])\)\s*(\d+)", hook_q9.get("options", "")
+            )
+        }
+        correct = hook_q9.get("correct", "")
+        if option_values.get(correct) != event_count:
+            errors.append(
+                f"{question_bank_path}: Hooks Q9 correct answer must match {event_count} events"
+            )
+        if f"{event_count} 个 hook 事件" not in hook_q9.get("explanation", ""):
+            errors.append(
+                f"{question_bank_path}: Hooks Q9 explanation must use {event_count} events"
+            )
+        if (
+            f"{event_count} 个 hook 事件" not in topic_recommendations
+            or f"{type_count} 种 hook 类型" not in topic_recommendations
+        ):
+            errors.append(
+                f"{topic_recommendations_path}: hook recommendation must match {event_count} events and {type_count} types"
+            )
+
+    english_output_fragments = (
+        "Lesson Quiz Results:",
+        "Quiz timing",
+        "Question breakdown",
+        "Incorrect Answers — Review These",
+        "Your answer:",
+        "Correct answer:",
+        "Pre-test score:",
+        "Progress check:",
+        "Mastery check:",
+        "Recommended Next Steps",
+        "Would you like to retake this quiz",
+        "[next lesson link]",
+        "[list sections]",
+    )
+    errors.extend(
+        f"{results_template_path}: untranslated user-facing text '{fragment}'"
+        for fragment in english_output_fragments
+        if fragment in results_template
+    )
+
+    if "N/20" in assessment_skill or "N/20" in assessment_template:
+        errors.append(f"{assessment_skill_path}: Deep Assessment maximum is 19, not 20")
+    if "N/19" not in assessment_skill or "N/19" not in assessment_template:
+        errors.append(
+            f"{assessment_template_path}: Deep Assessment output must use N/19"
+        )
+    if "8 个问题" in assessment_skill:
+        errors.append(
+            f"{assessment_skill_path}: Quick Assessment has 8 items across 2 questions"
+        )
+    if (
+        "每轮覆盖 2 个能力域，每个能力域对应 2 个选项"  # noqa: RUF001
+        in deep_rounds
+    ):
+        errors.append(f"{deep_rounds_path}: round 4 uses a 1/3 option split, not 2/2")
+
+    untranslated_assessment_fragments = (
+        "Which of these have you done? Select all that apply.",
+        "Created a custom slash command or skill",
+        "Installed and used an auto-invoked skill",
+        "Connected an MCP server and used its tools",
+        "Used checkpoints for safe experimentation",
+        "Installed or created a plugin",
+        "- Tutorial:",
+        "- Focus on:",
+        "- Key exercise:",
+        "- Done when:",
+    )
+    for path, content in (
+        (deep_rounds_path, deep_rounds),
+        (topic_recommendations_path, topic_recommendations),
+    ):
+        errors.extend(
+            f"{path}: untranslated assessment text '{fragment}'"
+            for fragment in untranslated_assessment_fragments
+            if fragment in content
+        )
+    if "2% context budget" in topic_recommendations:
+        errors.append(
+            f"{topic_recommendations_path}: skill description budget must be 1%"
+        )
+
+    for relative_path, snippets in V2_1_206_REQUIRED_SNIPPETS.items():
+        path = root / relative_path
+        if not path.is_file():
+            errors.append(f"{relative_path}: required v2.1.206 document is missing")
+            continue
+        content = read_text(path)
+        errors.extend(
+            f"{relative_path}: missing v2.1.206 content '{snippet}'"
+            for snippet in snippets
+            if snippet not in content
+        )
+
+    return errors
+
+
 def validate_root(root: Path) -> list[str]:
     errors: list[str] = []
     errors.extend(validate_markdown_links(root))
@@ -340,6 +637,7 @@ def validate_root(root: Path) -> list[str]:
     errors.extend(validate_shell_scripts(root))
     errors.extend(validate_untranslated_english(root))
     errors.extend(validate_protected_snippets(root))
+    errors.extend(validate_curriculum_consistency(root))
     return errors
 
 

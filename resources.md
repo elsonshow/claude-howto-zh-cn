@@ -11,7 +11,7 @@
 
 如果你要把这个中文 fork 发布成独立仓库，也可以在保留来源说明的前提下替换这些资源。
 
-## 2026 年 6 月需要关注的新能力
+## 2026 年 7 月需要关注的新能力
 
 这轮同步后，中文读者如果只看资源索引，至少要知道这些新入口：
 
@@ -65,5 +65,16 @@
 | `claude_code.assistant_response` | OpenTelemetry log event，用于记录模型回复文本 | [Advanced Features](09-advanced-features/) |
 | `!` bash mode 路径自动补全 | 输入 `!` shell 命令时支持 live file-path autocomplete | [Advanced Features](09-advanced-features/) |
 | `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` | 禁用 fullscreen mode 的 mouse click / drag / hover，wheel scroll 仍可用 | [CLI Guide](10-cli/) |
+| Sonnet 5 / `claude-sonnet-5` | 原生 1M context window；是否作为默认模型取决于订阅档位 | [CLI Guide](10-cli/) |
+| `manual` permission mode | `v2.1.200+` 的交互默认名称；旧 `default` 仍作为 alias 可用 | [Advanced Features](09-advanced-features/) |
+| `/dataviz` | 图表、dashboard 与调色板设计 bundled skill | [Skills Guide](03-skills/) |
+| `${CLAUDE_PROJECT_DIR}` | 在 command / skill 中引用项目根目录绝对路径 | [Skills Guide](03-skills/) |
+| subagent 默认后台运行 | `Explore` 继承 session 模型，extended thinking 也会继承 | [Subagents Guide](04-subagents/) |
+| MCP `roots/list` | 向 MCP server 暴露启动目录和额外工作目录 | [MCP Guide](05-mcp/) |
+| `agent_needs_input` / `agent_completed` | 后台 agent 对应的 `Notification` matcher | [Hooks Guide](06-hooks/) |
+| `renames` / `displayName` / `defaultEnabled` | marketplace entry 的迁移、显示和默认启用控制 | [Plugins Guide](07-plugins/) |
+| `Summarize up to here` | 压缩所选位置之前的对话，与 `Summarize from here` 组成双向压缩 | [Checkpoints Guide](08-checkpoints/) |
+| `askUserQuestionTimeout` / `enableArtifact` | 控制询问超时和 Artifact tool 的个人设置 | [Advanced Features](09-advanced-features/) |
+| `CLAUDE_ENABLE_STREAM_WATCHDOG` | streaming 5 分钟无事件时 abort / retry；设为 `0` 可禁用 | [CLI Guide](10-cli/) |
 
 这些名称都是可执行标识或协议字段，不要翻译成中文 key。
