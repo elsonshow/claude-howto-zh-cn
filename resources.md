@@ -33,7 +33,12 @@
 | `hookSpecificOutput.additionalContext` | Stop / SubagentStop hook 给 Claude 追加上下文并继续当前 turn | [Hooks Guide](06-hooks/) |
 | `CLAUDE_CODE_SESSION_ID` | 串联 MCP server、hooks 和 Bash 日志的 session 标识 | [MCP Guide](05-mcp/) |
 | `claude plugin init <name>` | 在 `.claude/skills` 中脚手架本地 plugin；该目录下的 plugin 会自动加载 | [Plugins Guide](07-plugins/) |
-| `CLAUDE_CODE_ENABLE_AUTO_MODE=1` | 在 Bedrock / Vertex / Foundry 上对 Opus 4.7 / 4.8 显式启用 Auto Mode | [CLI Guide](10-cli/) |
+| `CLAUDE_CODE_ENABLE_AUTO_MODE` / `disableAutoMode` | 前者从 `v2.1.207` 起仅保留兼容性且不再生效；管理员可用后者禁用 Auto Mode | [Advanced Features](09-advanced-features/) |
+| `claude auto-mode reset [--yes]` | 恢复 Auto Mode 默认配置；`--yes` 跳过确认 | [CLI Guide](10-cli/) |
+| `/fork <directive>` / `/branch [name]` | 前者委派给继承对话的后台 subagent，后者切换到对话副本 | [Slash Commands](01-slash-commands/) |
+| `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` / `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` | 限制每个 session 的 WebSearch 与 subagent spawn 次数，默认均为 200 | [CLI Guide](10-cli/) |
+| `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` | MCP tool call 自动转后台的阈值，默认 `120000` 毫秒 | [MCP Guide](05-mcp/) |
+| `--ax-screen-reader` / `CLAUDE_AX_SCREEN_READER` | 启用适合 screen reader 的纯文本渲染模式 | [CLI Guide](10-cli/) |
 | `EnterWorktree` | 在同一 session 中切换 Claude 管理的 worktree | [Advanced Features](09-advanced-features/) |
 | `claude agents` 里的 `Ctrl+T` | 固定后台 session，空闲时优先保留 | [CLI Guide](10-cli/) |
 | `allowAllClaudeAiMcps` | 组织级允许加载 claude.ai 云端 MCP connectors 的托管设置 | [MCP Guide](05-mcp/) |

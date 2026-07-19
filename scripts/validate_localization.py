@@ -398,6 +398,83 @@ V2_1_206_REQUIRED_SNIPPETS = {
     ],
 }
 
+V2_1_212_REQUIRED_SNIPPETS = {
+    Path("README.md"): ["v2.1.212", "a645ffe", "8f04517"],
+    Path("UPSTREAM.md"): [
+        "8f045173d1b1e876d101eb9a94972585f57c4ed1",
+        "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
+    ],
+    Path("INDEX.md"): ["v2.1.212", "/fork <directive>", "/branch [name]"],
+    Path("claude_concepts_guide.md"): [
+        "v2.1.212",
+        "4 hops",
+        "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
+    ],
+    Path("resources.md"): [
+        "claude auto-mode reset",
+        "CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION",
+        "--ax-screen-reader",
+    ],
+    Path("CATALOG.md"): [
+        "2 套机制",
+        "CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION",
+        "--ax-screen-reader",
+    ],
+    Path("QUICK_REFERENCE.md"): [
+        "claude auto-mode reset",
+        "CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION",
+        "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
+    ],
+    Path("01-slash-commands/README.md"): [
+        "/fork <directive>",
+        "/branch [name]",
+        "v2.1.212",
+    ],
+    Path("02-memory/README.md"): [
+        "4 hops",
+        "拼接",
+        "managed-settings.d/",
+        "命令行参数",
+    ],
+    Path("04-subagents/README.md"): [
+        "v2.1.210",
+        "CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION",
+        "xhigh",
+        "Task tool",
+        "`mode`",
+    ],
+    Path("05-mcp/README.md"): ["CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS"],
+    Path("09-advanced-features/README.md"): [
+        "claude auto-mode reset",
+        "--ax-screen-reader",
+        "CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION",
+        "disableAutoMode",
+    ],
+    Path("10-cli/README.md"): [
+        "CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION",
+        "CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION",
+        "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
+        "CLAUDE_AX_SCREEN_READER",
+    ],
+}
+
+V2_1_212_FORBIDDEN_SNIPPETS = {
+    Path("02-memory/README.md"): ["当前教程按 8 层理解"],
+    Path("09-advanced-features/README.md"): [
+        "需要显式设置 `CLAUDE_CODE_ENABLE_AUTO_MODE=1`",
+        "较新的主名称",
+    ],
+    Path("10-cli/README.md"): [
+        "需要显式设置 `CLAUDE_CODE_ENABLE_AUTO_MODE=1`",
+        "较新的主名称",
+    ],
+    Path("QUICK_REFERENCE.md"): ["某些版本中 `/fork` 仍可作为兼容别名"],
+    Path("resources.md"): [
+        "在 Bedrock / Vertex / Foundry 上对 Opus 4.7 / 4.8 显式启用"
+    ],
+    Path("CATALOG.md"): ["从当前对话分叉\uff08某些版本中 `/fork` 仍可能可用\uff09"],
+}
+
 
 def normalize_heading(value: str) -> str:
     return re.sub(r"[`*_]", "", value).strip().casefold()
@@ -614,16 +691,33 @@ def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
             f"{topic_recommendations_path}: skill description budget must be 1%"
         )
 
-    for relative_path, snippets in V2_1_206_REQUIRED_SNIPPETS.items():
+    for version, required_snippets in (
+        ("v2.1.206", V2_1_206_REQUIRED_SNIPPETS),
+        ("v2.1.212", V2_1_212_REQUIRED_SNIPPETS),
+    ):
+        for relative_path, snippets in required_snippets.items():
+            path = root / relative_path
+            if not path.is_file():
+                errors.append(
+                    f"{relative_path}: required {version} document is missing"
+                )
+                continue
+            content = read_text(path)
+            errors.extend(
+                f"{relative_path}: missing {version} content '{snippet}'"
+                for snippet in snippets
+                if snippet not in content
+            )
+
+    for relative_path, snippets in V2_1_212_FORBIDDEN_SNIPPETS.items():
         path = root / relative_path
         if not path.is_file():
-            errors.append(f"{relative_path}: required v2.1.206 document is missing")
             continue
         content = read_text(path)
         errors.extend(
-            f"{relative_path}: missing v2.1.206 content '{snippet}'"
+            f"{relative_path}: stale v2.1.212 content '{snippet}'"
             for snippet in snippets
-            if snippet not in content
+            if snippet in content
         )
 
     return errors

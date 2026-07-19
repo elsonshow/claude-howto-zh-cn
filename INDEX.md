@@ -32,7 +32,7 @@
 
 ## 当前版本重点
 
-本仓库已按 Claude Code `v2.1.206` 更新中文主线。交互权限模式的新名称是 `manual`（旧 `default` 仍可用）；模型入口新增 Sonnet 5；`/dataviz`、subagent 默认后台运行、MCP `roots/list`、双向 checkpoint summarize 等变化已分别写入对应教程。
+本仓库已按 Claude Code `v2.1.212` 更新中文主线。Memory 改按 CLAUDE.md 拼接与独立 auto memory 理解；`/fork <directive>` 和 `/branch [name]` 已区分；subagent 输出扫描与 session 上限、MCP 自动转后台、Auto Mode reset 和 screen reader mode 已分别写入对应教程。
 
 ## 资源与脚本
 

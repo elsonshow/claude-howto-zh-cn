@@ -60,7 +60,9 @@ Claude Code 里的 slash commands 大致分四类：
 | `/powerup` | 用交互式 lesson 了解内建能力 |
 | `/rewind` | 回退到 checkpoint |
 | `/undo` | `/rewind` 的别名 |
-| `/resume` | 恢复以前的 session |
+| `/resume` | 恢复以前的 session；无参数时会打开历史 session picker，并把选中的 session 作为后台 session 恢复（`v2.1.212+`） |
+| `/fork <directive>` | 启动一个继承完整对话的后台 subagent 执行 directive，当前对话可以继续工作 |
+| `/branch [name]` | 切换到当前对话的副本并保留原对话，之后可用 `/resume` 返回 |
 | `/reload-skills` | 重新扫描 skill 目录，不需要重启当前 session |
 | `/workflows` | 查看正在运行和已完成的 dynamic workflows |
 | `/scroll-speed <+N|-N>` | 调整 TUI live preview 的鼠标滚轮滚动速度 |
@@ -74,6 +76,8 @@ Claude Code 里的 slash commands 大致分四类：
 这些命令不用安装，开箱即用。
 
 `/cd <path>` 是 `v2.1.169+` 新增的实用入口。以前中途换目录往往会让 prompt cache 变冷，下一轮更慢也更贵；现在需要在同一个 session 里从前端目录切到后端目录时，优先用 `/cd`，不要为了换目录手动重开一轮。
+
+`/fork` 和 `/branch` 现在不是别名。只有 `v2.1.77` 到 `v2.1.161` 之间的版本曾把 `/fork` 当作 `/branch` 的 alias；当前版本里，前者把任务委派给后台 subagent，后者让你本人切换到对话副本。
 
 > 截至 2026 年 5 月，上游内建命令已经到了 **60+**，并且部分命令会继续改名或调整默认行为。这里保留的是中国小白最该先掌握的一批。
 
@@ -209,6 +213,8 @@ cp 01-slash-commands/optimize.md .claude/commands/
 - `/review <pr>` 在 `v2.1.186+` 起不再按“已废弃”理解；它用于审查 GitHub PR，并复用 `/code-review medium` 的 review engine。要审查当前本地工作区 diff，继续用 `/code-review [effort]`
 - `/dataviz` 在 `v2.1.198+` 成为 bundled skill，用于图表、dashboard 和调色板设计
 - `${CLAUDE_PROJECT_DIR}` 在 `v2.1.196+` 可用于 command / skill prompt，表示项目根目录绝对路径
+- `v2.1.212+` 中，`/fork <directive>` 会启动继承当前对话的后台 subagent，`/branch [name]` 则切换到当前对话的副本；两者不再是 alias
+- `/resume` 无参数时会打开历史 session picker，其中也包括已从 Agent View 可见列表移除的 session；选中后会作为后台 session 恢复
 
 ---
 

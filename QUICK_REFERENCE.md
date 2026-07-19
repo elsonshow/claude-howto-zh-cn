@@ -128,10 +128,16 @@ ultracode            # 触发 dynamic workflows 的关键词，裸词 workflow �
 /config thinking=false  # 直接设置单个配置项
 !npm test            # v2.1.186+ 起输出会自动发给 Claude 并触发回复
 !cat src/index.ts    # v2.1.193+ 起 ! bash mode 支持路径自动补全
-export CLAUDE_CODE_ENABLE_AUTO_MODE=1  # Bedrock / Vertex / Foundry 上显式启用 Auto Mode
+claude auto-mode reset        # 恢复 Auto Mode 默认配置并请求确认
+claude auto-mode reset --yes  # 跳过确认
+# CLAUDE_CODE_ENABLE_AUTO_MODE 从 v2.1.207 起仅保留兼容性，不再产生效果
 export CLAUDE_CODE_DISABLE_MOUSE_CLICKS=1  # 禁用 fullscreen mode 的 click / drag / hover
 CLAUDE_CODE_SAFE_MODE=1 claude          # 禁用自定义项后排查配置问题
 export CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT=600
+export CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=120000
+export CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION=200
+export CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION=200
+export CLAUDE_AX_SCREEN_READER=1
 export CLAUDE_CODE_RETRY_WATCHDOG=1
 
 # 常见 permission mode
@@ -142,11 +148,13 @@ claude --permission-mode dontAsk
 claude --permission-mode bypassPermissions
 claude --safe-mode
 claude --fallback-model sonnet
+claude --ax-screen-reader
 
 # session 常用命令
-/resume
+/resume                 # 无参数时打开历史 session picker
 /rename "session-name"
-/branch                # 某些版本中 `/fork` 仍可作为兼容别名
+/fork 检查 flaky tests  # 委派给继承完整对话的后台 subagent
+/branch try-oauth       # 切换到对话副本，原对话保留
 claude -c
 claude -r "session-name"
 claude agents --json   # 机器可读的 Agent View 列表
@@ -185,6 +193,8 @@ git worktree prune     # 清理已解锁且不再使用的 worktree
 | Planning Mode | 内建 | `/plan <task>` | 复杂任务规划 |
 | Ultraplan | 内建 | `/ultraplan <task>` | 云端起草复杂计划 |
 | Monitor Tool | 内建 | 监控后台命令 stdout 事件流 | 适合替代轮询 |
+| Auto Mode Reset | 内建 | `claude auto-mode reset [--yes]` | 恢复默认自动权限规则 |
+| Screen Reader Mode | 内建 | `--ax-screen-reader` | 纯文本渲染，便于辅助技术读取 |
 | Print Mode | 内建 | `claude -p` | 脚本 / CI/CD |
 | Run / Verify Skills | bundled skills | `/run`、`/verify`、`/run-skill-generator` | 启动项目并确认改动真实可用 |
 

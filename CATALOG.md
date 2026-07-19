@@ -17,7 +17,7 @@
 | 类别 | 内建能力 | 仓库示例 | 适合先学吗 | 入口 |
 |------|----------|----------|------------|------|
 | Slash Commands | 60+ | 8 | 非常适合 | [01-slash-commands/](01-slash-commands/) |
-| Memory | 7 类 | 3 | 非常适合 | [02-memory/](02-memory/) |
+| Memory | 2 套机制 | 3 | 非常适合 | [02-memory/](02-memory/) |
 | Skills | 10 个 bundled skills + 示例 | 多个 | 适合进阶 | [03-skills/](03-skills/) |
 | Subagents | 6 个内建 | 多个 | 适合进阶 | [04-subagents/](04-subagents/) |
 | MCP | 1 个内建生态入口 + 示例 | 多个 | 适合集成场景 | [05-mcp/](05-mcp/) |
@@ -51,7 +51,7 @@ slash commands 是用户在 Claude Code 里主动输入的快捷操作，例如 
 | `/proactive` | `/loop` 的别名 |
 | `/recap` | 返回旧 session 时快速回顾上下文 |
 | `/rewind` | 回退到 checkpoint |
-| `/resume` | 恢复之前的 session |
+| `/resume` | 恢复之前的 session；无参数时打开历史 session picker |
 | `/team-onboarding` | 根据当前项目配置生成新人上手说明 |
 | `/tui` | 切换全屏 TUI 模式 |
 | `/focus` | 切换 focus view |
@@ -64,7 +64,8 @@ slash commands 是用户在 Claude Code 里主动输入的快捷操作，例如 
 | `/usage` | 查看 plan 用量、限流状态和成本；`v2.1.149+` 起成本视图会按 skills、subagents、plugins、MCP server 等类别拆分，`v2.1.174+` 的 VSCode Account & usage 视图还会显示 cache miss、long-context cost、subagents 以及 per-skill / per-agent / per-plugin / per-MCP 归因 |
 | `/usage-credits` | 配置额外用量额度；`/extra-usage` 仍可作为 alias（别名）使用 |
 | `/review <pr>` | 审查 GitHub PR；`v2.1.186+` 起复用 `/code-review medium` 的 review engine，本地 diff 仍用 `/code-review` |
-| `/branch` | 从当前对话分叉（某些版本中 `/fork` 仍可能可用） |
+| `/fork <directive>` | 启动继承完整对话的后台 subagent，当前对话继续进行 |
+| `/branch [name]` | 切换到当前对话的副本并保留原对话 |
 
 ### 仓库里的示例命令
 
@@ -111,6 +112,8 @@ subagents 是专门负责某类任务的子代理。它们适合复杂任务拆�
 从 `v2.1.172+` 起，subagent 可以再 spawn 子 subagent，最多嵌套 5 层。需要限制可 spawn 对象时，保留 `Agent(agent_type)` 语法，不要翻译或改名。
 
 从 `v2.1.178+` 起，嵌套 `.claude/agents/` 的同名 agent 采用最近目录优先；workflow 和 output-style 定义也遵循同样规则。
+
+从 `v2.1.210+` 起，subagent 最终报告会扫描 instruction-shaped text；从 `v2.1.212+` 起，每个 session 默认最多 spawn 200 个 subagents，可用 `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` 调整，`/clear` 会重置预算。
 
 ### 常见内建 subagents
 
@@ -309,7 +312,9 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 ### 新手最重要的理解
 
 - `CLAUDE.md` 不是随便写笔记的地方，它更像项目规范和上下文入口。
-- 项目级和个人级 memory 适合放不同内容。
+- `CLAUDE.md` 指令与 auto memory 是两套互补机制；前者由人维护，后者由 Claude 维护。
+- Managed、User、Project、Local 四类 CLAUDE.md 会按范围拼接进上下文，不是严格的覆盖链。
+- `@path/to/file` import 最多递归 4 hops，相对路径以包含 import 的文件为基准。
 - memory 很强，但它不替代 skills、hooks 和 slash commands。
 - 旧教程里常见的 `# ...` 快捷写 memory 已经停用；现在请用 `/memory` 或自然语言更新。
 
@@ -379,7 +384,14 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `claude_code.assistant_response`
 - `!` bash mode live file-path autocomplete
 - `claude plugin init <name>`
-- `CLAUDE_CODE_ENABLE_AUTO_MODE=1`
+- `CLAUDE_CODE_ENABLE_AUTO_MODE`（从 `v2.1.207` 起仅保留兼容性，不再产生效果）
+- `disableAutoMode`
+- `claude auto-mode reset [--yes]`
+- `/fork <directive>` 与 `/branch [name]` 的不同行为
+- `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`
+- `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`
+- `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`
+- `--ax-screen-reader`、`CLAUDE_AX_SCREEN_READER`、`axScreenReader`
 - `EnterWorktree`
 - dynamic workflows 触发关键词是 `ultracode`，裸词 `workflow` 不再触发
 - `claude agents --json`

@@ -2,6 +2,28 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-07-19
+
+### 上游审阅
+
+- 核对上游范围：`a645ffe` → `8f04517`
+- 上游这轮重点：
+  - 教程覆盖更新到 Claude Code `v2.1.212`，修正 Memory、session 分支、subagent、MCP、Auto Mode 和 accessibility 行为
+  - CLAUDE.md 文件按范围拼接，不是严格覆盖链；import 最大深度为 4 hops
+  - `/fork <directive>`、`/branch [name]` 与无参数 `/resume` 的行为已更新
+  - 新增 subagent 输出扫描与 spawn 上限、WebSearch 上限、MCP 自动转后台阈值
+  - Auto Mode provider opt-in 自 `v2.1.207` 起不再需要，并新增 `claude auto-mode reset` 与 screen reader mode
+
+### 中文 fork 处理
+
+- 将 `v2.1.212` 的行为变化写入中文教程、功能总表、速查卡、概念总览、资源索引和 Index，不照搬英文上游 README
+- 删除“Memory 8 层覆盖”“`/fork` 是 `/branch` 的兼容别名”“云 provider 仍需 `CLAUDE_CODE_ENABLE_AUTO_MODE=1`”等过时说法
+- 保留命令、路径、JSON key、环境变量、frontmatter 字段和 CLI flags 原文
+- 不引入上游其他语言目录；示例页脚的元数据变化仅记录同步状态，不给中文示例添加无必要页脚
+- 扩展本地化校验，锁定关键新行为并阻止旧内容回归
+- 不改变 `Claude Code 中文全面上手指南` 默认入口
+- 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
+
 ## 中文版同步 — 2026-07-12
 
 ### 上游审阅

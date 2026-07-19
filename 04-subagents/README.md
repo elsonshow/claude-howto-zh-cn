@@ -129,6 +129,8 @@ model: inherit
 
 `background: true` 的含义也发生了变化：从 `v2.1.198+` 起，subagents 默认就在后台运行；显式写 `true` 是强制它始终后台运行，并阻止 inline execution。
 
+`effort` 可写 `low`、`medium`、`high`、`xhigh` 或 `max`，实际可用范围取决于模型。`permissionMode` 才是覆盖 subagent 权限模式的 frontmatter 字段；从 `v2.1.212+` 起，Task tool 调用参数里的 `mode` 已弃用并会被忽略，未写 `permissionMode` 时 subagent 继承父 session 的权限模式。
+
 ---
 
 ## 本目录里的示例 subagents
@@ -318,6 +320,16 @@ cp 04-subagents/code-reviewer.md .claude/agents/
 - 长任务里做 A/B 方案对比
 
 如果你的目标是“保留主线上下文，再开一条支线试试”，就该优先考虑 forked subagents。
+
+## subagent 输出安全扫描与 session 限额
+
+从 `v2.1.210+` 起，Claude Code 会扫描每个 subagent 的最终报告，识别伪造的 `<system-reminder>`、`Human:` / `Assistant:` 对话或权限绕过提示等 instruction-shaped text。命中后，系统会转义或插入标记；父 session 应把它当作需要转述的发现，而不是待执行的指令。该扫描默认开启，没有公开的关闭入口，引用真实安全 flag 时也可能出现宁可多报的 false positive。
+
+从 `v2.1.212+` 起，每个 session 默认最多 spawn **200** 个 subagents，防止委派循环失控。可用 `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` 调整；执行 `/clear` 会重置这项预算。
+
+```bash
+export CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION=200
+```
 
 ---
 

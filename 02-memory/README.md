@@ -94,6 +94,23 @@ Claude 会根据你的描述，把内容写进合适的 `CLAUDE.md`。
 
 ---
 
+## 用 `@` 导入外部文档
+
+`CLAUDE.md` 支持用 `@path/to/file` 引用已有文档，避免把同一份项目说明复制多遍：
+
+```markdown
+项目概览见 @README.md
+架构约定见 @docs/architecture.md
+个人补充说明见 @~/.claude/my-project-instructions.md
+```
+
+- 相对路径以包含这条 import 的文件为基准，不是以启动 Claude Code 的工作目录为基准。
+- import 可以递归，但最多允许 **4 hops**。
+- 第一次导入外部位置时会弹出 approval dialog，确认来源后再继续。
+- Markdown code span 和 code block 里的 `@path` 只是示例，不会被执行为 import。
+
+---
+
 ## 常见 memory 类型
 
 ### 项目级 memory
@@ -132,20 +149,24 @@ Claude 会根据你的描述，把内容写进合适的 `CLAUDE.md`。
 
 ---
 
-## memory 层级与优先级
+## 两套 memory 机制与 CLAUDE.md 加载顺序
 
-同一条规则在多个位置冲突时，高层级优先。当前教程按 8 层理解：
+Claude Code 有两套互补机制：你维护的 `CLAUDE.md` 指令，以及 Claude 自己维护的 auto memory。两者都会在对话开始时加载，但不能混成一条“高层覆盖低层”的严格优先级链。
 
-1. Managed Policy
-2. Managed Drop-ins（`managed-settings.d/`）
-3. Project Memory（`./CLAUDE.md` 或 `./.claude/CLAUDE.md`）
-4. Project Rules（`./.claude/rules/*.md`）
-5. User Memory（`~/.claude/CLAUDE.md`）
-6. User Rules（`~/.claude/rules/*.md`）
-7. Local Project Memory（`./CLAUDE.local.md`）
-8. Auto Memory（`~/.claude/projects/<project>/memory/`）
+`CLAUDE.md` 文件按作用范围从宽到窄加载：
 
-Managed Drop-ins 会按文件名字母顺序合并，方便组织把策略拆成多个文件。低层级 memory 不能用类似 `!important` 的写法覆盖高层级规则。
+| 范围 | 位置 | 用途 |
+|------|------|------|
+| Managed policy | macOS `/Library/Application Support/ClaudeCode/CLAUDE.md`、Linux/WSL `/etc/claude-code/CLAUDE.md`、Windows `C:\Program Files\ClaudeCode\CLAUDE.md` | 组织统一指令 |
+| User instructions | `~/.claude/CLAUDE.md` | 个人跨项目偏好 |
+| Project instructions | `./CLAUDE.md` 或 `./.claude/CLAUDE.md` | 团队共享的项目约定 |
+| Local instructions | `./CLAUDE.local.md` | 不提交到 Git 的个人项目偏好 |
+
+这些文件会**拼接**进上下文，而不是由后一层把前一层整份覆盖。Claude Code 会从工作目录向上查找；同一目录中的 `CLAUDE.local.md` 接在 `CLAUDE.md` 后面。工作目录下更深层的文件则在 Claude 读取对应子目录时按需加载。
+
+`.claude/rules/*.md` 是另一套相关的模块化规则机制，可以通过 `paths` frontmatter 按路径生效。auto memory 位于 `~/.claude/projects/<project>/memory/`，保存 Claude 自己整理的笔记，也不参与上面的 CLAUDE.md 拼接顺序。
+
+组织还可以在 managed settings 中通过 `claudeMd` 写入托管指令；这个 key 放到用户或项目 settings 中不会生效。大型 monorepo 可以用 `claudeMdExcludes` 排除无关的 CLAUDE.md 文件，但不能排除 managed policy。
 
 ## 用 --add-dir 加载额外目录
 
@@ -156,7 +177,7 @@ export CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1
 claude --add-dir /path/to/other/project
 ```
 
-`--add-dir` 和 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` 都是可执行标识，不要翻译。额外目录只用于补充上下文，不会改变上面的优先级原则。
+`--add-dir` 和 `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD` 都是可执行标识，不要翻译。额外目录中的 CLAUDE.md 会和当前项目的 memory 一起加载，用于补充上下文。
 
 ---
 
@@ -246,12 +267,15 @@ Claude Code 不会把整个 auto memory 目录一次性全塞进上下文。最�
 
 当前更准确的 settings 优先级顺序是：
 
-1. managed policy / `managed-settings.d/`
-2. `.claude/settings.local.json`（本地覆盖，通常不提交）
-3. `.claude/settings.json`（项目级，通常提交）
-4. `~/.claude/settings.json`（用户级偏好）
+1. managed policy / `managed-settings.json`
+2. 命令行参数
+3. `.claude/settings.local.json`（本地覆盖，通常不提交）
+4. `.claude/settings.json`（项目级，通常提交）
+5. `~/.claude/settings.json`（用户级偏好）
 
 这点容易和旧资料混淆：本地项目覆盖项 `.claude/settings.local.json` 的优先级高于项目级 `.claude/settings.json`，也高于用户级 `~/.claude/settings.json`。
+
+`managed-settings.d/` 是 managed settings 的 JSON drop-in 目录，不是 memory 层。它会在基础 `managed-settings.json` 之后按文件名字母顺序合并 `*.json`；普通标量覆盖、数组拼接并去重、对象深度合并。另一个例外是 permission rules：`allow` / `ask` / `deny` 会跨 scope 合并，而不是简单由高优先级整项替换。
 
 ### 2. `cleanupPeriodDays` 不只是管 checkpoints
 

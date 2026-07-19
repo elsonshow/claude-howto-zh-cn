@@ -144,6 +144,17 @@ cp 05-mcp/multi-mcp.json .mcp.json
 
 同一版本还把 idle timeout 扩展到 stdio servers：默认空闲 30 分钟；单个 server 的 `timeout` 会作为空闲时间下限。这里的 `roots/list`、`notifications/roots/list_changed`、`timeout` 都是协议或配置标识，不能翻译。
 
+## 长时间 MCP tool call 自动转后台
+
+从 `v2.1.212+` 起，MCP tool call 运行超过 2 分钟时会自动转到后台，避免慢工具一直阻塞当前 session。默认阈值是 `120000` 毫秒，可以通过 `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` 调整：
+
+```bash
+# 改为 5 分钟
+export CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=300000
+```
+
+这个变量控制“何时转后台”，不要和 `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` 的无响应中止阈值混为一谈。
+
 ## 托管 MCP 配置
 
 项目提交的 `.mcp.json` 仍需要用户信任。未信任的 workspace 即使在 `.claude/settings.json` 中自行批准了 project MCP，`claude mcp list` / `get` 也不会自动启动它，而会显示 `⏸ Pending approval`。

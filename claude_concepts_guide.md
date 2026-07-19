@@ -6,15 +6,19 @@
 
 用户主动输入的快捷命令，适合显式触发某个动作。
 
+`/fork <directive>` 会启动继承完整对话的后台 subagent；`/branch [name]` 会让你切换到当前对话的副本并保留原对话。它们当前不是 alias。无参数 `/resume` 会打开历史 session picker，并将选中的 session 作为后台 session 恢复。
+
 ## 2. Memory（记忆）
 
-长期自动加载的上下文，适合放项目规则和个人偏好。
+Memory 包含两套互补机制：人维护的 `CLAUDE.md` 指令，以及 Claude 自己维护的 auto memory。Managed、User、Project、Local 四类 CLAUDE.md 会按范围**拼接**进上下文，不是严格覆盖链；`.claude/rules/*.md` 与 auto memory 是独立的相关机制。
+
+`@path/to/file` 可以从 CLAUDE.md 导入外部文档，递归最大深度为 4 hops；相对路径以包含 import 的文件为基准。
 
 ## 3. Skills（技能）
 
 可复用、可自动触发的能力，适合沉淀稳定工作流。
 
-`v2.1.206` 这轮同步后，特别值得关注这些 bundled skills、plugin 和排障入口：
+截至 `v2.1.212`，特别值得关注这些 bundled skills、plugin 和排障入口：
 
 - `/run`：启动当前项目，确认改动能真实运行
 - `/verify`：构建、运行并观察应用，确认修复不是只停留在测试通过
@@ -42,6 +46,8 @@
 
 从 `v2.1.198+` 起，subagents 默认在后台运行，built-in `Explore` 会继承 session 模型（上限 Opus），extended thinking 也会继承。`CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS=1` 可禁用 built-in Explore / Plan，`--append-subagent-system-prompt` 可在 print mode 中追加统一提示。
 
+从 `v2.1.210+` 起，subagent 最终报告会扫描 instruction-shaped text；从 `v2.1.212+` 起，每个 session 默认最多 spawn 200 个 subagents，可用 `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` 调整，`/clear` 会重置预算。Task tool 的 `mode` 调用参数已弃用并被忽略，权限应通过 agent frontmatter 的 `permissionMode` 配置。
+
 Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 teammate 放进 iTerm2 pane；该模式依赖 `it2` CLI。
 
 ## 5. MCP（外部工具协议）
@@ -53,6 +59,8 @@ Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 tea
 从 `v2.1.193+` 起，启动时会提示哪些 MCP server 仍需要认证；如果你用 `headersHelper` 提供动态认证头，遇到 HTTP 401 / 403 时会自动刷新。
 
 从 `v2.1.203+` 起，MCP server 可通过 `roots/list` 获得启动目录和 `--add-dir` / `additionalDirectories`，目录变化时会收到 `notifications/roots/list_changed`。未信任 workspace 中的 project MCP 会保持 `Pending approval`，不能靠 `enableAllProjectMcpServers` 自动绕过。
+
+从 `v2.1.212+` 起，MCP tool call 超过 2 分钟会自动转后台；`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` 用于调整这个阈值，和无响应中止用的 `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` 不是同一个设置。
 
 ## 6. Hooks（钩子）
 
@@ -104,6 +112,10 @@ Claude Code 的核心使用入口，也是自动化、脚本化和 CI/CD 的关�
 
 `--safe-mode` / `CLAUDE_CODE_SAFE_MODE=1` 适合排查自定义配置问题；`fallbackModel` 适合给主模型不可用时准备有序 fallback。
 
+`claude auto-mode reset [--yes]` 用于恢复 Auto Mode 默认配置。`CLAUDE_CODE_ENABLE_AUTO_MODE` 从 `v2.1.207` 起仅保留历史兼容性且不再生效；管理员可通过 managed setting `disableAutoMode` 禁用该能力。
+
+`--ax-screen-reader`、`CLAUDE_AX_SCREEN_READER=1` 或 `"axScreenReader": true` 会启用适合 screen reader 的纯文本渲染模式。
+
 `wheelScrollAccelerationEnabled`、`footerLinksRegexes`、`language` 是 settings.json 里的 key，说明文字可以中文化，但 key 本身不要翻译。
 
 `respondToBashCommands` 控制 `!` bash 命令输出后是否自动让 Claude 回复；默认 `true`，设为 `false` 可回到只把输出放进上下文的旧行为。
@@ -112,4 +124,4 @@ Claude Code 的核心使用入口，也是自动化、脚本化和 CI/CD 的关�
 
 从 `v2.1.193+` 起，`!` bash mode 支持 live file-path autocomplete。`autoMode.classifyAllShell` 可以让所有 Bash / PowerShell 命令都过 Auto Mode 分类器，`claude_code.assistant_response` 可把模型回复文本写进 OpenTelemetry log event。
 
-`CLAUDE_CLIENT_PRESENCE_FILE`、`CLAUDE_CODE_MAX_RETRIES`、`CLAUDE_CODE_RETRY_WATCHDOG`、`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`、`CLAUDE_CODE_DISABLE_MOUSE_CLICKS` 是环境变量标识，不要翻译。`sandbox.credentials`、`sandbox.allowAppleEvents`、`autoMode.classifyAllShell` 和 `/config key=value` 属于配置 / 命令口径，也要保持原文。
+`CLAUDE_CLIENT_PRESENCE_FILE`、`CLAUDE_CODE_MAX_RETRIES`、`CLAUDE_CODE_RETRY_WATCHDOG`、`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`、`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`、`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`、`CLAUDE_CODE_DISABLE_MOUSE_CLICKS` 是环境变量标识，不要翻译。`sandbox.credentials`、`sandbox.allowAppleEvents`、`autoMode.classifyAllShell` 和 `/config key=value` 属于配置 / 命令口径，也要保持原文。

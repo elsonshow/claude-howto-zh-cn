@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`a645ffe6b027c2dfb56c4efcbba1c8051f0ff006`
+- 最近检查到的上游 commit：`8f045173d1b1e876d101eb9a94972585f57c4ed1`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,23 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-07-19
+
+- Reviewed upstream range: `a645ffe` → `8f04517`
+- 重点上游变化：
+  - 教程覆盖更新到 Claude Code `v2.1.212`，修正已经停用的 `#` memory shortcut 说明
+  - CLAUDE.md 改为按 Managed、User、Project、Local 范围拼接理解；auto memory 和 `.claude/rules/*.md` 属于独立机制，import 最大深度为 4 hops
+  - `/fork <directive>` 现在委派给继承完整对话的后台 subagent，`/branch [name]` 切换到对话副本；无参数 `/resume` 增加历史 session picker
+  - subagent 输出在 `v2.1.210+` 增加 instruction-shaped text 扫描，`v2.1.212+` 默认限制每 session 200 次 spawn
+  - MCP tool call 超过 2 分钟自动转后台；Auto Mode provider opt-in 在 `v2.1.207+` 已移除，并新增 reset 与 screen reader 入口
+- Chinese fork actions:
+  - 将行为变化本土化写入 slash commands、Memory、subagents、MCP、Advanced Features、CLI、Catalog、Quick Reference、概念总览、资源索引和 Index，不复制上游英文根 README
+  - 保留 `/fork <directive>`、`/branch [name]`、`managed-settings.d/`、`permissionMode`、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`、`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`、`disableAutoMode`、`--ax-screen-reader` 等标识原文
+  - 删除当前教程中的“8 层覆盖链”、`/fork` 兼容别名和 `CLAUDE_CODE_ENABLE_AUTO_MODE=1` 仍需 opt-in 等过时说法
+  - 上游 `ja/`、`vi/`、`uk/`、`zh/` 目录仅作为差异参考，不引入本中文主线；示例页脚的版本元数据变化通过本记录吸收，不改写无对应页脚的中文示例
+  - 扩展 `scripts/validate_localization.py`，覆盖 `v2.1.212` 关键字段并阻止旧表述回归
+  - 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
 
 ### 上游同步 — 2026-07-12
 

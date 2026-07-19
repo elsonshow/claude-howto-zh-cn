@@ -28,6 +28,7 @@ Claude Code 的 CLI 是最核心的使用入口。
 | `claude project purge [path]` | 清理某个项目的本地 Claude Code 状态，先用 `--dry-run` 预览 |
 | `claude plugin prune` | 清理无主的自动安装 plugin 依赖 |
 | `claude ultrareview [target]` | 在无头模式里运行 `/ultrareview`，适合 CI / PR gate |
+| `claude auto-mode reset [--yes]` | 恢复 Auto Mode 默认配置；`--yes` 跳过确认（`v2.1.212+`） |
 
 如果你是新手，先熟悉 `claude`、`claude -p`、`claude -c`、`claude -r` 就已经很有价值。
 
@@ -92,6 +93,7 @@ cat error.log | claude -p "explain this error"
 | `--add-dir` | 加额外目录到工作上下文 |
 | `--tmux` | 给 worktree / 多任务场景创建 tmux 会话 |
 | `--exclude-dynamic-system-prompt-sections` | 排除系统提示中的动态段落，帮助 prompt cache 更稳定命中 |
+| `--ax-screen-reader` | 使用适合 screen reader 的纯文本渲染模式（`v2.1.208+`） |
 
 ---
 
@@ -174,7 +176,9 @@ claude -p --append-subagent-system-prompt "Cite sources" "review this project"
 - Fast Mode 默认切到 Opus 4.8；`CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` 在 `v2.1.160` 起已经是 no-op
 - 新增 `/reload-skills` 和 `/workflows`，分别用于重扫 skills 和查看 dynamic workflows
 - 新增 `claude plugin init <name>`，可在 `.claude/skills` 中脚手架本地 plugin
-- Bedrock / Vertex / Foundry 上的 Auto Mode 需要显式设置 `CLAUDE_CODE_ENABLE_AUTO_MODE=1`
+- 从 `v2.1.207` 起，Bedrock / Vertex AI / Microsoft Foundry 上受支持模型的 Auto Mode 不再需要 `CLAUDE_CODE_ENABLE_AUTO_MODE=1`；该变量仅为历史兼容而保留，当前不产生效果
+- `v2.1.212+` 可用 `claude auto-mode reset [--yes]` 恢复 Auto Mode 默认配置；管理员可通过 managed setting `disableAutoMode` 禁用该能力
+- `--ax-screen-reader`、`CLAUDE_AX_SCREEN_READER=1` 或 `"axScreenReader": true` 可以启用纯文本 screen reader 渲染模式
 - `EnterWorktree` 可以在同一 session 中切换 Claude 管理的 worktree
 - `/cd <path>` 可以在保留 prompt cache 的情况下切换当前 session 工作目录
 - `--safe-mode` / `CLAUDE_CODE_SAFE_MODE=1` 适合排查 CLAUDE.md、plugins、skills、hooks、MCP 带来的配置问题
@@ -201,6 +205,8 @@ claude -p --append-subagent-system-prompt "Cite sources" "review this project"
 | `footerLinksRegexes` | 从 `v2.1.176+` 起可配置正则数组，把匹配到的链接显示成 footer badges |
 | `language` | 设置 Claude Code 偏好的回复语言和语音听写语言；从 `v2.1.176+` 起，自动生成的 session title 也会按这个语言固定 |
 | `respondToBashCommands` | 从 `v2.1.186+` 起控制 `!` bash 命令输出后是否自动让 Claude 回复；默认 `true`，设为 `false` 可回到只进上下文的旧行为 |
+| `disableAutoMode` | 在 managed settings 中禁用 Auto Mode（`v2.1.207+`） |
+| `axScreenReader` | 设为 `true` 后启用纯文本 screen reader 渲染模式（`v2.1.208+`） |
 
 示例：
 
@@ -401,14 +407,14 @@ claude --agents "$(cat agents.json)" "review the auth module"
 
 常用命令和 flags：
 
-- `/resume`
+- `/resume`（无参数时打开历史 session picker，并把选中项作为后台 session 恢复）
 - `/rename`
-- `/branch`（较新的主名称，部分环境里 `/fork` 仍可能作为兼容别名出现）
-- `/fork`
+- `/fork <directive>`（委派给继承完整对话的后台 subagent）
+- `/branch [name]`（切换到当前对话的副本，并保留原对话）
 - `claude -c`
 - `claude -r`
 
-不命名 session，前期感觉没问题，后期会越来越难管理。
+`/fork` 与 `/branch` 当前不是 alias；不命名 session，前期感觉没问题，后期会越来越难管理。
 
 ---
 
@@ -451,7 +457,11 @@ claude ultrareview 1234 --json > review.json
 | `CLAUDE_CODE_FORCE_SYNC_OUTPUT` | 在终端能力自动检测失误时强制同步输出，例如 Emacs `eat` |
 | `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE` | 为 Homebrew / WinGet 安装启用后台升级 |
 | `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY` | 在设置了 `ANTHROPIC_BASE_URL` 时，显式开启 `/v1/models` 网关发现 |
-| `CLAUDE_CODE_ENABLE_AUTO_MODE` | 设为 `1` 后，在 Bedrock / Vertex / Foundry 上对 Opus 4.7 / 4.8 显式启用 Auto Mode |
+| `CLAUDE_CODE_ENABLE_AUTO_MODE` | `v2.1.158` 到 `v2.1.206` 的 Auto Mode opt-in；从 `v2.1.207` 起仅为历史兼容而保留，不再产生效果 |
+| `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` | 每个 session 的 WebSearch 调用上限，默认 200（`v2.1.212+`） |
+| `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` | 每个 session 的 subagent spawn 上限，默认 200；`/clear` 会重置预算（`v2.1.212+`） |
+| `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` | MCP tool call 自动转后台的阈值，默认 `120000` 毫秒（2 分钟，`v2.1.212+`） |
+| `CLAUDE_AX_SCREEN_READER` | 设为 `1` 后启用纯文本 screen reader 渲染模式，等同于 `--ax-screen-reader` 或 `"axScreenReader": true` |
 | `CLAUDE_CODE_SAFE_MODE` | 设为 `1` 后以 safe mode 启动，禁用 CLAUDE.md、plugins、skills、hooks、MCP servers |
 | `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` | 设为 `1` 后隐藏内置 skills、workflows 和 commands |
 | `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` | `v2.1.160` 起已经是 no-op；如果仍想让 Opus 4.6 走 fast mode，先 `/model claude-opus-4-6[1m]`，再 `/fast on` |

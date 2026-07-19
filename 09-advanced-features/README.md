@@ -218,14 +218,18 @@ Auto Mode 属于更偏自动化、也更需要谨慎的能力。
 
 ### 当前要求要看清
 
-截至 2026 年 6 月，上游文档里对 Auto Mode 的要求已经更明确：
+截至 `v2.1.212`，Auto Mode 是否可用仍取决于账号、组织策略、模型和 provider；Team / Enterprise 环境还可能需要管理员启用。不要把它简单理解成“所有账号默认都能用”。
 
-- 不是 Pro / Max 就能直接用
-- 更偏向 Team、Enterprise 或 API 场景
-- Max 用户在 Opus 4.7+ 上已经不再强依赖 `--enable-auto-mode`
-- 在 Bedrock / Vertex / Foundry 上使用 Opus 4.7 / 4.8 时，需要显式设置 `CLAUDE_CODE_ENABLE_AUTO_MODE=1`
+从 `v2.1.207` 起，Bedrock / Vertex AI / Microsoft Foundry 以及已登录的 Claude apps gateway session 不再需要 `CLAUDE_CODE_ENABLE_AUTO_MODE=1` 才能启用受支持模型的 Auto Mode。这个旧环境变量仍会被接受以兼容历史脚本，但已经不产生效果。管理员可以在 managed settings 中使用 `disableAutoMode` 禁用该能力。
 
-如果你看到旧资料写得很宽泛，优先以最新官方能力范围为准。
+需要恢复 Auto Mode 默认配置时，`v2.1.212+` 可以运行：
+
+```bash
+claude auto-mode reset
+claude auto-mode reset --yes
+```
+
+第一条会请求确认，`--yes` 用于跳过确认。看到旧资料时，优先核对当前版本和组织策略，不要继续复制旧的 opt-in 环境变量。
 
 ---
 
@@ -643,13 +647,27 @@ session 管理能力在任务复杂后会非常重要。
 
 常见操作：
 
-- `/resume`
+- `/resume`：无参数时打开历史 session picker，并将选中的 session 作为后台 session 恢复（`v2.1.212+`）
 - `/rename`
-- `/branch`（较新的主名称，部分环境中 `/fork` 仍可能作为兼容别名出现）
+- `/fork <directive>`：启动继承完整对话的后台 subagent，当前对话继续进行
+- `/branch [name]`：切换到当前对话的副本，原对话保留
 - `claude -c`
 - `claude -r "session-name"`
 
-如果你不命名 session，后期会越来越难管理。
+`/fork` 只在 `v2.1.77` 到 `v2.1.161` 之间曾是 `/branch` 的 alias；当前版本里两者行为不同。如果你不命名 session，后期会越来越难管理。
+
+---
+
+## 屏幕阅读器模式
+
+从 `v2.1.208+` 起，Claude Code 提供纯文本渲染模式，减少全屏 TUI 对 screen reader 的干扰。以下三种入口效果相同：
+
+```bash
+claude --ax-screen-reader
+export CLAUDE_AX_SCREEN_READER=1
+```
+
+也可以在 settings 中设置 `"axScreenReader": true`。`--ax-screen-reader`、`CLAUDE_AX_SCREEN_READER` 和 `axScreenReader` 都是可执行标识，不要翻译。
 
 ---
 
@@ -788,14 +806,16 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 
 如果你想长期高效使用 Claude Code，这一步绕不过去。
 
-### 两个新增的个人设置
+### 值得注意的 settings
 
 | setting | 用途 |
 |---------|------|
 | `askUserQuestionTimeout` | 给无人回答的 `AskUserQuestion` 设置空闲超时并自动继续。`v2.1.200+` 默认不再自动继续；只有显式配置这个 key 才恢复定时行为 |
 | `enableArtifact` | 按用户启用或禁用 Artifact tool（`v2.1.196+`） |
+| `disableAutoMode` | 在 managed settings 中禁用 Auto Mode（`v2.1.207+`） |
+| `axScreenReader` | 设为 `true` 后启用纯文本 screen reader 渲染模式（`v2.1.208+`） |
 
-这两个 key 可以放在 `~/.claude/settings.json` 或项目 settings 中，key 名不要翻译。
+这些 key 名不要翻译。`askUserQuestionTimeout`、`enableArtifact` 和 `axScreenReader` 可用于常规 settings；`disableAutoMode` 是管理员使用的 managed setting。
 
 ### `/config` 可以直接写 `key=value`
 
@@ -821,6 +841,10 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 - `CLAUDE_CODE_MAX_RETRIES`（控制 API retry 次数；`v2.1.186+` 起最多 15 次）
 - `CLAUDE_CODE_RETRY_WATCHDOG`（适合无人值守 session 的 retry 控制，不建议一味抬高 `CLAUDE_CODE_MAX_RETRIES`）
 - `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`（覆盖 remote MCP tool 5 分钟无响应 abort 的默认值，适合排查长时间挂起的 MCP 调用）
+- `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`（每个 session 的 WebSearch 调用上限，默认 200；`v2.1.212+`）
+- `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`（每个 session 的 subagent spawn 上限，默认 200；`/clear` 会重置预算）
+- `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`（MCP tool call 自动转后台的阈值，默认 `120000` 毫秒）
+- `CLAUDE_AX_SCREEN_READER=1`（启用纯文本 screen reader 渲染模式）
 
 这里还有两个这轮很值得知道的行为修正：
 

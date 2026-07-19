@@ -20,14 +20,14 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-07-12
-- **本轮参考范围**：`0f3fe1d` -> `a645ffe`
+- **最近同步日期**：2026-07-19
+- **本轮参考范围**：`a645ffe` -> `8f04517`
 - **本次同步内容**：
-  - 同步 Claude Code `v2.1.206`：Sonnet 5、`manual` permission mode、`/dataviz`、skill 叠加、subagent 默认后台运行、MCP `roots/list`、双向 checkpoint summarize 等
-  - 补齐 hooks、plugins、advanced settings 和 CLI 新字段，同时保留所有可执行标识原文
-  - 复查并修正上一轮课程评估内容：Lesson Quiz 统一为 5 轮，Deep Assessment 满分统一为 19，Hooks 题目更新为 30 个事件
-  - 将题目、结果模板和学习建议改成中文主线，并让 Q9 / Q10 的回看指针匹配真实中文章节
-  - 修复 EPUB 构建时把已嵌入 Mermaid 资源误报为本地缺图的问题，并增加回归测试
+  - 同步 Claude Code `v2.1.212`：区分 `/fork <directive>` 与 `/branch [name]`，补充 `/resume` 历史 session picker 的新行为
+  - 重写 Memory 说明：CLAUDE.md 按范围拼接而非 8 层覆盖，auto memory 独立，import 最多 4 hops，settings 才遵循真实优先级
+  - 补充 subagent 输出安全扫描、每 session 200 次 spawn 上限，以及 MCP tool call 运行 2 分钟后自动转后台的规则
+  - 更新 Auto Mode `v2.1.207+` 行为、`claude auto-mode reset` 和 screen reader 入口，移除已经无效的 provider opt-in 说法
+  - 扩展本地化校验，阻止上述旧表述或关键新字段在后续同步中回归
   - 保留 `SKILL.md` frontmatter key、CLI flags、路径、slash command 和 skill / plugin / subagent 名称原文
   - 继续保持根目录中文主线，不把上游英文 README 覆盖到中文首页
 
