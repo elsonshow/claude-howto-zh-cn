@@ -69,10 +69,11 @@ skill-name/
 - `effort` 可用值需要看模型能力；新版里可写 `low` / `medium` / `high` / `xhigh` / `max`，Opus 4.8 默认是 `high`，`xhigh` 适用于 Opus 4.8 / 4.7
 - skill 内容里可以使用 `${CLAUDE_EFFORT}` 获取当前 effort level，适合根据思考强度分支执行不同流程
 - `/skills` 交互菜单支持直接输入过滤，装了很多 skills 时更容易定位
-- Claude Code 现在内置 **10 个 bundled skills**，其中 `/run`、`/verify`、`/run-skill-generator` 很适合做“代码真的跑起来了吗”的端到端验证
+- Claude Code 现在内置一组 bundled skills，其中 `/run`、`/verify`、`/run-skill-generator` 很适合做“代码真的跑起来了吗”的端到端验证
 - `/reload-skills` 可以在不重启 session 的情况下重新扫描 skill 目录；`SessionStart` hook 也可以通过返回 `reloadSkills: true` 触发同样行为
 - skill frontmatter 现在可以写 `disallowed-tools`，用于在 skill 生效期间移除某些工具权限
 - `/simplify` 在 `v2.1.154+` 后重新成为独立的清理型命令；`/code-review` 继续负责正确性缺陷审查
+- `/code-review` 和 `/verify` 从 `v2.1.215+` 起只会在用户显式调用时运行，Claude 不会自行触发
 - 如果你写了 `context: fork` 的 skill，建议升级到 `v2.1.145+`；上游修复了少数场景下可能无限重新调用的问题
 
 ---
@@ -141,9 +142,9 @@ skills 的一个核心优点是按需加载，而不是一上来把所有内容�
 | `/loop` | 需要按固定间隔重复执行一个 prompt 时 |
 | `/run` | 改完后要启动项目，确认应用真实跑起来时 |
 | `/run-skill-generator` | 第一次让 Claude 学会这个项目该怎么 `/run` / `/verify` 时 |
-| `/code-review [effort]` | 想让 Claude 审查当前 diff 的正确性缺陷时 |
+| `/code-review [effort]` | 想让 Claude 审查当前 diff 的正确性缺陷时；`v2.1.215+` 起必须显式调用 |
 | `/simplify` | 想做复用、简化、效率和抽象层级相关的清理型审查，并让 Claude 应用修复时 |
-| `/verify` | 不只跑测试，还要构建、运行并观察修复是否真的生效时 |
+| `/verify` | 不只跑测试，还要构建、运行并观察修复是否真的生效时；`v2.1.215+` 起必须显式调用 |
 
 对中文用户来说，`/verify` 的价值很高：它把“测试通过”和“用户实际能用”分开看，能减少本地看似成功、线上或真实应用仍出错的问题。
 

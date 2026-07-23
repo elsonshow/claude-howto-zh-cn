@@ -81,6 +81,8 @@ CLAUDE_CODE_NEW_INIT=1 claude
 
 这会直接打开 memory 文件，让你手工改最稳。
 
+从 `v2.1.216+` 起，如果系统用 GUI editor 打开文件，当前 session 不会一直等到编辑器关闭，你可以并行继续工作；Vim 等 terminal editor 仍会占用终端，直到退出编辑器。
+
 ### 方法 4：直接用自然语言告诉 Claude 要记住什么
 
 ```text
@@ -232,6 +234,8 @@ claude --add-dir /path/to/other/project
 
 Claude Code 不会把整个 auto memory 目录一次性全塞进上下文。最先进入上下文的是 `MEMORY.md` 的前 200 行或前 25KB，其余 topic files 按需加载。
 
+从 `v2.1.214+` 起，auto memory 文件如果以 YAML frontmatter 开头，Claude Code 每次写入时会自动维护 ISO 8601 格式的 `modified` 字段。`modified` 是协议字段，不要翻译或手工改名。
+
 ### 2. 它不是手工 `CLAUDE.md` 的替代品
 
 - `CLAUDE.md` 更适合明确规则
@@ -314,7 +318,7 @@ Claude Code 不会把整个 auto memory 目录一次性全塞进上下文。最�
 
 ### 1. 以为 memory 越长越好
 
-不是。memory 要优先放高价值、长期稳定、对 Claude 行为影响大的规则。
+不是。memory 要优先放高价值、长期稳定、对 Claude 行为影响大的规则。单个文件控制在几百行内，越短越好；官方没有“必须少于 100 行”或“最多 500 行”这类固定数字。
 
 ### 2. 把项目规则和个人偏好全混在一起
 

@@ -18,7 +18,7 @@
 |------|----------|----------|------------|------|
 | Slash Commands | 60+ | 8 | 非常适合 | [01-slash-commands/](01-slash-commands/) |
 | Memory | 2 套机制 | 3 | 非常适合 | [02-memory/](02-memory/) |
-| Skills | 10 个 bundled skills + 示例 | 多个 | 适合进阶 | [03-skills/](03-skills/) |
+| Skills | bundled skills + 示例 | 多个 | 适合进阶 | [03-skills/](03-skills/) |
 | Subagents | 6 个内建 | 多个 | 适合进阶 | [04-subagents/](04-subagents/) |
 | MCP | 1 个内建生态入口 + 示例 | 多个 | 适合集成场景 | [05-mcp/](05-mcp/) |
 | Hooks | 30 个事件 | 9 | 适合自动化 | [06-hooks/](06-hooks/) |
@@ -109,11 +109,11 @@ permission modes 决定 Claude Code 在使用工具时需要多大授权。
 
 subagents 是专门负责某类任务的子代理。它们适合复杂任务拆分，比如“一个做代码审查，一个做测试，一个做文档”。
 
-从 `v2.1.172+` 起，subagent 可以再 spawn 子 subagent，最多嵌套 5 层。需要限制可 spawn 对象时，保留 `Agent(agent_type)` 语法，不要翻译或改名。
+`v2.1.172` 到 `v2.1.216` 曾默认允许 subagent 再 spawn 子 subagent，最多 5 层；从 `v2.1.217` 起嵌套默认关闭。需要时设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 显式开启，并用 `Agent(agent_type)` 限制可 spawn 对象；这些标识都不要翻译或改名。
 
 从 `v2.1.178+` 起，嵌套 `.claude/agents/` 的同名 agent 采用最近目录优先；workflow 和 output-style 定义也遵循同样规则。
 
-从 `v2.1.210+` 起，subagent 最终报告会扫描 instruction-shaped text；从 `v2.1.212+` 起，每个 session 默认最多 spawn 200 个 subagents，可用 `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` 调整，`/clear` 会重置预算。
+从 `v2.1.210+` 起，subagent 最终报告会扫描 instruction-shaped text；从 `v2.1.212+` 起，每个 session 默认最多 spawn 200 个 subagents，可用 `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` 调整，`/clear` 会重置预算。`v2.1.217+` 还可用 `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` 控制同时运行数量，默认 20。
 
 ### 常见内建 subagents
 
@@ -165,9 +165,9 @@ skills 是 Claude Code 会根据描述自动触发的复用能力。它们往往
 | `/loop` | 按间隔重复执行 prompt |
 | `/run` | 启动当前项目，实际看改动是否跑起来 |
 | `/run-skill-generator` | 为项目生成 `/run` / `/verify` 所需的运行技能 |
-| `/code-review [effort]` | 审查当前 diff 的正确性缺陷，可传入 `/code-review high` |
+| `/code-review [effort]` | 审查当前 diff 的正确性缺陷，可传入 `/code-review high`；`v2.1.215+` 起仅显式调用 |
 | `/simplify` | 做复用、简化、效率和抽象层级相关的清理型审查，并应用修复；不负责找 bug |
-| `/verify` | 构建、运行并观察应用，确认修复真的有效 |
+| `/verify` | 构建、运行并观察应用，确认修复真的有效；`v2.1.215+` 起仅显式调用 |
 
 ### skill 结构
 
@@ -356,7 +356,8 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - hook `matcher` 逗号列表和精确匹配
 - `CLAUDE_CODE_SESSION_ID`
 - `claude-fable-5`
-- `Agent(agent_type)` 限制 subagent 可 spawn 类型，subagent 最多 5 层嵌套
+- `Agent(agent_type)` 限制 subagent 可 spawn 类型；`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 显式开启嵌套
+- `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` 控制并发 subagents，默认 20
 - hook handler 级 `if` 条件
 - `/plugin` marketplace 搜索栏
 - `enforceAvailableModels`
@@ -391,6 +392,11 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`
 - `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`
 - `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`
+- `--permission-mode auto`（替代已移除的 `--enable-auto-mode`）
+- `sandbox.filesystem.disabled`
+- `emojiCompletionEnabled`
+- `CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH`
+- `FORCE_HYPERLINK=0`
 - `--ax-screen-reader`、`CLAUDE_AX_SCREEN_READER`、`axScreenReader`
 - `EnterWorktree`
 - dynamic workflows 触发关键词是 `ultracode`，裸词 `workflow` 不再触发

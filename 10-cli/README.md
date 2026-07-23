@@ -88,6 +88,7 @@ cat error.log | claude -p "explain this error"
 | `--model` | 指定模型 |
 | `--effort` | 指定思考强度；Opus 4.8 默认 `high`，也支持 `xhigh` / `max` |
 | `--permission-mode` | 指定权限模式 |
+| `--permission-mode auto` | 直接以 Auto Mode 启动；替代已经移除的 `--enable-auto-mode` |
 | `--bare` | 以最小模式启动 |
 | `--safe-mode` | 禁用 CLAUDE.md、plugins、skills、hooks、MCP servers，用于隔离配置问题 |
 | `--add-dir` | 加额外目录到工作上下文 |
@@ -177,7 +178,10 @@ claude -p --append-subagent-system-prompt "Cite sources" "review this project"
 - 新增 `/reload-skills` 和 `/workflows`，分别用于重扫 skills 和查看 dynamic workflows
 - 新增 `claude plugin init <name>`，可在 `.claude/skills` 中脚手架本地 plugin
 - 从 `v2.1.207` 起，Bedrock / Vertex AI / Microsoft Foundry 上受支持模型的 Auto Mode 不再需要 `CLAUDE_CODE_ENABLE_AUTO_MODE=1`；该变量仅为历史兼容而保留，当前不产生效果
+- `--enable-auto-mode` 已在 `v2.1.111` 移除；需要直接进入 Auto Mode 时使用 `--permission-mode auto`
 - `v2.1.212+` 可用 `claude auto-mode reset [--yes]` 恢复 Auto Mode 默认配置；管理员可通过 managed setting `disableAutoMode` 禁用该能力
+- `--max-budget-usd` 从 `v2.1.217+` 起达到预算上限时会停止已经运行的后台 subagents，并拒绝继续 spawn
+- `--settings` 读取的文件从 `v2.1.214+` 起不得超过 2 MiB
 - `--ax-screen-reader`、`CLAUDE_AX_SCREEN_READER=1` 或 `"axScreenReader": true` 可以启用纯文本 screen reader 渲染模式
 - `EnterWorktree` 可以在同一 session 中切换 Claude 管理的 worktree
 - `/cd <path>` 可以在保留 prompt cache 的情况下切换当前 session 工作目录
@@ -207,6 +211,8 @@ claude -p --append-subagent-system-prompt "Cite sources" "review this project"
 | `respondToBashCommands` | 从 `v2.1.186+` 起控制 `!` bash 命令输出后是否自动让 Claude 回复；默认 `true`，设为 `false` 可回到只进上下文的旧行为 |
 | `disableAutoMode` | 在 managed settings 中禁用 Auto Mode（`v2.1.207+`） |
 | `axScreenReader` | 设为 `true` 后启用纯文本 screen reader 渲染模式（`v2.1.208+`） |
+| `sandbox.filesystem.disabled` | 跳过 filesystem isolation，但继续执行 network isolation；仅 user / managed settings 或 `--settings` 可设置（`v2.1.216+`） |
+| `emojiCompletionEnabled` | 控制 prompt 输入框里的 emoji shortcode 自动补全（`v2.1.217+`） |
 
 示例：
 
@@ -305,6 +311,8 @@ Tool(param:value)
 
 真实项目里不要凭空猜参数名，先查当前版本的 permissions / settings reference。这里的 `Tool(param:value)`、`Bash(...)`、`Read(...)` 都是规则语法，不能翻译。
 
+从 `v2.1.214+` 起还有三项 permission hardening：Docker / Podman 使用 `--url`、`--connection`、`--identity` 等 daemon redirect flag 时会要求确认；`file` 命令使用 `-m` / `--magic-file` 或 `-f` / `--files-from` 时会要求确认；超过 10,000 字符的 Bash 命令无论 allow rule 如何都会提示确认。
+
 ---
 
 ## 输出与格式
@@ -314,6 +322,7 @@ Tool(param:value)
 - `--output-format`
 - `--json-schema`
 - `--include-partial-messages`
+- `--max-budget-usd`
 
 ### 常见使用方式
 
@@ -326,6 +335,9 @@ claude -p --output-format json "list all functions in main.py"
 
 # 用 schema 约束结构
 claude -p --json-schema '{"type":"object"}' "return structured analysis"
+
+# 设置 print mode 预算；v2.1.217+ 达到上限时也会停止后台 subagents
+claude -p --max-budget-usd 5.00 "analyze this repository"
 ```
 
 如果你的下游还要接 `jq`、Python、Node 或 CI job，结构化输出会非常有用。
@@ -460,6 +472,8 @@ claude ultrareview 1234 --json > review.json
 | `CLAUDE_CODE_ENABLE_AUTO_MODE` | `v2.1.158` 到 `v2.1.206` 的 Auto Mode opt-in；从 `v2.1.207` 起仅为历史兼容而保留，不再产生效果 |
 | `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` | 每个 session 的 WebSearch 调用上限，默认 200（`v2.1.212+`） |
 | `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` | 每个 session 的 subagent spawn 上限，默认 200；`/clear` 会重置预算（`v2.1.212+`） |
+| `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` | 同时运行的 subagents 上限，默认 20（`v2.1.217+`） |
+| `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` | 允许 subagent 嵌套 spawn 的最大深度；`v2.1.217+` 默认不允许嵌套 |
 | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` | MCP tool call 自动转后台的阈值，默认 `120000` 毫秒（2 分钟，`v2.1.212+`） |
 | `CLAUDE_AX_SCREEN_READER` | 设为 `1` 后启用纯文本 screen reader 渲染模式，等同于 `--ax-screen-reader` 或 `"axScreenReader": true` |
 | `CLAUDE_CODE_SAFE_MODE` | 设为 `1` 后以 safe mode 启动，禁用 CLAUDE.md、plugins、skills、hooks、MCP servers |
@@ -468,6 +482,8 @@ claude ultrareview 1234 --json > review.json
 | `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN` | 设为 `1` 后，停留在普通终端滚动历史里，而不是 fullscreen alternate-screen 渲染 |
 | `CLAUDE_CODE_SESSION_ID` | 每个 Bash tool 子进程都会带上这个 session UUID，可用来和 hooks / telemetry 对日志 |
 | `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` | 在 OTEL 环境下重新打开 Anthropic 的会话质量问卷 |
+| `CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH` | OpenTelemetry content attribute 的截断上限，默认 60 KB（`v2.1.214+`） |
+| `FORCE_HYPERLINK` | 设为 `0` 后关闭 footer 中可点击的 PR badge 链接（`v2.1.217+`） |
 | `CLAUDE_CLIENT_PRESENCE_FILE` | 指向一个本机 marker file，人在电脑前时抑制 mobile push notifications；变量名不是 `CLAUDE_CODE_CLIENT_PRESENCE_FILE` |
 | `CLAUDE_CODE_MAX_RETRIES` | API retry 最大次数；`v2.1.186+` 起上限为 15 |
 | `CLAUDE_CODE_RETRY_WATCHDOG` | 面向无人值守 session 的 retry 控制，比盲目提高 `CLAUDE_CODE_MAX_RETRIES` 更稳 |

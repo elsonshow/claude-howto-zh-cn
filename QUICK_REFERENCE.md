@@ -115,7 +115,7 @@ claude plugin init my-plugin
 # 额外用量配置
 /usage-credits       # `/extra-usage` 仍可作为兼容 alias（别名）
 /usage               # v2.1.149+ 成本视图会按类别拆分
-/code-review high    # 正确性缺陷审查
+/code-review high    # 正确性缺陷审查；v2.1.215+ 起仅显式调用
 /review <pr>         # 审查 GitHub PR；本地 diff 仍用 /code-review
 /simplify            # 清理型审查并应用修复，不负责找 bug
 /doctor              # 诊断安装、配置和 plugin 健康
@@ -137,6 +137,10 @@ export CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT=600
 export CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=120000
 export CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION=200
 export CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION=200
+export CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=20
+export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=5  # 显式开启 subagent 嵌套
+export CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH=61440
+export FORCE_HYPERLINK=0
 export CLAUDE_AX_SCREEN_READER=1
 export CLAUDE_CODE_RETRY_WATCHDOG=1
 
@@ -146,6 +150,7 @@ claude --permission-mode acceptEdits
 claude --permission-mode plan
 claude --permission-mode dontAsk
 claude --permission-mode bypassPermissions
+claude --permission-mode auto  # 替代已移除的 --enable-auto-mode
 claude --safe-mode
 claude --fallback-model sonnet
 claude --ax-screen-reader
@@ -165,6 +170,8 @@ git worktree prune     # 清理已解锁且不再使用的 worktree
 # footerLinksRegexes
 # language
 # enforceAvailableModels
+# sandbox.filesystem.disabled
+# emojiCompletionEnabled
 
 # permission rule 参数匹配示意（语法不要翻译）
 # Tool(param:value)
@@ -196,7 +203,7 @@ git worktree prune     # 清理已解锁且不再使用的 worktree
 | Auto Mode Reset | 内建 | `claude auto-mode reset [--yes]` | 恢复默认自动权限规则 |
 | Screen Reader Mode | 内建 | `--ax-screen-reader` | 纯文本渲染，便于辅助技术读取 |
 | Print Mode | 内建 | `claude -p` | 脚本 / CI/CD |
-| Run / Verify Skills | bundled skills | `/run`、`/verify`、`/run-skill-generator` | 启动项目并确认改动真实可用 |
+| Run / Verify Skills | bundled skills | `/run`、`/verify`、`/run-skill-generator` | 启动项目并确认改动真实可用；`/verify` 从 `v2.1.215+` 起仅显式调用 |
 
 ---
 

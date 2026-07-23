@@ -222,14 +222,13 @@ cp 04-subagents/code-reviewer.md .claude/agents/
 这对“skill + subagent” 组合工作流很重要。
 如果你以前感觉主 Claude 会用某个 skill，但一委派给 subagent 就像“忘了这项能力”，新版应该按统一目录发现逻辑来理解。
 
-### 这轮上游要补的第二点：subagent 可以再 spawn 子 subagent
+### subagent 嵌套现在默认关闭
 
-从 `v2.1.172+` 起，subagent 不再只能停留在“主 session -> subagent”这一层。
-它可以继续 spawn 自己的子 subagent，最多嵌套 5 层。
+`v2.1.172` 到 `v2.1.216` 曾默认允许 subagent 继续 spawn 子 subagent，最多 5 层；从 `v2.1.217` 起，嵌套 spawn 改为默认关闭。只有显式设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 后，subagent 才能继续向下委派，最大深度由你配置。
 
-这对复杂任务有用，比如一个 `implementation-agent` 再把安全检查交给 `secure-reviewer`，把测试补齐交给 `test-engineer`。但也要控制边界，否则多层委派很容易让成本和上下文流向变得难追。
+复杂任务确实可能需要嵌套，例如一个 `implementation-agent` 再把安全检查交给 `secure-reviewer`、把测试交给 `test-engineer`。但默认关闭更容易控制成本、权限和上下文流向；需要时再按任务边界开启。
 
-如果你要限制某个 subagent 能 spawn 哪些子 agent，使用 `Agent(agent_type)` 这种权限限制语法。这里的 `Agent(agent_type)` 是可执行标识，不要翻译成中文字段。
+如果你要限制某个 subagent 能 spawn 哪些子 agent，使用 `Agent(agent_type)` 这种权限限制语法。这里的 `Agent(agent_type)`、`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 都是可执行标识，不要翻译成中文字段。
 
 ### `v2.1.198+` 的默认后台运行和模型继承
 
@@ -327,8 +326,15 @@ cp 04-subagents/code-reviewer.md .claude/agents/
 
 从 `v2.1.212+` 起，每个 session 默认最多 spawn **200** 个 subagents，防止委派循环失控。可用 `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` 调整；执行 `/clear` 会重置这项预算。
 
+`v2.1.217+` 又增加了两层独立限制：
+
+- `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`：同一时间最多运行多少个 subagents，默认 `20`
+- `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`：允许嵌套 spawn 的最大深度；默认不设置，也就是不允许嵌套
+
 ```bash
 export CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION=200
+export CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=20
+export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=5
 ```
 
 ---

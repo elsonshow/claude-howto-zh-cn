@@ -18,12 +18,12 @@ Memory 包含两套互补机制：人维护的 `CLAUDE.md` 指令，以及 Claud
 
 可复用、可自动触发的能力，适合沉淀稳定工作流。
 
-截至 `v2.1.212`，特别值得关注这些 bundled skills、plugin 和排障入口：
+截至 `v2.1.217`，特别值得关注这些 bundled skills、plugin 和排障入口：
 
 - `/run`：启动当前项目，确认改动能真实运行
-- `/verify`：构建、运行并观察应用，确认修复不是只停留在测试通过
+- `/verify`：构建、运行并观察应用，确认修复不是只停留在测试通过；`v2.1.215+` 起仅显式调用
 - `/run-skill-generator`：为项目生成专属 run / verify skill
-- `/code-review [effort]`：审查当前 diff 的正确性缺陷
+- `/code-review [effort]`：审查当前 diff 的正确性缺陷；`v2.1.215+` 起仅显式调用
 - `/simplify`：清理型审查，关注复用、简化、效率和抽象层级，并应用修复
 - `/dataviz`：图表和 dashboard 设计指导，附带可运行的调色板校验器
 - `${CLAUDE_PROJECT_DIR}`：在 skill body 和 `allowed-tools` 中引用项目根目录绝对路径
@@ -40,13 +40,13 @@ Memory 包含两套互补机制：人维护的 `CLAUDE.md` 指令，以及 Claud
 
 用于复杂任务拆分和专业分工的子代理。
 
-从 `v2.1.172+` 起，subagent 可以再 spawn 子 subagent，最多嵌套 5 层；如果要限制可 spawn 的对象，保留 `Agent(agent_type)` 语法，不要翻译成中文字段。
+`v2.1.172` 到 `v2.1.216` 曾默认允许 subagent 再 spawn 子 subagent，最多 5 层；从 `v2.1.217` 起嵌套默认关闭。需要时设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 显式开启；如果要限制可 spawn 的对象，保留 `Agent(agent_type)` 语法，不要翻译成中文字段。
 
 从 `v2.1.178+` 起，嵌套 `.claude/agents/` 里的同名 agent 会按“离当前工作目录最近者优先”加载；workflow 和 output-style 定义也遵循这个规则。
 
 从 `v2.1.198+` 起，subagents 默认在后台运行，built-in `Explore` 会继承 session 模型（上限 Opus），extended thinking 也会继承。`CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS=1` 可禁用 built-in Explore / Plan，`--append-subagent-system-prompt` 可在 print mode 中追加统一提示。
 
-从 `v2.1.210+` 起，subagent 最终报告会扫描 instruction-shaped text；从 `v2.1.212+` 起，每个 session 默认最多 spawn 200 个 subagents，可用 `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` 调整，`/clear` 会重置预算。Task tool 的 `mode` 调用参数已弃用并被忽略，权限应通过 agent frontmatter 的 `permissionMode` 配置。
+从 `v2.1.210+` 起，subagent 最终报告会扫描 instruction-shaped text；从 `v2.1.212+` 起，每个 session 默认最多 spawn 200 个 subagents，可用 `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` 调整，`/clear` 会重置预算。`v2.1.217+` 新增 `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`，默认最多同时运行 20 个。Task tool 的 `mode` 调用参数已弃用并被忽略，权限应通过 agent frontmatter 的 `permissionMode` 配置。
 
 Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 teammate 放进 iTerm2 pane；该模式依赖 `it2` CLI。
 
@@ -67,6 +67,8 @@ Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 tea
 在特定事件上自动执行动作的机制。
 
 从 `v2.1.172+` 起，hook handler 可以加 `if` 条件，用 `Edit(src/**)`、`Read(.env)`、`Bash(git push *)` 这类 permission-rule 语法按工具参数继续收窄匹配。
+
+从 `v2.1.214+` 起，hook `if` 中的单段 `dir/**` 只匹配 `<cwd>/dir`；需要任意深度时写 `**/dir/**`。同一版本里，fork session 的 `SessionStart` source 改为 `"fork"`，不再报告 `"resume"`。
 
 从 `v2.1.178+` 起，permission rule 还可以用 `Tool(param:value)` 形式按工具输入参数匹配。这个语法本身不要翻译。
 
@@ -89,6 +91,8 @@ marketplace entry 还支持 `renames`、`displayName`、`defaultEnabled`；`firs
 用于安全试错和回退。
 
 从 `v2.1.191+` 起，`/clear` 不再是 `/rewind` 的硬边界。需要时可以回到 `/clear` 之前创建的 checkpoint。
+
+从 `v2.1.216+` 起，`/rewind` 遇到 symlink 或 hard link 路径会跳过，不再沿链接恢复或删除真实目标，并会报告跳过数量。
 
 `Summarize up to here` 可以压缩所选位置之前的对话，与 `Summarize from here` 组成双向定点压缩。
 
@@ -114,6 +118,8 @@ Claude Code 的核心使用入口，也是自动化、脚本化和 CI/CD 的关�
 
 `claude auto-mode reset [--yes]` 用于恢复 Auto Mode 默认配置。`CLAUDE_CODE_ENABLE_AUTO_MODE` 从 `v2.1.207` 起仅保留历史兼容性且不再生效；管理员可通过 managed setting `disableAutoMode` 禁用该能力。
 
+直接进入 Auto Mode 应使用 `--permission-mode auto`；`--enable-auto-mode` 已在 `v2.1.111` 移除。`--max-budget-usd` 从 `v2.1.217+` 起达到上限时也会停止后台 subagents，`--settings` 文件上限为 2 MiB。
+
 `--ax-screen-reader`、`CLAUDE_AX_SCREEN_READER=1` 或 `"axScreenReader": true` 会启用适合 screen reader 的纯文本渲染模式。
 
 `wheelScrollAccelerationEnabled`、`footerLinksRegexes`、`language` 是 settings.json 里的 key，说明文字可以中文化，但 key 本身不要翻译。
@@ -124,4 +130,4 @@ Claude Code 的核心使用入口，也是自动化、脚本化和 CI/CD 的关�
 
 从 `v2.1.193+` 起，`!` bash mode 支持 live file-path autocomplete。`autoMode.classifyAllShell` 可以让所有 Bash / PowerShell 命令都过 Auto Mode 分类器，`claude_code.assistant_response` 可把模型回复文本写进 OpenTelemetry log event。
 
-`CLAUDE_CLIENT_PRESENCE_FILE`、`CLAUDE_CODE_MAX_RETRIES`、`CLAUDE_CODE_RETRY_WATCHDOG`、`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`、`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`、`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`、`CLAUDE_CODE_DISABLE_MOUSE_CLICKS` 是环境变量标识，不要翻译。`sandbox.credentials`、`sandbox.allowAppleEvents`、`autoMode.classifyAllShell` 和 `/config key=value` 属于配置 / 命令口径，也要保持原文。
+`CLAUDE_CLIENT_PRESENCE_FILE`、`CLAUDE_CODE_MAX_RETRIES`、`CLAUDE_CODE_RETRY_WATCHDOG`、`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`、`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`、`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`、`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`、`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`、`CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH`、`FORCE_HYPERLINK`、`CLAUDE_CODE_DISABLE_MOUSE_CLICKS` 是环境变量标识，不要翻译。`sandbox.credentials`、`sandbox.allowAppleEvents`、`sandbox.filesystem.disabled`、`emojiCompletionEnabled`、`autoMode.classifyAllShell` 和 `/config key=value` 属于配置 / 命令口径，也要保持原文。

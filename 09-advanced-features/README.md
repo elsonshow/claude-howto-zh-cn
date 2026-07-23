@@ -218,7 +218,7 @@ Auto Mode 属于更偏自动化、也更需要谨慎的能力。
 
 ### 当前要求要看清
 
-截至 `v2.1.212`，Auto Mode 是否可用仍取决于账号、组织策略、模型和 provider；Team / Enterprise 环境还可能需要管理员启用。不要把它简单理解成“所有账号默认都能用”。
+截至 `v2.1.217`，Auto Mode 是否可用仍取决于账号、组织策略、模型和 provider；Team / Enterprise 环境还可能需要管理员启用。不要把它简单理解成“所有账号默认都能用”。
 
 从 `v2.1.207` 起，Bedrock / Vertex AI / Microsoft Foundry 以及已登录的 Claude apps gateway session 不再需要 `CLAUDE_CODE_ENABLE_AUTO_MODE=1` 才能启用受支持模型的 Auto Mode。这个旧环境变量仍会被接受以兼容历史脚本，但已经不产生效果。管理员可以在 managed settings 中使用 `disableAutoMode` 禁用该能力。
 
@@ -783,7 +783,9 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 - `sandbox.allowAppleEvents`：macOS 上显式允许 sandboxed commands 发送 Apple Events
 - `sandbox.credentials`：阻止 sandboxed commands 读取 credential files 和 secret environment variables
 
-如果你在公司设备或含有生产凭证的机器上跑自动化，优先关注 `sandbox.credentials`；它不是“中文化字段”，必须按原 key 写。
+`v2.1.216+` 新增 `sandbox.filesystem.disabled`：跳过文件系统隔离，但继续执行网络出口限制。它适合“文件 sandbox 会破坏工具链、但仍必须限制网络访问”的场景，只允许从 user settings、managed settings 或 `--settings` 提供；project settings 不能开启。
+
+如果你在公司设备或含有生产凭证的机器上跑自动化，优先关注 `sandbox.credentials`；这些都不是“中文化字段”，必须按原 key 写。
 
 ---
 
@@ -806,6 +808,8 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 
 如果你想长期高效使用 Claude Code，这一步绕不过去。
 
+本目录的 [`config-examples.json`](config-examples.json) 提供 11 组可解析示例。最外层 `name` / `description` 是中文索引信息，真正可复制到 `settings.json` 的内容位于每组 `config` 中；其中 key、permission rule、hook event 和模型 ID 都保持原样。
+
 ### 值得注意的 settings
 
 | setting | 用途 |
@@ -814,6 +818,8 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 | `enableArtifact` | 按用户启用或禁用 Artifact tool（`v2.1.196+`） |
 | `disableAutoMode` | 在 managed settings 中禁用 Auto Mode（`v2.1.207+`） |
 | `axScreenReader` | 设为 `true` 后启用纯文本 screen reader 渲染模式（`v2.1.208+`） |
+| `sandbox.filesystem.disabled` | 跳过 filesystem isolation，但保留 network isolation（`v2.1.216+`） |
+| `emojiCompletionEnabled` | 控制 prompt 输入框的 emoji shortcode 自动补全，例如 `:heart:`（`v2.1.217+`） |
 
 这些 key 名不要翻译。`askUserQuestionTimeout`、`enableArtifact` 和 `axScreenReader` 可用于常规 settings；`disableAutoMode` 是管理员使用的 managed setting。
 
@@ -843,7 +849,11 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 - `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`（覆盖 remote MCP tool 5 分钟无响应 abort 的默认值，适合排查长时间挂起的 MCP 调用）
 - `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`（每个 session 的 WebSearch 调用上限，默认 200；`v2.1.212+`）
 - `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`（每个 session 的 subagent spawn 上限，默认 200；`/clear` 会重置预算）
+- `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`（同时运行的 subagents 上限，默认 20；`v2.1.217+`）
+- `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`（允许嵌套 spawn 的最大深度；`v2.1.217+` 默认不允许嵌套）
 - `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`（MCP tool call 自动转后台的阈值，默认 `120000` 毫秒）
+- `CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH`（OpenTelemetry content attribute 的截断上限，默认 60 KB；`v2.1.214+`）
+- `FORCE_HYPERLINK=0`（关闭 footer 里的可点击 PR badge 链接；`v2.1.217+`）
 - `CLAUDE_AX_SCREEN_READER=1`（启用纯文本 screen reader 渲染模式）
 
 这里还有两个这轮很值得知道的行为修正：

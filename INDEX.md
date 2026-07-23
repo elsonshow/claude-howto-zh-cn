@@ -32,7 +32,7 @@
 
 ## 当前版本重点
 
-本仓库已按 Claude Code `v2.1.212` 更新中文主线。Memory 改按 CLAUDE.md 拼接与独立 auto memory 理解；`/fork <directive>` 和 `/branch [name]` 已区分；subagent 输出扫描与 session 上限、MCP 自动转后台、Auto Mode reset 和 screen reader mode 已分别写入对应教程。
+本仓库已按 Claude Code `v2.1.217` 更新中文主线。subagent 嵌套现在默认关闭，可用 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 显式开启，并由 `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` 控制并发；Auto Mode 启动参数统一为 `--permission-mode auto`；hooks、checkpoints、Memory、sandbox 与真实 `settings.json` 示例也已同步修正。
 
 ## 资源与脚本
 

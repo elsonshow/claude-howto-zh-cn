@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`8f045173d1b1e876d101eb9a94972585f57c4ed1`
+- 最近检查到的上游 commit：`97fc961a8cc68ade7e74f2dbd5c9dc5491ce55bb`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,25 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-07-23
+
+- Reviewed upstream range: `8f04517` → `97fc961`
+- 重点上游变化：
+  - 教程覆盖更新到 Claude Code `v2.1.217`；subagent 嵌套从默认最多 5 层改为默认关闭，并新增 `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` 与 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`
+  - 删除已经在 `v2.1.111` 移除的 `--enable-auto-mode` 口径，改用 `--permission-mode auto`
+  - hook `if` 的单段 `dir/**` 只匹配 `<cwd>/dir`，`SessionStart` 新增 `fork` 来源；`/rewind` 不再沿 symlink / hard link 恢复或删除文件
+  - Memory 文件 frontmatter 新增自动维护的 `modified` 时间；GUI editor 打开 `/memory` 后不再阻塞 session
+  - `config-examples.json` 删除虚构的 `planning.*`、`extendedThinking.*`、`headless.*`、`checkpoints.autoCheckpoint` 等字段，改用真实 `settings.json` schema
+  - 新增 `sandbox.filesystem.disabled`、`emojiCompletionEnabled`、`FORCE_HYPERLINK`、`CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH`、`--settings` 2 MiB 上限与 permission hardening 说明
+- Chinese fork actions:
+  - 将上述变化本土化写入 slash commands、Memory、skills、subagents、hooks、checkpoints、Advanced Features、CLI、Catalog、Quick Reference、概念总览、资源索引和 Index
+  - 保留 `defaultMode`、`fileCheckpointingEnabled`、hook event、CLI flag、环境变量、模型 ID 和 frontmatter key 原文；仅翻译 JSON 中给人看的 `name` / `description` 值
+  - 对齐 `brand-voice` skill 的 `name` 与 `user-invocable`，统一 CLAUDE.md 长度建议，并加入 Vexilo 参考资源
+  - 上游 `ja/`、`vi/`、`uk/`、`zh/` 目录仍只作为差异参考，不引入本中文主线；其中 `zh/06-hooks/README.md` 的 JSON 修复已核对，根目录对应示例本来就是有效 JSON
+  - 扩展 `scripts/validate_localization.py`，阻止旧 Auto Mode flag、旧 subagent 默认嵌套规则和虚构配置字段回归
+  - 不复制上游英文根 README，继续保持 `Claude Code 中文全面上手指南` 为默认入口
+  - 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
 
 ### 上游同步 — 2026-07-19
 

@@ -20,14 +20,15 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-07-19
-- **本轮参考范围**：`a645ffe` -> `8f04517`
+- **最近同步日期**：2026-07-23
+- **本轮参考范围**：`8f04517` -> `97fc961`
 - **本次同步内容**：
-  - 同步 Claude Code `v2.1.212`：区分 `/fork <directive>` 与 `/branch [name]`，补充 `/resume` 历史 session picker 的新行为
-  - 重写 Memory 说明：CLAUDE.md 按范围拼接而非 8 层覆盖，auto memory 独立，import 最多 4 hops，settings 才遵循真实优先级
-  - 补充 subagent 输出安全扫描、每 session 200 次 spawn 上限，以及 MCP tool call 运行 2 分钟后自动转后台的规则
-  - 更新 Auto Mode `v2.1.207+` 行为、`claude auto-mode reset` 和 screen reader 入口，移除已经无效的 provider opt-in 说法
-  - 扩展本地化校验，阻止上述旧表述或关键新字段在后续同步中回归
+  - 同步 Claude Code `v2.1.217`：subagent 嵌套改为默认关闭，并新增并发上限与显式嵌套深度配置
+  - 将过时的 `--enable-auto-mode` 改为 `--permission-mode auto`，补充 `--max-budget-usd`、`--settings` 2 MiB 上限和权限加固说明
+  - 补充 hook `if` glob 范围、`SessionStart` 的 `fork` 来源、`/rewind` 对 symlink / hard link 的保护，以及 Memory 新行为
+  - 重写 `config-examples.json`，删除虚构配置字段，改用真实 `settings.json` key 和当前模型 ID
+  - 对齐 `brand-voice` skill frontmatter，并统一 CLAUDE.md 长度建议为“控制在几百行内，越短越好”
+  - 加入 Vexilo 可视化参考资源，并扩展本地化校验，阻止旧 flag、旧嵌套规则和无效配置字段回归
   - 保留 `SKILL.md` frontmatter key、CLI flags、路径、slash command 和 skill / plugin / subagent 名称原文
   - 继续保持根目录中文主线，不把上游英文 README 覆盖到中文首页
 

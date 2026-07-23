@@ -399,12 +399,6 @@ V2_1_206_REQUIRED_SNIPPETS = {
 }
 
 V2_1_212_REQUIRED_SNIPPETS = {
-    Path("README.md"): ["v2.1.212", "a645ffe", "8f04517"],
-    Path("UPSTREAM.md"): [
-        "8f045173d1b1e876d101eb9a94972585f57c4ed1",
-        "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
-    ],
-    Path("INDEX.md"): ["v2.1.212", "/fork <directive>", "/branch [name]"],
     Path("claude_concepts_guide.md"): [
         "v2.1.212",
         "4 hops",
@@ -473,6 +467,119 @@ V2_1_212_FORBIDDEN_SNIPPETS = {
         "在 Bedrock / Vertex / Foundry 上对 Opus 4.7 / 4.8 显式启用"
     ],
     Path("CATALOG.md"): ["从当前对话分叉\uff08某些版本中 `/fork` 仍可能可用\uff09"],
+}
+
+V2_1_217_REQUIRED_SNIPPETS = {
+    Path("README.md"): ["v2.1.217", "8f04517", "97fc961"],
+    Path("UPSTREAM.md"): [
+        "97fc961a8cc68ade7e74f2dbd5c9dc5491ce55bb",
+        "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
+        "config-examples.json",
+    ],
+    Path("CHANGELOG.md"): ["v2.1.217", "8f04517", "97fc961"],
+    Path("INDEX.md"): [
+        "v2.1.217",
+        "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH",
+        "--permission-mode auto",
+    ],
+    Path("claude_concepts_guide.md"): [
+        "v2.1.217",
+        "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
+        "sandbox.filesystem.disabled",
+        "--permission-mode auto",
+    ],
+    Path("resources.md"): [
+        "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
+        "sandbox.filesystem.disabled",
+        "Vexilo",
+    ],
+    Path("CATALOG.md"): [
+        "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH",
+        "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
+        "--permission-mode auto",
+    ],
+    Path("QUICK_REFERENCE.md"): [
+        "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
+        "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH",
+        "--permission-mode auto",
+    ],
+    Path("01-slash-commands/README.md"): [
+        "v2.1.216+` 起压缩失败",
+        "context window 上限",
+        "--permission-mode auto",
+    ],
+    Path("02-memory/README.md"): [
+        "GUI editor",
+        "`modified` 字段",
+        "控制在几百行内\uff0c越短越好",
+    ],
+    Path("03-skills/README.md"): [
+        "v2.1.215+` 起只会在用户显式调用时运行",
+    ],
+    Path("03-skills/brand-voice/SKILL.md"): [
+        "name: brand-voice",
+        "user-invocable: false",
+    ],
+    Path("03-skills/claude-md/SKILL.md"): ["控制在几百行内\uff0c越短越好"],
+    Path("04-subagents/README.md"): [
+        "嵌套 spawn 改为默认关闭",
+        "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
+        "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH",
+    ],
+    Path("06-hooks/README.md"): [
+        "**/dir/**",
+        '报告 `"fork"`',
+        "deny / ask permission rules",
+    ],
+    Path("08-checkpoints/README.md"): ["symlink", "hard link", "跳过数量"],
+    Path("09-advanced-features/README.md"): [
+        "sandbox.filesystem.disabled",
+        "emojiCompletionEnabled",
+        "CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH",
+    ],
+    Path("09-advanced-features/config-examples.json"): [
+        '"defaultMode"',
+        '"fileCheckpointingEnabled"',
+        '"PostToolUse"',
+        '"claude-sonnet-5"',
+    ],
+    Path("10-cli/README.md"): [
+        "--permission-mode auto",
+        "--settings` 读取的文件",
+        "10,000 字符",
+        "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
+        "CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH",
+    ],
+}
+
+V2_1_217_FORBIDDEN_SNIPPETS = {
+    Path("01-slash-commands/README.md"): [
+        "不再强依赖 `--enable-auto-mode`",
+    ],
+    Path("03-skills/brand-voice/SKILL.md"): [
+        "name: brand-voice-consistency",
+    ],
+    Path("03-skills/claude-md/SKILL.md"): ["目标尽量少于 300 行"],
+    Path("04-subagents/README.md"): [
+        "它可以继续 spawn 自己的子 subagent\uff0c最多嵌套 5 层",
+    ],
+    Path("CATALOG.md"): [
+        "subagent 可以再 spawn 子 subagent\uff0c最多嵌套 5 层",
+        "subagent 最多 5 层嵌套",
+    ],
+    Path("resources.md"): ["最多支持 5 层嵌套"],
+    Path("claude_concepts_guide.md"): [
+        "subagent 可以再 spawn 子 subagent\uff0c最多嵌套 5 层",
+    ],
+    Path("09-advanced-features/config-examples.json"): [
+        '"planning"',
+        '"extendedThinking"',
+        '"headless"',
+        '"autoCheckpoint"',
+        '"mode": "unrestricted"',
+        '"claude-opus-4-7"',
+        '"PreToolUse:Write"',
+    ],
 }
 
 
@@ -694,6 +801,7 @@ def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
     for version, required_snippets in (
         ("v2.1.206", V2_1_206_REQUIRED_SNIPPETS),
         ("v2.1.212", V2_1_212_REQUIRED_SNIPPETS),
+        ("v2.1.217", V2_1_217_REQUIRED_SNIPPETS),
     ):
         for relative_path, snippets in required_snippets.items():
             path = root / relative_path
@@ -716,6 +824,17 @@ def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
         content = read_text(path)
         errors.extend(
             f"{relative_path}: stale v2.1.212 content '{snippet}'"
+            for snippet in snippets
+            if snippet in content
+        )
+
+    for relative_path, snippets in V2_1_217_FORBIDDEN_SNIPPETS.items():
+        path = root / relative_path
+        if not path.is_file():
+            continue
+        content = read_text(path)
+        errors.extend(
+            f"{relative_path}: stale v2.1.217 content '{snippet}'"
             for snippet in snippets
             if snippet in content
         )

@@ -2,6 +2,29 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-07-23
+
+### 上游审阅
+
+- 核对上游范围：`8f04517` → `97fc961`
+- 上游这轮重点：
+  - 教程覆盖更新到 Claude Code `v2.1.217`，修正 subagent、Auto Mode、Memory、hooks、checkpoints、sandbox 与 CLI 行为
+  - subagent 嵌套改为默认关闭；新增并发上限和显式嵌套深度环境变量
+  - `--enable-auto-mode` 已是无效旧 flag，当前应使用 `--permission-mode auto`
+  - `config-examples.json` 原有 11 组示例包含虚构 schema 和旧模型 ID，现已改成真实 `settings.json` key
+  - `brand-voice` skill、CLAUDE.md 长度建议和 Sonnet 5 兼容说明完成一致性修正
+
+### 中文 fork 处理
+
+- 将 `v2.1.217` 的行为变化写入中文教程、功能总表、速查卡、概念总览、资源索引和 Index，不照搬英文上游 README
+- 重写 JSON 配置示例：保留 key、hook event、permission rule 和模型 ID 原文，仅本土化说明值
+- 清除“subagent 默认最多嵌套 5 层”和 `--enable-auto-mode` 仍可用等过时表述
+- 补充 hook glob 范围、fork source、rewind link protection、Memory `modified` 字段、sandbox 与 telemetry 新入口
+- 对齐 `brand-voice` frontmatter，统一 CLAUDE.md 长度建议，并加入 Vexilo 参考资源
+- 扩展本地化校验，锁定本轮关键行为并阻止无效配置字段回归
+- 上游其他语言目录继续只作参考，不改变 `Claude Code 中文全面上手指南` 默认入口
+- 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
+
 ## 中文版同步 — 2026-07-19
 
 ### 上游审阅

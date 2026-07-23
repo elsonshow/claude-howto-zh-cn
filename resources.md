@@ -42,7 +42,8 @@
 | `EnterWorktree` | 在同一 session 中切换 Claude 管理的 worktree | [Advanced Features](09-advanced-features/) |
 | `claude agents` 里的 `Ctrl+T` | 固定后台 session，空闲时优先保留 | [CLI Guide](10-cli/) |
 | `allowAllClaudeAiMcps` | 组织级允许加载 claude.ai 云端 MCP connectors 的托管设置 | [MCP Guide](05-mcp/) |
-| `Agent(agent_type)` | 限制 subagent 能 spawn 哪些子 subagent；`v2.1.172+` 最多支持 5 层嵌套 | [Subagents Guide](04-subagents/) |
+| `Agent(agent_type)` / `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` | 限制可 spawn 类型并显式开启嵌套；`v2.1.217+` 默认关闭嵌套 | [Subagents Guide](04-subagents/) |
+| `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` | 限制同时运行的 subagents，默认 20 | [Subagents Guide](04-subagents/) |
 | hook `if` 条件 | 用 permission-rule 语法按工具参数继续收窄 hook 匹配 | [Hooks Guide](06-hooks/) |
 | `/plugin` marketplace 搜索栏 | 在 marketplace 浏览界面按名称或关键词过滤 plugin | [Plugins Guide](07-plugins/) |
 | `enforceAvailableModels` | 托管策略强制 `availableModels` 也约束 Default model | [Advanced Features](09-advanced-features/) |
@@ -81,5 +82,12 @@
 | `Summarize up to here` | 压缩所选位置之前的对话，与 `Summarize from here` 组成双向压缩 | [Checkpoints Guide](08-checkpoints/) |
 | `askUserQuestionTimeout` / `enableArtifact` | 控制询问超时和 Artifact tool 的个人设置 | [Advanced Features](09-advanced-features/) |
 | `CLAUDE_ENABLE_STREAM_WATCHDOG` | streaming 5 分钟无事件时 abort / retry；设为 `0` 可禁用 | [CLI Guide](10-cli/) |
+| `--permission-mode auto` | 直接以 Auto Mode 启动；替代已经移除的 `--enable-auto-mode` | [CLI Guide](10-cli/) |
+| `sandbox.filesystem.disabled` | 关闭 filesystem isolation，但保留 network isolation | [Advanced Features](09-advanced-features/) |
+| `CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH` / `FORCE_HYPERLINK=0` | 控制 OTEL 内容截断上限和 footer PR badge 超链接 | [CLI Guide](10-cli/) |
 
 这些名称都是可执行标识或协议字段，不要翻译成中文 key。
+
+## 外部补充资源
+
+- [Vexilo：Claude Code 可视化 field guide](https://vexilo.app/?lang=en)：按 Research、Plan、Test-first、Security、Commit 五步工作流整理 agents、commands、skills 与 rules；配套仓库见 [`lilhawk7077/claude-code-resources`](https://github.com/lilhawk7077/claude-code-resources)。它是社区资源，不是 Anthropic 官方文档，使用前仍应以当前 Claude Code 文档和实际 CLI 为准。
