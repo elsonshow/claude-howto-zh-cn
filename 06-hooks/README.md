@@ -45,6 +45,8 @@ hooks 最大的价值，是把“你本来每次都要手动做的检查”变�
 
 如果你是新手，建议先从用户级或项目级配置开始。
 
+从 `v2.1.218+` 起，project agent frontmatter 里的 hooks 只有在 agent 文件所在目录通过 workspace trust 后才运行。这个限制不会因为 hook 写在 frontmatter 里就自动绕过。
+
 ---
 
 ## 基本结构
@@ -259,6 +261,7 @@ hooks 最大的价值，是把“你本来每次都要手动做的检查”变�
 - `PostToolBatch`
 - `Notification`
 - `MessageDisplay`
+- `DirectoryAdded`
 - `TaskCreated`
 - `TaskCompleted`
 - `CwdChanged`
@@ -272,7 +275,7 @@ hooks 最大的价值，是把“你本来每次都要手动做的检查”变�
 
 如果你是新手，不需要一上来把所有事件都学完。
 
-> 截至 `v2.1.152+`，上游已经明确写成 **30 个 hook 事件、5 种 hook 类型**。如果你还在参考旧资料里“25 个事件 / 4 种类型”“28 个事件”或“29 个事件”的说法，优先以现在这版为准。新增的 `MessageDisplay` 会在 assistant message text 显示过程中触发，适合转换或隐藏展示文本。
+> 截至 `v2.1.219+`，上游共有 **31 个 hook 事件、5 种 hook 类型**。如果你还在参考旧资料里的 25、28、29 或 30 个事件，优先以当前版本为准。`MessageDisplay` 会在 assistant message text 显示过程中触发；新增的 `DirectoryAdded` 会在 `/add-dir` 或 SDK `register_repo_root` 注册新工作目录后触发。
 
 ---
 
@@ -577,6 +580,7 @@ open local-progress/index.html
 - `reloadSkills`
 - `sessionTitle`
 - `MessageDisplay`
+- `DirectoryAdded`
 - `COLUMNS`
 - `LINES`
 - 事件名，例如 `PreToolUse`

@@ -470,18 +470,11 @@ V2_1_212_FORBIDDEN_SNIPPETS = {
 }
 
 V2_1_217_REQUIRED_SNIPPETS = {
-    Path("README.md"): ["v2.1.217", "8f04517", "97fc961"],
     Path("UPSTREAM.md"): [
-        "97fc961a8cc68ade7e74f2dbd5c9dc5491ce55bb",
         "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
         "config-examples.json",
     ],
     Path("CHANGELOG.md"): ["v2.1.217", "8f04517", "97fc961"],
-    Path("INDEX.md"): [
-        "v2.1.217",
-        "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH",
-        "--permission-mode auto",
-    ],
     Path("claude_concepts_guide.md"): [
         "v2.1.217",
         "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
@@ -491,7 +484,6 @@ V2_1_217_REQUIRED_SNIPPETS = {
     Path("resources.md"): [
         "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
         "sandbox.filesystem.disabled",
-        "Vexilo",
     ],
     Path("CATALOG.md"): [
         "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH",
@@ -522,7 +514,6 @@ V2_1_217_REQUIRED_SNIPPETS = {
     ],
     Path("03-skills/claude-md/SKILL.md"): ["控制在几百行内\uff0c越短越好"],
     Path("04-subagents/README.md"): [
-        "嵌套 spawn 改为默认关闭",
         "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
         "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH",
     ],
@@ -579,6 +570,118 @@ V2_1_217_FORBIDDEN_SNIPPETS = {
         '"mode": "unrestricted"',
         '"claude-opus-4-7"',
         '"PreToolUse:Write"',
+    ],
+}
+
+V2_1_220_REQUIRED_SNIPPETS = {
+    Path("README.md"): ["v2.1.220", "97fc961", "343d6f0"],
+    Path("UPSTREAM.md"): [
+        "343d6f0f992de4b5fadd10583388efde7cf39e71",
+        "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1",
+        "DirectoryAdded",
+        "workflowSizeGuideline",
+    ],
+    Path("CHANGELOG.md"): ["v2.1.220", "97fc961", "343d6f0"],
+    Path("INDEX.md"): ["v2.1.220", "默认深度为 3", "claude-opus-5"],
+    Path("01-slash-commands/README.md"): [
+        "/deep-research <topic>",
+        "claude-opus-5",
+        "Opus 5 和 Opus 4.8",
+    ],
+    Path("03-skills/README.md"): [
+        "background: true",
+        "background: false",
+        "yes` / `no`",
+        "/deep-research <topic>",
+    ],
+    Path("04-subagents/README.md"): [
+        "默认深度为 3",
+        "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1",
+        "workspace trust",
+        "不能包含 `:`",
+    ],
+    Path("05-mcp/README.md"): [
+        "claude mcp list",
+        "HTTP 状态与错误文本",
+        "首尾空白字符",
+        "mcp_server_errors",
+    ],
+    Path("06-hooks/README.md"): [
+        "31 个 hook 事件、5 种 hook 类型",
+        "DirectoryAdded",
+        "register_repo_root",
+        "workspace trust",
+    ],
+    Path("09-advanced-features/README.md"): [
+        "permissions.disableAutoMode",
+        "useAutoModeDuringPlan",
+        "workflowSizeGuideline",
+        "sandbox.network.strictAllowlist",
+        "safety-classifier fallback",
+    ],
+    Path("10-cli/README.md"): [
+        "claude-opus-5",
+        "--forward-subagent-text",
+        "workflowSizeGuideline",
+        "默认 `3`\uff0c设为 `1`",
+    ],
+    Path("CATALOG.md"): [
+        "31 个事件",
+        "claude-opus-5",
+        "mcp_server_errors",
+        "workflowSizeGuideline",
+    ],
+    Path("QUICK_REFERENCE.md"): [
+        "/deep-research topic",
+        "默认深度 3",
+        "--forward-subagent-text",
+        "sandbox.network.strictAllowlist",
+    ],
+    Path("claude_concepts_guide.md"): [
+        "v2.1.220",
+        "mcp_server_errors",
+        "31 个 hook 事件",
+        "claude-opus-5",
+    ],
+    Path("resources.md"): [
+        "claude-opus-5",
+        "DirectoryAdded",
+        "mcp_server_errors",
+        "sandbox.network.strictAllowlist",
+    ],
+}
+
+V2_1_220_FORBIDDEN_SNIPPETS = {
+    Path("04-subagents/README.md"): [
+        "subagent 嵌套现在默认关闭",
+        "默认不设置\uff0c也就是不允许嵌套",
+    ],
+    Path("CATALOG.md"): [
+        "从 `v2.1.217` 起嵌套默认关闭",
+        "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 显式开启嵌套",
+        "Opus 4.8 默认 effort 是 `high`",
+    ],
+    Path("QUICK_REFERENCE.md"): ["显式开启 subagent 嵌套"],
+    Path("resources.md"): [
+        "`v2.1.217+` 默认关闭嵌套",
+        "Vexilo",
+    ],
+    Path("claude_concepts_guide.md"): [
+        "从 `v2.1.217` 起嵌套默认关闭",
+    ],
+    Path("06-hooks/README.md"): [
+        "**30 个 hook 事件、5 种 hook 类型**",
+    ],
+    Path("09-advanced-features/README.md"): [
+        "截至 `v2.1.217`\uff0cAuto Mode",
+        "`v2.1.217+` 默认不允许嵌套",
+        "核心变化是 **Opus 4.8**",
+    ],
+    Path("10-cli/README.md"): [
+        "API 仍默认使用 Opus 4.8",
+        "Opus 主线已经切到 **Opus 4.8**",
+        "默认不允许嵌套",
+        "让 Opus 4.6 走 fast mode",
     ],
 }
 
@@ -802,6 +905,7 @@ def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
         ("v2.1.206", V2_1_206_REQUIRED_SNIPPETS),
         ("v2.1.212", V2_1_212_REQUIRED_SNIPPETS),
         ("v2.1.217", V2_1_217_REQUIRED_SNIPPETS),
+        ("v2.1.220", V2_1_220_REQUIRED_SNIPPETS),
     ):
         for relative_path, snippets in required_snippets.items():
             path = root / relative_path
@@ -835,6 +939,17 @@ def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
         content = read_text(path)
         errors.extend(
             f"{relative_path}: stale v2.1.217 content '{snippet}'"
+            for snippet in snippets
+            if snippet in content
+        )
+
+    for relative_path, snippets in V2_1_220_FORBIDDEN_SNIPPETS.items():
+        path = root / relative_path
+        if not path.is_file():
+            continue
+        content = read_text(path)
+        errors.extend(
+            f"{relative_path}: stale v2.1.220 content '{snippet}'"
             for snippet in snippets
             if snippet in content
         )

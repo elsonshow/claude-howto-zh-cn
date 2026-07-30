@@ -32,7 +32,7 @@
 
 ## 当前版本重点
 
-本仓库已按 Claude Code `v2.1.217` 更新中文主线。subagent 嵌套现在默认关闭，可用 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 显式开启，并由 `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` 控制并发；Auto Mode 启动参数统一为 `--permission-mode auto`；hooks、checkpoints、Memory、sandbox 与真实 `settings.json` 示例也已同步修正。
+本仓库已按 Claude Code `v2.1.220` 更新中文主线。subagent 嵌套从 `v2.1.219` 起默认深度为 3，设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` 可禁用嵌套；Claude Opus 5（`claude-opus-5`）成为默认 Opus 模型；hooks 增至 31 个事件并新增 `DirectoryAdded`；Auto Mode、dynamic workflows、MCP、sandbox 与 skills 的新行为也已同步本土化。
 
 ## 资源与脚本
 

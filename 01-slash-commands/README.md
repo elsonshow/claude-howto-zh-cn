@@ -41,7 +41,8 @@ Claude Code 里的 slash commands 大致分四类：
 | `/doctor` | 诊断安装、配置和 plugin 健康状态；`v2.1.178+` 起界面改成 flat tree，状态图标更清楚 |
 | `/feedback` / `/bug` | 提交反馈；`v2.1.178+` 起 `/bug` 必须填写描述后才能提交 |
 | `/model` | 切换模型；`v2.1.153+` 起默认保存为后续 session 默认值，选择后按 `s` 才只作用于当前 session |
-| `/effort [low|medium|high|xhigh|max|auto]` | 用交互滑杆调整思考强度；Opus 4.8 默认是 `high`，`xhigh` 适用于 Opus 4.8 / 4.7 |
+| `/effort [low|medium|high|xhigh|max|auto]` | 用交互滑杆调整思考强度；Opus 5 默认是 `high`，支持 `low` 到 `max` |
+| `/fast` | 切换 Fast Mode；`v2.1.219+` 只适用于 Opus 5 和 Opus 4.8 |
 | `/agents` | 查看可用 agents |
 | `/skills` | 查看可用 skills |
 | `/hooks` | 查看 hooks |
@@ -52,7 +53,8 @@ Claude Code 里的 slash commands 大致分四类：
 | `/focus` | 切换 focus view，减少长任务时的视觉干扰 |
 | `/goal <目标>` | 给当前 session 注册一个持续追踪的完成目标 |
 | `/less-permission-prompts` | 分析常见 Bash / MCP 调用，帮你生成更合理的 allowlist |
-| `/code-review [effort]` | 审查当前 diff 的正确性缺陷；可传入 `/code-review high` 这类 effort 参数；`v2.1.215+` 起只会在用户显式调用时运行 |
+| `/deep-research <topic>` | 深入研究指定主题；`v2.1.218+` 起只会在用户显式调用时运行 |
+| `/code-review [effort]` | 审查当前 diff 的正确性缺陷；可传入 `/code-review high` 这类 effort 参数；`v2.1.215+` 起仅显式调用，`v2.1.218+` 起在后台 subagent 中运行 |
 | `/dataviz` | 图表和 dashboard 设计指导，并附带可运行的调色板校验器（`v2.1.198+`） |
 | `/review <pr>` | 审查 GitHub PR；`v2.1.186+` 起使用和 `/code-review medium` 相同的 review engine，本地 diff 仍优先用 `/code-review` |
 | `/proactive` | `/loop` 的别名 |
@@ -195,7 +197,8 @@ cp 01-slash-commands/optimize.md .claude/commands/
 - `/proactive` 新增，作为 `/loop` 的别名
 - `/ultrareview` 新增，用云端多代理做综合代码审查
 - `/less-permission-prompts` 新增，会分析常见 Bash / MCP 调用并帮你减少重复权限提示
-- `/effort` 在 Opus 4.8 上默认是 `high`；`xhigh` 适用于 Opus 4.8 / 4.7，`max` 适用于 Opus 4.8 / 4.7 / 4.6 和 Sonnet 4.6
+- Claude Opus 5（`claude-opus-5`、1M context）现在是默认 Opus 模型，默认 effort 为 `high`，支持 `low` 到 `max`
+- `/fast` 从 `v2.1.219+` 起只适用于 Opus 5 和 Opus 4.8；Opus 4.6 / 4.7 不再是 Fast Mode 目标
 - `ultracode` 不是模型 effort level；它会发送 `xhigh` 并让 Claude 编排 dynamic workflows
 - Auto Mode 现在用 `--permission-mode auto` 直接启动；`--enable-auto-mode` 已在 `v2.1.111` 移除
 - `/team-onboarding` 新增，适合自动生成团队上手说明
@@ -209,6 +212,7 @@ cp 01-slash-commands/optimize.md .claude/commands/
 - `/reload-skills` 新增，用来重新扫描 skill 目录
 - `/workflows` 新增，用来查看 dynamic workflows 的运行记录
 - `/simplify` 在 `v2.1.154+` 后重新成为独立的清理型命令；如果要找正确性缺陷，仍然用 `/code-review`
+- `/deep-research` 从 `v2.1.218+` 起仅显式调用；`/code-review` 同版本起在后台 subagent 中运行，不占满主对话
 - `/doctor` 在 `v2.1.178+` 刷新为 flat tree 布局，状态图标更容易扫读
 - `/bug` 在 `v2.1.178+` 需要先写描述，避免空反馈误提交
 - `/review <pr>` 在 `v2.1.186+` 起不再按“已废弃”理解；它用于审查 GitHub PR，并复用 `/code-review medium` 的 review engine。要审查当前本地工作区 diff，继续用 `/code-review [effort]`

@@ -500,9 +500,9 @@
 ### Q9
 - **Category**: conceptual
 - **Question**: Claude Code 一共支持多少种 hook events？
-- **Options**: A) 10 | B) 16 | C) 25 | D) 30
+- **Options**: A) 16 | B) 25 | C) 30 | D) 31
 - **Correct**: D
-- **Explanation**: 当前教程按 Claude Code `v2.1.152+` 的口径记录 30 个 hook 事件、5 种 hook 类型；不要再沿用旧资料里的 25、28 或 29 个事件。
+- **Explanation**: 当前教程按 Claude Code `v2.1.219+` 的口径记录 31 个 hook 事件、5 种 hook 类型；新增事件是 `DirectoryAdded`，不要再沿用旧资料里的 25、28、29 或 30 个事件。
 - **Review**: 常见事件
 
 ### Q10

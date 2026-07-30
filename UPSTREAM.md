@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`97fc961a8cc68ade7e74f2dbd5c9dc5491ce55bb`
+- 最近检查到的上游 commit：`343d6f0f992de4b5fadd10583388efde7cf39e71`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -61,6 +61,28 @@ uv run python scripts/validate_localization.py
    - 哪些内容暂时未同步
 
 ## 最近一次同步记录
+
+### 上游同步 — 2026-07-30
+
+- Reviewed upstream range: `97fc961` → `343d6f0`
+- 重点上游变化：
+  - 教程覆盖更新到 Claude Code `v2.1.220`；`v2.1.219` 将 subagent 嵌套默认深度改为 3，`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` 用于禁用嵌套
+  - Claude Opus 5（`claude-opus-5`、1M context）成为默认 Opus 模型，默认 effort 为 `high`；`/fast` 当前只适用于 Opus 5 和 Opus 4.8
+  - `/deep-research` 改为仅显式调用，`/code-review` 改为后台 subagent；`context: fork` skills 默认 `background: true`
+  - 新增 `DirectoryAdded`，hook 事件总数变为 31；project agent frontmatter hooks 受 workspace trust 约束
+  - Auto Mode 对所有 plans 开放，但仍受组织策略、模型和 provider 资格限制；新增 `workflowSizeGuideline`、`sandbox.network.strictAllowlist` 和 classifier 行为
+  - MCP 连接错误会显示 HTTP 状态与文本，配置值首尾空白会报警，headless stream-json init 暴露 `mcp_server_errors`
+  - 上游 commit `5f36214` 撤回此前加入 README 的 Vexilo 社区资源
+- Chinese fork actions:
+  - 将上述行为本土化写入中文入口、skills、subagents、MCP、hooks、Advanced Features、CLI、Catalog、Quick Reference、概念总览和资源索引
+  - 保留 `claude-opus-5`、`DirectoryAdded`、`workflowSizeGuideline`、`strictAllowlist`、`mcp_server_errors`、CLI flags、环境变量和 frontmatter key 原文
+  - 将 Hooks 自测题与学习建议统一更新为 31 个事件，避免教程正文和自测数据互相矛盾
+  - 复核 `doc-generator` 名称已经正确；上游 plugins、checkpoints、planning examples、Learning Roadmap 与 Style Guide 的其余变化仅涉及英文版本页脚、来源和兼容模型，中文精简版没有对应页脚，因此不机械引入英文元数据
+  - 从当前资源索引移除 Vexilo，旧同步记录继续保留，准确反映先合入后撤回的上游历史
+  - 扩展 `scripts/validate_localization.py`，阻止旧嵌套默认值、30 个 hooks、旧默认模型和已撤回资源回归
+  - 上游 `ja/`、`vi/`、`uk/`、`zh/` 目录继续只作差异参考，不引入本中文主线
+  - 不复制上游英文根 README，继续保持 `Claude Code 中文全面上手指南` 为默认入口
+  - 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
 
 ### 上游同步 — 2026-07-23
 

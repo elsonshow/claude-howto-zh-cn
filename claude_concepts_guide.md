@@ -18,16 +18,18 @@ Memory 包含两套互补机制：人维护的 `CLAUDE.md` 指令，以及 Claud
 
 可复用、可自动触发的能力，适合沉淀稳定工作流。
 
-截至 `v2.1.217`，特别值得关注这些 bundled skills、plugin 和排障入口：
+截至 `v2.1.220`，特别值得关注这些 bundled skills、plugin 和排障入口：
 
 - `/run`：启动当前项目，确认改动能真实运行
 - `/verify`：构建、运行并观察应用，确认修复不是只停留在测试通过；`v2.1.215+` 起仅显式调用
 - `/run-skill-generator`：为项目生成专属 run / verify skill
-- `/code-review [effort]`：审查当前 diff 的正确性缺陷；`v2.1.215+` 起仅显式调用
+- `/deep-research <topic>`：深入研究指定主题；`v2.1.218+` 起仅显式调用
+- `/code-review [effort]`：审查当前 diff 的正确性缺陷；`v2.1.215+` 起仅显式调用，`v2.1.218+` 起在后台 subagent 中运行
 - `/simplify`：清理型审查，关注复用、简化、效率和抽象层级，并应用修复
 - `/dataviz`：图表和 dashboard 设计指导，附带可运行的调色板校验器
 - `${CLAUDE_PROJECT_DIR}`：在 skill body 和 `allowed-tools` 中引用项目根目录绝对路径
 - 一次调用可叠加最多 6 个开头的 slash-skills，重复 skill 内容会去重
+- `context: fork` skills 从 `v2.1.218+` 起默认 `background: true`；设为 `false` 才在前台运行
 - `/reload-skills`：重新扫描 skill 目录，不需要重启当前 session
 - `disableBundledSkills` / `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1`：隐藏内置 skills、workflows 和 commands
 - `claude plugin init <name>`：在 `.claude/skills` 中脚手架本地 plugin，放在该目录的 plugin 会自动加载
@@ -40,7 +42,9 @@ Memory 包含两套互补机制：人维护的 `CLAUDE.md` 指令，以及 Claud
 
 用于复杂任务拆分和专业分工的子代理。
 
-`v2.1.172` 到 `v2.1.216` 曾默认允许 subagent 再 spawn 子 subagent，最多 5 层；从 `v2.1.217` 起嵌套默认关闭。需要时设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 显式开启；如果要限制可 spawn 的对象，保留 `Agent(agent_type)` 语法，不要翻译成中文字段。
+当前版本从 `v2.1.219` 起默认允许 subagent 嵌套 spawn，默认深度为 3；设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` 可禁用嵌套。历史上，`v2.1.172` 到 `v2.1.216` 默认最多 5 层且不能配置，`v2.1.217` 到 `v2.1.218` 才短暂使用深度 1。要限制可 spawn 的对象，保留 `Agent(agent_type)` 语法，不要翻译成中文字段。
+
+project agent 的 frontmatter hooks 只有在 agent 文件所在 workspace 通过 trust 后才运行；agent `name` 不能包含 `:`，因为该字符保留给 plugin namespace。
 
 从 `v2.1.178+` 起，嵌套 `.claude/agents/` 里的同名 agent 会按“离当前工作目录最近者优先”加载；workflow 和 output-style 定义也遵循这个规则。
 
@@ -62,6 +66,8 @@ Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 tea
 
 从 `v2.1.212+` 起，MCP tool call 超过 2 分钟会自动转后台；`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` 用于调整这个阈值，和无响应中止用的 `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT` 不是同一个设置。
 
+从 `v2.1.219+` 起，`claude mcp list` 和 `/mcp` 会显示连接失败的 HTTP 状态与错误文本；配置值首尾空白会报警，headless stream-json init event 会通过 `mcp_server_errors` 暴露无效 `--mcp-config` server 的错误。
+
 ## 6. Hooks（钩子）
 
 在特定事件上自动执行动作的机制。
@@ -77,6 +83,8 @@ Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 tea
 这轮同步移除了上一版里关于 `Stop` / `SubagentStop` 可读取 `background_tasks`、`session_crons` 的说明；当前官方 hooks reference 没有列出这两个字段，写 hook 时不要依赖它们。
 
 `Notification` matcher 新增 `agent_needs_input` 和 `agent_completed`；hook 输入新增 `prompt_id`，可与 OpenTelemetry `prompt.id` 对齐。
+
+从 `v2.1.219+` 起共有 31 个 hook 事件；新增的 `DirectoryAdded` 会在 `/add-dir` 或 SDK `register_repo_root` 注册新工作目录后触发。`MessageDisplay` 和 `DirectoryAdded` 都是事件名，不能翻译。
 
 ## 7. Plugins（插件）
 
@@ -110,24 +118,26 @@ Claude Code 的核心使用入口，也是自动化、脚本化和 CI/CD 的关�
 
 `/workflows` 可以查看 dynamic workflows 的运行记录，适合大规模审查、迁移、全仓扫描这类需要多代理编排的任务。
 
+从 `v2.1.219+` 起，dynamic workflows 默认采用 medium 指引，目标少于 15 个 agents。可在 `/config` 的 **Dynamic workflow size** 中调整，或设置 `workflowSizeGuideline`；它是建议，不是并发硬上限。
+
 `v2.1.160` 起，dynamic workflows 的触发关键词是 `ultracode`；裸词 `workflow` 不再触发运行。
 
 `/model` 的默认行为也要注意：`v2.1.153+` 起选择模型会保存为后续 session 默认值；如果只想作用于当前 session，选中后按 `s`。
 
 `--safe-mode` / `CLAUDE_CODE_SAFE_MODE=1` 适合排查自定义配置问题；`fallbackModel` 适合给主模型不可用时准备有序 fallback。
 
-`claude auto-mode reset [--yes]` 用于恢复 Auto Mode 默认配置。`CLAUDE_CODE_ENABLE_AUTO_MODE` 从 `v2.1.207` 起仅保留历史兼容性且不再生效；管理员可通过 managed setting `disableAutoMode` 禁用该能力。
+`claude auto-mode reset [--yes]` 用于恢复 Auto Mode 默认配置。Auto Mode 面向所有 plans，但仍受模型和 provider 资格限制；Team / Enterprise 默认可用，管理员可在 managed settings 中把 `permissions.disableAutoMode` 设为 `"disable"`。`CLAUDE_CODE_ENABLE_AUTO_MODE` 从 `v2.1.207` 起仅保留兼容性且不再生效。
 
 直接进入 Auto Mode 应使用 `--permission-mode auto`；`--enable-auto-mode` 已在 `v2.1.111` 移除。`--max-budget-usd` 从 `v2.1.217+` 起达到上限时也会停止后台 subagents，`--settings` 文件上限为 2 MiB。
 
 `--ax-screen-reader`、`CLAUDE_AX_SCREEN_READER=1` 或 `"axScreenReader": true` 会启用适合 screen reader 的纯文本渲染模式。
 
-`wheelScrollAccelerationEnabled`、`footerLinksRegexes`、`language` 是 settings.json 里的 key，说明文字可以中文化，但 key 本身不要翻译。
+`wheelScrollAccelerationEnabled`、`footerLinksRegexes`、`language`、`workflowSizeGuideline` 是 settings.json 里的 key，说明文字可以中文化，但 key 本身不要翻译。
 
 `respondToBashCommands` 控制 `!` bash 命令输出后是否自动让 Claude 回复；默认 `true`，设为 `false` 可回到只把输出放进上下文的旧行为。
 
-交互 permission mode 从 `v2.1.200+` 起显示为 `manual`，旧 `default` 仍是 alias。`askUserQuestionTimeout`、`enableArtifact`、`CLAUDE_ENABLE_STREAM_WATCHDOG` 和 Sonnet 5 的 `claude-sonnet-5` 都已进入当前口径。
+交互 permission mode 从 `v2.1.200+` 起显示为 `manual`，旧 `default` 仍是 alias。`askUserQuestionTimeout`、`enableArtifact`、`CLAUDE_ENABLE_STREAM_WATCHDOG`、Sonnet 5 的 `claude-sonnet-5` 和默认 Opus 模型 `claude-opus-5` 都已进入当前口径。Opus 5 是 1M context，默认 effort 为 `high`；`/fast` 只适用于 Opus 5 和 Opus 4.8。
 
 从 `v2.1.193+` 起，`!` bash mode 支持 live file-path autocomplete。`autoMode.classifyAllShell` 可以让所有 Bash / PowerShell 命令都过 Auto Mode 分类器，`claude_code.assistant_response` 可把模型回复文本写进 OpenTelemetry log event。
 
-`CLAUDE_CLIENT_PRESENCE_FILE`、`CLAUDE_CODE_MAX_RETRIES`、`CLAUDE_CODE_RETRY_WATCHDOG`、`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`、`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`、`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`、`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`、`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`、`CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH`、`FORCE_HYPERLINK`、`CLAUDE_CODE_DISABLE_MOUSE_CLICKS` 是环境变量标识，不要翻译。`sandbox.credentials`、`sandbox.allowAppleEvents`、`sandbox.filesystem.disabled`、`emojiCompletionEnabled`、`autoMode.classifyAllShell` 和 `/config key=value` 属于配置 / 命令口径，也要保持原文。
+`CLAUDE_CLIENT_PRESENCE_FILE`、`CLAUDE_CODE_MAX_RETRIES`、`CLAUDE_CODE_RETRY_WATCHDOG`、`CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`、`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`、`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`、`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`、`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`、`CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH`、`FORCE_HYPERLINK`、`CLAUDE_CODE_DISABLE_MOUSE_CLICKS` 是环境变量标识，不要翻译。`sandbox.credentials`、`sandbox.allowAppleEvents`、`sandbox.filesystem.disabled`、`sandbox.network.strictAllowlist`、`emojiCompletionEnabled`、`workflowSizeGuideline`、`autoMode.classifyAllShell` 和 `/config key=value` 属于配置 / 命令口径，也要保持原文。print mode 的 `--forward-subagent-text` 从 `v2.1.219+` 起也会转发深度 2 及更深的 subagent 文本。

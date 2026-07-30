@@ -21,7 +21,8 @@
 | `/run` / `/verify` | bundled skills，用于启动项目并确认改动真实可用 | [Skills Guide](03-skills/) |
 | `/run-skill-generator` | 为项目生成专属 run / verify skill | [Skills Guide](03-skills/) |
 | `claude agents --json` | 输出机器可读的 Agent View 列表 | [CLI Guide](10-cli/) |
-| `/code-review [effort]` | 内置正确性缺陷审查命令，可传入 `/code-review high` | [Skills Guide](03-skills/) |
+| `/deep-research <topic>` | 深入研究主题；`v2.1.218+` 起仅显式调用 | [Skills Guide](03-skills/) |
+| `/code-review [effort]` | 内置正确性缺陷审查命令；`v2.1.218+` 起在后台 subagent 中运行 | [Skills Guide](03-skills/) |
 | `/simplify` | 清理型审查命令，关注复用、简化、效率和抽象层级 | [Skills Guide](03-skills/) |
 | `/reload-skills` | 重新扫描 skill 目录，不需要重启当前 session | [Skills Guide](03-skills/) |
 | `/workflows` | 查看 dynamic workflows 的运行记录 | [Advanced Features](09-advanced-features/) |
@@ -33,7 +34,7 @@
 | `hookSpecificOutput.additionalContext` | Stop / SubagentStop hook 给 Claude 追加上下文并继续当前 turn | [Hooks Guide](06-hooks/) |
 | `CLAUDE_CODE_SESSION_ID` | 串联 MCP server、hooks 和 Bash 日志的 session 标识 | [MCP Guide](05-mcp/) |
 | `claude plugin init <name>` | 在 `.claude/skills` 中脚手架本地 plugin；该目录下的 plugin 会自动加载 | [Plugins Guide](07-plugins/) |
-| `CLAUDE_CODE_ENABLE_AUTO_MODE` / `disableAutoMode` | 前者从 `v2.1.207` 起仅保留兼容性且不再生效；管理员可用后者禁用 Auto Mode | [Advanced Features](09-advanced-features/) |
+| `CLAUDE_CODE_ENABLE_AUTO_MODE` / `permissions.disableAutoMode` | 前者从 `v2.1.207` 起仅保留兼容性且不再生效；Team / Enterprise 管理员可把后者设为 `"disable"` | [Advanced Features](09-advanced-features/) |
 | `claude auto-mode reset [--yes]` | 恢复 Auto Mode 默认配置；`--yes` 跳过确认 | [CLI Guide](10-cli/) |
 | `/fork <directive>` / `/branch [name]` | 前者委派给继承对话的后台 subagent，后者切换到对话副本 | [Slash Commands](01-slash-commands/) |
 | `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` / `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` | 限制每个 session 的 WebSearch 与 subagent spawn 次数，默认均为 200 | [CLI Guide](10-cli/) |
@@ -42,8 +43,14 @@
 | `EnterWorktree` | 在同一 session 中切换 Claude 管理的 worktree | [Advanced Features](09-advanced-features/) |
 | `claude agents` 里的 `Ctrl+T` | 固定后台 session，空闲时优先保留 | [CLI Guide](10-cli/) |
 | `allowAllClaudeAiMcps` | 组织级允许加载 claude.ai 云端 MCP connectors 的托管设置 | [MCP Guide](05-mcp/) |
-| `Agent(agent_type)` / `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` | 限制可 spawn 类型并显式开启嵌套；`v2.1.217+` 默认关闭嵌套 | [Subagents Guide](04-subagents/) |
+| `Agent(agent_type)` / `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` | 限制可 spawn 类型并控制深度；`v2.1.219+` 默认深度 3，设为 `1` 可禁用嵌套 | [Subagents Guide](04-subagents/) |
 | `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` | 限制同时运行的 subagents，默认 20 | [Subagents Guide](04-subagents/) |
+| `claude-opus-5` | 默认 Opus 模型，1M context，默认 effort `high` | [CLI Guide](10-cli/) |
+| `DirectoryAdded` | `/add-dir` 或 SDK `register_repo_root` 新增工作目录后的 hook；当前共 31 个 hook 事件 | [Hooks Guide](06-hooks/) |
+| `workflowSizeGuideline` | dynamic workflows 的建议规模；默认 medium，目标少于 15 个 agents | [Advanced Features](09-advanced-features/) |
+| `sandbox.network.strictAllowlist` | sandboxed command 访问非 allowlist host 时直接拒绝，不再弹出询问 | [Advanced Features](09-advanced-features/) |
+| `mcp_server_errors` | headless stream-json init event 暴露 MCP server 配置 / 连接错误 | [MCP Guide](05-mcp/) |
+| `--forward-subagent-text` | stream-json 中转发 subagent 文本；`v2.1.219+` 包含深度 2+ 的嵌套输出 | [CLI Guide](10-cli/) |
 | hook `if` 条件 | 用 permission-rule 语法按工具参数继续收窄 hook 匹配 | [Hooks Guide](06-hooks/) |
 | `/plugin` marketplace 搜索栏 | 在 marketplace 浏览界面按名称或关键词过滤 plugin | [Plugins Guide](07-plugins/) |
 | `enforceAvailableModels` | 托管策略强制 `availableModels` 也约束 Default model | [Advanced Features](09-advanced-features/) |
@@ -87,7 +94,3 @@
 | `CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH` / `FORCE_HYPERLINK=0` | 控制 OTEL 内容截断上限和 footer PR badge 超链接 | [CLI Guide](10-cli/) |
 
 这些名称都是可执行标识或协议字段，不要翻译成中文 key。
-
-## 外部补充资源
-
-- [Vexilo：Claude Code 可视化 field guide](https://vexilo.app/?lang=en)：按 Research、Plan、Test-first、Security、Commit 五步工作流整理 agents、commands、skills 与 rules；配套仓库见 [`lilhawk7077/claude-code-resources`](https://github.com/lilhawk7077/claude-code-resources)。它是社区资源，不是 Anthropic 官方文档，使用前仍应以当前 Claude Code 文档和实际 CLI 为准。

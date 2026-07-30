@@ -127,6 +127,10 @@ model: inherit
 
 如果你是做中文本地化，这些字段要保真；可以翻译的是下面真正给人看的 system prompt 正文。
 
+从 `v2.1.218+` 起，agent `name` 不能包含 `:`；这个字符保留给 plugin namespace。不要为了中英文分组自行加入冒号。
+
+project agent frontmatter 里的 `hooks` 只有在 agent 文件所在目录通过 workspace trust 后才运行。未信任项目不会借 agent hook 绕过这层安全边界。
+
 `background: true` 的含义也发生了变化：从 `v2.1.198+` 起，subagents 默认就在后台运行；显式写 `true` 是强制它始终后台运行，并阻止 inline execution。
 
 `effort` 可写 `low`、`medium`、`high`、`xhigh` 或 `max`，实际可用范围取决于模型。`permissionMode` 才是覆盖 subagent 权限模式的 frontmatter 字段；从 `v2.1.212+` 起，Task tool 调用参数里的 `mode` 已弃用并会被忽略，未写 `permissionMode` 时 subagent 继承父 session 的权限模式。
@@ -222,11 +226,11 @@ cp 04-subagents/code-reviewer.md .claude/agents/
 这对“skill + subagent” 组合工作流很重要。
 如果你以前感觉主 Claude 会用某个 skill，但一委派给 subagent 就像“忘了这项能力”，新版应该按统一目录发现逻辑来理解。
 
-### subagent 嵌套现在默认关闭
+### subagent 嵌套现在默认深度为 3
 
-`v2.1.172` 到 `v2.1.216` 曾默认允许 subagent 继续 spawn 子 subagent，最多 5 层；从 `v2.1.217` 起，嵌套 spawn 改为默认关闭。只有显式设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 后，subagent 才能继续向下委派，最大深度由你配置。
+从 `v2.1.219` 起，subagent 默认可以继续 spawn 子 subagent，默认深度为 3。设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` 会禁用嵌套；设为其他正整数则覆盖最大深度。
 
-复杂任务确实可能需要嵌套，例如一个 `implementation-agent` 再把安全检查交给 `secure-reviewer`、把测试交给 `test-engineer`。但默认关闭更容易控制成本、权限和上下文流向；需要时再按任务边界开启。
+历史口径要分三段看：`v2.1.172` 到 `v2.1.216` 默认最多 5 层且不能配置；`v2.1.217` 到 `v2.1.218` 默认深度为 1，也就是嵌套关闭；`v2.1.219` 再把默认值改为 3。复杂任务可以利用嵌套分工，但仍要结合并发、权限和成本边界控制。
 
 如果你要限制某个 subagent 能 spawn 哪些子 agent，使用 `Agent(agent_type)` 这种权限限制语法。这里的 `Agent(agent_type)`、`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 都是可执行标识，不要翻译成中文字段。
 
@@ -326,15 +330,15 @@ cp 04-subagents/code-reviewer.md .claude/agents/
 
 从 `v2.1.212+` 起，每个 session 默认最多 spawn **200** 个 subagents，防止委派循环失控。可用 `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` 调整；执行 `/clear` 会重置这项预算。
 
-`v2.1.217+` 又增加了两层独立限制：
+当前还有两层独立限制：
 
 - `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`：同一时间最多运行多少个 subagents，默认 `20`
-- `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`：允许嵌套 spawn 的最大深度；默认不设置，也就是不允许嵌套
+- `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`：允许嵌套 spawn 的最大深度；`v2.1.219+` 默认 `3`，设为 `1` 可禁用嵌套
 
 ```bash
 export CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION=200
 export CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=20
-export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=5
+export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1  # 禁用嵌套；不设置时默认深度为 3
 ```
 
 ---

@@ -256,10 +256,13 @@ MCP 配置是高风险文件，以下内容默认不要翻：
 - 自 `v2.1.186` 起，可以直接用 `claude mcp login <name>` / `claude mcp logout <name>` 处理 OAuth 登录状态
 - 自 `v2.1.193` 起，启动时会提示哪些 MCP server 仍需要认证，避免“配置看起来有了、实际还没登录”的 server 静默失效
 - 自 `v2.1.193` 起，如果你用 `headersHelper` 提供动态认证头，server 返回 HTTP 401 / 403 时会自动重新调用 helper 刷新凭证，不需要手动断开重连
+- 自 `v2.1.219` 起，`claude mcp list` 和 `/mcp` 会直接显示连接失败的 HTTP 状态与错误文本，不再只给一个模糊的失败标记
+- 自 `v2.1.219` 起，配置值含有隐藏的首尾空白字符时会报警；token、URL、header 值从环境变量注入时尤其要检查
+- 自 `v2.1.219` 起，无效 `--mcp-config` 中的 server 会被跳过，而不是让全部启动失败；交互模式会显示 warning，headless stream-json init event 会在 `mcp_server_errors` 中列出错误
 
 对中文用户来说，这意味着排查“为什么连上了但看起来不能用”时，先跑一次 `/mcp` 往往比盲猜配置更快。
 
-这里的 `login`、`logout`、`--no-browser`、`headersHelper`、HTTP 401 / 403 都是 CLI / 协议标识，不要翻译。
+这里的 `login`、`logout`、`--no-browser`、`--mcp-config`、`headersHelper`、`mcp_server_errors`、HTTP 401 / 403 都是 CLI / 协议标识，不要翻译。
 
 ### 这轮 MCP 生命周期修复值得知道
 

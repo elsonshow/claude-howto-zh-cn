@@ -2,6 +2,31 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-07-30
+
+### 上游审阅
+
+- 核对上游范围：`97fc961` → `343d6f0`
+- 上游这轮重点：
+  - 教程覆盖更新到 Claude Code `v2.1.220`，其中 `v2.1.219` 再次反转 subagent 嵌套默认值：现在默认深度为 3，设为 `1` 才会禁用嵌套
+  - Claude Opus 5（`claude-opus-5`、1M context、默认 effort `high`）成为默认 Opus 模型，Fast Mode 只覆盖 Opus 5 与 Opus 4.8
+  - 新增 `/deep-research`、`/code-review`、fork skills、frontmatter boolean、agent name 和 workspace trust 相关行为
+  - hooks 新增 `DirectoryAdded`，总数从 30 增至 31
+  - Auto Mode、dynamic workflows、sandbox、MCP 和 stream-json 增加新的资格、限制和排错入口
+  - 上游撤回此前合入的 Vexilo 社区资源
+
+### 中文 fork 处理
+
+- 将 `v2.1.220` 行为写入中文教程、功能总表、速查卡、概念总览、资源索引和 Index，不照搬英文上游 README
+- 统一 subagent 默认深度、Opus 5、Fast Mode、Auto Mode、31 个 hooks 和 MCP 错误输出的中文口径
+- 保留模型 ID、hook event、settings key、环境变量、CLI flag、frontmatter key 和 skill / agent 名称原文
+- 将 Hooks 自测题和学习建议同步改为 31 个事件
+- 复核 `doc-generator` 已使用正确名称；对仅更新英文页脚、来源和兼容模型的文件不做无意义机械改写
+- 从当前资源索引移除 Vexilo，但保留旧同步日志作为真实历史
+- 扩展本地化校验，锁定本轮关键行为并阻止旧事实回归
+- 不改变 `Claude Code 中文全面上手指南` 默认入口
+- 更新 `README.md`、`UPSTREAM.md` 和 `CHANGELOG.md` 的最近同步记录
+
 ## 中文版同步 — 2026-07-23
 
 ### 上游审阅

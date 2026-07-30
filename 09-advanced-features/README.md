@@ -114,6 +114,8 @@ claude --permission-mode plan
 
 > `v2.1.136` 之后要特别注意：plan mode 现在会**无条件阻止所有文件写入**。即使你在 `permissions.allow` 里配过宽松的 `Edit(...)` 规则，也不能再绕过去。如果旧工作流依赖这种行为，现在必须先退出 plan mode，再做编辑。
 
+> `v2.1.218+` 还要区分 shell 与写文件：当 Auto Mode 可用且默认开启的 `useAutoModeDuringPlan` 生效时，plan mode 会把 shell command 交给 classifier，而不是弹权限询问；获批命令可以运行，被拒命令会阻止。文件写入仍然无条件禁止。
+
 ## Ultraplan（深度计划）
 
 `/ultraplan` 会把“起草计划”这一步交给 Claude Code on the web 的云端会话来完成。你本地终端不用一直等着，等云端把 plan 草案写好后，再去浏览器审阅，并决定继续在云端执行，还是把计划带回本地终端落地。
@@ -218,9 +220,13 @@ Auto Mode 属于更偏自动化、也更需要谨慎的能力。
 
 ### 当前要求要看清
 
-截至 `v2.1.217`，Auto Mode 是否可用仍取决于账号、组织策略、模型和 provider；Team / Enterprise 环境还可能需要管理员启用。不要把它简单理解成“所有账号默认都能用”。
+从 `v2.1.219+` 的当前口径看，Auto Mode 面向所有 plans，但仍受组织策略、模型和 provider 资格限制。Team / Enterprise 默认可用；管理员可在 managed settings 中把 `permissions.disableAutoMode` 设为 `"disable"` 来关闭。
 
-从 `v2.1.207` 起，Bedrock / Vertex AI / Microsoft Foundry 以及已登录的 Claude apps gateway session 不再需要 `CLAUDE_CODE_ENABLE_AUTO_MODE=1` 才能启用受支持模型的 Auto Mode。这个旧环境变量仍会被接受以兼容历史脚本，但已经不产生效果。管理员可以在 managed settings 中使用 `disableAutoMode` 禁用该能力。
+- Anthropic API 与 Claude Platform on AWS：支持 Opus 5、Opus 4.6+、Sonnet 4.6+ 和 Fable 5
+- Bedrock、Vertex AI、Microsoft Foundry 与已登录的 Claude apps gateway session：支持 Opus 5、Sonnet 5、Opus 4.7+ 和 Fable 5
+- Sonnet 4.5、Opus 4.5、Haiku 与 claude-3 系列不支持 Auto Mode
+
+从 `v2.1.207` 起，上述 provider 不再需要 `CLAUDE_CODE_ENABLE_AUTO_MODE=1`。这个旧环境变量仍会被接受以兼容历史脚本，但已经不产生效果；后台 classifier 使用 Sonnet 4.6，会产生额外 token 成本。
 
 需要恢复 Auto Mode 默认配置时，`v2.1.212+` 可以运行：
 
@@ -233,9 +239,9 @@ claude auto-mode reset --yes
 
 ---
 
-## 没有 Team plan 时的替代方案：一次性权限种子脚本
+## 不想使用后台分类器时的替代方案：一次性权限种子脚本
 
-如果你没有 Team plan，或者你不想用“后台分类器 + 自动判定”这套模式，上游最近新增了一种更务实的替代方案：
+如果你不想用“后台分类器 + 自动判定”这套模式，上游提供了一种更务实的替代方案：
 
 - 直接用一次性脚本把一组 **更保守的安全权限基线** 写进 `~/.claude/settings.json`
 
@@ -319,6 +325,8 @@ python3 09-advanced-features/setup-auto-mode-permissions.py --include-gh-read --
 - `terraform destroy`、`pulumi destroy`、`cdk destroy`
 
 这属于内置 intent-based protection，不需要你手工把这些命令都塞进 `hard_deny`。但团队里仍建议把真正不可接受的组织规则写进 `autoMode.hard_deny`，两层保护不要混为一谈。
+
+从 `v2.1.218+` 起，针对 filesystem root 或 home 的删除（包括 command / process substitution 里的 `rm -rf /`、`rm -rf ~`）也交给 classifier 判定，不再另开 permission dialog。这里仍然不是“自动放行”，而是改由分类器按意图批准或拒绝。
 
 ### `autoMode.classifyAllShell`：让所有 shell 命令都过分类器
 
@@ -707,6 +715,8 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 
 从 `v2.1.160` 起，dynamic workflows 的触发关键词是 `ultracode`；只写裸词 `workflow` 不再触发运行。文档、prompt 模板和团队 SOP 里如果还写“说 workflow 就会启动”，需要改成新口径。
 
+从 `v2.1.219+` 起，dynamic workflows 默认采用 medium size guideline，目标少于 15 个 agents。可在 `/config` 的 **Dynamic workflow size** 中选其他规模或 unrestricted，也可以在 settings 中写 `workflowSizeGuideline`。它是 Claude 力求遵守的建议，不是像 `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` 那样的硬上限；settings 已设置该 key 时，`/config` 会隐藏对应行。
+
 如果你的任务只是普通单文件修复，不需要急着用它；它更适合“覆盖面很大、需要确定性拆分”的工程任务。
 
 ---
@@ -785,6 +795,8 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 
 `v2.1.216+` 新增 `sandbox.filesystem.disabled`：跳过文件系统隔离，但继续执行网络出口限制。它适合“文件 sandbox 会破坏工具链、但仍必须限制网络访问”的场景，只允许从 user settings、managed settings 或 `--settings` 提供；project settings 不能开启。
 
+`v2.1.219+` 新增 `sandbox.network.strictAllowlist`：sandboxed command 访问不在 allowlist 中的 host 时直接拒绝，不再弹出询问。需要“未列入即拒绝”的企业网络边界时再启用。
+
 如果你在公司设备或含有生产凭证的机器上跑自动化，优先关注 `sandbox.credentials`；这些都不是“中文化字段”，必须按原 key 写。
 
 ---
@@ -816,12 +828,14 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 |---------|------|
 | `askUserQuestionTimeout` | 给无人回答的 `AskUserQuestion` 设置空闲超时并自动继续。`v2.1.200+` 默认不再自动继续；只有显式配置这个 key 才恢复定时行为 |
 | `enableArtifact` | 按用户启用或禁用 Artifact tool（`v2.1.196+`） |
-| `disableAutoMode` | 在 managed settings 中禁用 Auto Mode（`v2.1.207+`） |
+| `permissions.disableAutoMode` | 在 managed settings 中设为 `"disable"`，关闭 Team / Enterprise 默认可用的 Auto Mode |
 | `axScreenReader` | 设为 `true` 后启用纯文本 screen reader 渲染模式（`v2.1.208+`） |
 | `sandbox.filesystem.disabled` | 跳过 filesystem isolation，但保留 network isolation（`v2.1.216+`） |
+| `sandbox.network.strictAllowlist` | 非 allowlist host 直接拒绝，不弹权限询问（`v2.1.219+`） |
 | `emojiCompletionEnabled` | 控制 prompt 输入框的 emoji shortcode 自动补全，例如 `:heart:`（`v2.1.217+`） |
+| `workflowSizeGuideline` | dynamic workflow 的建议规模；默认 medium，目标少于 15 个 agents（`v2.1.219+`） |
 
-这些 key 名不要翻译。`askUserQuestionTimeout`、`enableArtifact` 和 `axScreenReader` 可用于常规 settings；`disableAutoMode` 是管理员使用的 managed setting。
+这些 key 名不要翻译。`askUserQuestionTimeout`、`enableArtifact`、`axScreenReader` 和 `workflowSizeGuideline` 可用于常规 settings；`permissions.disableAutoMode` 是管理员使用的 managed setting。
 
 ### `/config` 可以直接写 `key=value`
 
@@ -850,7 +864,7 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 - `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`（每个 session 的 WebSearch 调用上限，默认 200；`v2.1.212+`）
 - `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`（每个 session 的 subagent spawn 上限，默认 200；`/clear` 会重置预算）
 - `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`（同时运行的 subagents 上限，默认 20；`v2.1.217+`）
-- `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`（允许嵌套 spawn 的最大深度；`v2.1.217+` 默认不允许嵌套）
+- `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`（允许嵌套 spawn 的最大深度；`v2.1.219+` 默认 3，设为 `1` 可禁用嵌套）
 - `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`（MCP tool call 自动转后台的阈值，默认 `120000` 毫秒）
 - `CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH`（OpenTelemetry content attribute 的截断上限，默认 60 KB；`v2.1.214+`）
 - `FORCE_HYPERLINK=0`（关闭 footer 里的可点击 PR badge 链接；`v2.1.217+`）
@@ -882,10 +896,11 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 
 ## effort level 这轮要纠正的一个误解
 
-上游这次把模型和 effort level 的关系又更新了一轮，核心变化是 **Opus 4.8**：
+上游这次把模型和 effort level 的关系又更新了一轮，核心变化是 **Claude Opus 5**：
 
-- Opus 4.8：`low` / `medium` / `high` / `xhigh` / `max`，默认是 `high`
-- Opus 4.7：`low` / `medium` / `high` / `xhigh` / `max`，旧口径里默认是 `xhigh`
+- Opus 5（`claude-opus-5`、1M context）：`low` / `medium` / `high` / `xhigh` / `max`，默认 `high`
+- Sonnet 5、Opus 4.8：`low` / `medium` / `high` / `xhigh` / `max`，默认 `high`
+- Opus 4.7：`low` / `medium` / `high` / `xhigh` / `max`，默认 `xhigh`
 - Opus 4.6、Sonnet 4.6：`low` / `medium` / `high` / `max`
 - Haiku 4.5：不支持 effort levels
 
@@ -893,9 +908,13 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 
 对中文用户来说，一个最简单的记法是：
 
-- **Opus 4.8 默认先按 `high` 理解**
+- **Opus 5 是当前默认 Opus 模型，默认 effort 为 `high`**
 - 需要更重推理时再显式选 `xhigh` 或 `max`
 - 不要把 Haiku 4.5 写成支持 effort levels
+
+### Opus 5 的 safety-classifier fallback
+
+这和主模型过载时使用的 `fallbackModel` 不是同一机制。`v2.1.219+` 中，Opus 5 请求被 cybersecurity classifier 标记时会改用 Opus 4.8 重跑；被 biology classifier 标记时直接拒绝，不会切换 fallback。做渗透测试、CTF、安全审查或生物相关代码时，需要把这种模型变化或拒绝算进验证预期。
 
 ---
 

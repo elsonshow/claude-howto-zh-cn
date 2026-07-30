@@ -20,15 +20,17 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-07-23
-- **本轮参考范围**：`8f04517` -> `97fc961`
+- **最近同步日期**：2026-07-30
+- **本轮参考范围**：`97fc961` -> `343d6f0`
 - **本次同步内容**：
-  - 同步 Claude Code `v2.1.217`：subagent 嵌套改为默认关闭，并新增并发上限与显式嵌套深度配置
-  - 将过时的 `--enable-auto-mode` 改为 `--permission-mode auto`，补充 `--max-budget-usd`、`--settings` 2 MiB 上限和权限加固说明
-  - 补充 hook `if` glob 范围、`SessionStart` 的 `fork` 来源、`/rewind` 对 symlink / hard link 的保护，以及 Memory 新行为
-  - 重写 `config-examples.json`，删除虚构配置字段，改用真实 `settings.json` key 和当前模型 ID
-  - 对齐 `brand-voice` skill frontmatter，并统一 CLAUDE.md 长度建议为“控制在几百行内，越短越好”
-  - 加入 Vexilo 可视化参考资源，并扩展本地化校验，阻止旧 flag、旧嵌套规则和无效配置字段回归
+  - 同步 Claude Code `v2.1.220`：subagent 嵌套从 `v2.1.219` 起默认深度为 3；设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` 才会禁用嵌套
+  - 加入 Claude Opus 5（`claude-opus-5`、1M context、默认 effort `high`），并修正 `/fast` 只适用于 Opus 5 和 Opus 4.8
+  - 补充 `/deep-research` 仅显式调用、`/code-review` 后台运行、`context: fork` 默认后台及 frontmatter boolean 新写法
+  - hooks 增至 31 个事件，新增 `DirectoryAdded`；project agent frontmatter hooks 只有在 workspace trust 通过后才运行
+  - 修正 Auto Mode 的 plan、组织策略与模型 / provider 资格，并加入 `workflowSizeGuideline`、`sandbox.network.strictAllowlist` 和 classifier 新行为
+  - 补充 MCP HTTP 错误、配置空白字符、`mcp_server_errors` 与 `--forward-subagent-text` 的嵌套输出说明
+  - 上游撤回此前合入的 Vexilo 社区资源，本仓库同步从当前资源索引移除；旧同步记录保留为历史
+  - 扩展本地化校验，阻止旧的“嵌套默认关闭”、30 个 hooks、Opus 4.8 默认模型等口径回归
   - 保留 `SKILL.md` frontmatter key、CLI flags、路径、slash command 和 skill / plugin / subagent 名称原文
   - 继续保持根目录中文主线，不把上游英文 README 覆盖到中文首页
 

@@ -21,7 +21,7 @@
 | Skills | bundled skills + 示例 | 多个 | 适合进阶 | [03-skills/](03-skills/) |
 | Subagents | 6 个内建 | 多个 | 适合进阶 | [04-subagents/](04-subagents/) |
 | MCP | 1 个内建生态入口 + 示例 | 多个 | 适合集成场景 | [05-mcp/](05-mcp/) |
-| Hooks | 30 个事件 | 9 | 适合自动化 | [06-hooks/](06-hooks/) |
+| Hooks | 31 个事件 | 9 | 适合自动化 | [06-hooks/](06-hooks/) |
 | Plugins | - | 3 | 适合团队级方案 | [07-plugins/](07-plugins/) |
 | Checkpoints | 内建 | 示例文档 | 新手必学 | [08-checkpoints/](08-checkpoints/) |
 | Advanced Features | 多项 | 示例文档 | 高阶再学 | [09-advanced-features/](09-advanced-features/) |
@@ -103,13 +103,15 @@ permission modes 决定 Claude Code 在使用工具时需要多大授权。
 
 从 `v2.1.193+` 起，`autoMode.classifyAllShell` 可以让所有 Bash / PowerShell 命令都走 Auto Mode 分类器；拒绝原因会显示在 transcript、toast 和 `/permissions` 的 recently-denied 列表。
 
+从 `v2.1.219+` 的当前口径看，Auto Mode 面向所有 plans，但仍要求符合条件的模型和 provider。Team / Enterprise 默认可用，管理员可在 managed settings 中把 `permissions.disableAutoMode` 设为 `"disable"` 来关闭。`CLAUDE_CODE_ENABLE_AUTO_MODE` 仅为兼容保留，不再决定是否启用。
+
 ---
 
 ## Subagents（子代理）
 
 subagents 是专门负责某类任务的子代理。它们适合复杂任务拆分，比如“一个做代码审查，一个做测试，一个做文档”。
 
-`v2.1.172` 到 `v2.1.216` 曾默认允许 subagent 再 spawn 子 subagent，最多 5 层；从 `v2.1.217` 起嵌套默认关闭。需要时设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 显式开启，并用 `Agent(agent_type)` 限制可 spawn 对象；这些标识都不要翻译或改名。
+当前版本从 `v2.1.219` 起默认允许 subagent 嵌套 spawn，默认深度为 3；设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` 才会禁用嵌套。历史上，`v2.1.172` 到 `v2.1.216` 默认最多 5 层且不能配置，`v2.1.217` 到 `v2.1.218` 才短暂改为深度 1。可用 `Agent(agent_type)` 限制可 spawn 对象；这些标识不要翻译或改名。
 
 从 `v2.1.178+` 起，嵌套 `.claude/agents/` 的同名 agent 采用最近目录优先；workflow 和 output-style 定义也遵循同样规则。
 
@@ -165,7 +167,8 @@ skills 是 Claude Code 会根据描述自动触发的复用能力。它们往往
 | `/loop` | 按间隔重复执行 prompt |
 | `/run` | 启动当前项目，实际看改动是否跑起来 |
 | `/run-skill-generator` | 为项目生成 `/run` / `/verify` 所需的运行技能 |
-| `/code-review [effort]` | 审查当前 diff 的正确性缺陷，可传入 `/code-review high`；`v2.1.215+` 起仅显式调用 |
+| `/deep-research <topic>` | 深入研究指定主题；`v2.1.218+` 起仅显式调用 |
+| `/code-review [effort]` | 审查当前 diff 的正确性缺陷，可传入 `/code-review high`；`v2.1.215+` 起仅显式调用，`v2.1.218+` 起在后台 subagent 中运行 |
 | `/simplify` | 做复用、简化、效率和抽象层级相关的清理型审查，并应用修复；不负责找 bug |
 | `/verify` | 构建、运行并观察应用，确认修复真的有效；`v2.1.215+` 起仅显式调用 |
 
@@ -185,6 +188,8 @@ skills 是 Claude Code 会根据描述自动触发的复用能力。它们往往
 - `name`
 - `description`
 - `effort`
+- `context`
+- `background`
 - `shell`
 
 ---
@@ -356,7 +361,7 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - hook `matcher` 逗号列表和精确匹配
 - `CLAUDE_CODE_SESSION_ID`
 - `claude-fable-5`
-- `Agent(agent_type)` 限制 subagent 可 spawn 类型；`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 显式开启嵌套
+- `Agent(agent_type)` 限制 subagent 可 spawn 类型；`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` 默认值为 3，设为 `1` 可禁用嵌套
 - `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` 控制并发 subagents，默认 20
 - hook handler 级 `if` 条件
 - `/plugin` marketplace 搜索栏
@@ -386,7 +391,7 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `!` bash mode live file-path autocomplete
 - `claude plugin init <name>`
 - `CLAUDE_CODE_ENABLE_AUTO_MODE`（从 `v2.1.207` 起仅保留兼容性，不再产生效果）
-- `disableAutoMode`
+- `permissions.disableAutoMode`（managed settings 中设为 `"disable"` 可关闭 Auto Mode）
 - `claude auto-mode reset [--yes]`
 - `/fork <directive>` 与 `/branch [name]` 的不同行为
 - `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`
@@ -402,16 +407,23 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - dynamic workflows 触发关键词是 `ultracode`，裸词 `workflow` 不再触发
 - `claude agents --json`
 - `/model` 默认保存为后续 session 默认值；按 `s` 才只作用于当前 session
-- Opus 4.8 默认 effort 是 `high`
+- Claude Opus 5（`claude-opus-5`、1M context）是默认 Opus 模型，默认 effort 为 `high`
+- `/fast` 只适用于 Opus 5 和 Opus 4.8
 - Sonnet 5（`claude-sonnet-5`）与 1M context window
 - `manual` permission mode（原 `default`，旧名仍可用）
 - `/dataviz` bundled skill
+- `/deep-research` 仅显式调用；`/code-review` 在后台 subagent 中运行
+- `context: fork` skills 默认 `background: true`；frontmatter boolean 也接受 `yes` / `no`、`on` / `off`、`1` / `0`
 - `${CLAUDE_PROJECT_DIR}` 与一次调用叠加多个 skills
 - subagents 默认后台运行、Explore 模型继承和 `--append-subagent-system-prompt`
 - MCP `roots/list`、`Pending approval` trust gate
 - `Summarize up to here`
 - `askUserQuestionTimeout`、`enableArtifact`
 - `CLAUDE_ENABLE_STREAM_WATCHDOG`
+- `DirectoryAdded` hook 与 31 个 hook 事件
+- `workflowSizeGuideline`（默认 medium，目标少于 15 个 agents）
+- `sandbox.network.strictAllowlist`
+- `mcp_server_errors` 与 `--forward-subagent-text`
 - `claude agents` 里用 `Ctrl+T` 固定后台 session
 - `/usage` 按 skills、subagents、plugins、MCP server 等类别拆分成本
 - VSCode Account & usage 视图显示 cache miss、long-context cost、subagents 以及 per-skill / per-agent / per-plugin / per-MCP 归因

@@ -115,7 +115,8 @@ claude plugin init my-plugin
 # 额外用量配置
 /usage-credits       # `/extra-usage` 仍可作为兼容 alias（别名）
 /usage               # v2.1.149+ 成本视图会按类别拆分
-/code-review high    # 正确性缺陷审查；v2.1.215+ 起仅显式调用
+/deep-research topic # 深入研究主题；v2.1.218+ 起仅显式调用
+/code-review high    # 正确性缺陷审查；v2.1.218+ 起在后台 subagent 中运行
 /review <pr>         # 审查 GitHub PR；本地 diff 仍用 /code-review
 /simplify            # 清理型审查并应用修复，不负责找 bug
 /doctor              # 诊断安装、配置和 plugin 健康
@@ -138,7 +139,7 @@ export CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=120000
 export CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION=200
 export CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION=200
 export CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=20
-export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=5  # 显式开启 subagent 嵌套
+export CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1  # v2.1.219+ 设为 1 可禁用嵌套；默认深度 3
 export CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH=61440
 export FORCE_HYPERLINK=0
 export CLAUDE_AX_SCREEN_READER=1
@@ -163,6 +164,7 @@ claude --ax-screen-reader
 claude -c
 claude -r "session-name"
 claude agents --json   # 机器可读的 Agent View 列表
+claude -p --output-format stream-json --forward-subagent-text "query"  # 包含深度 2+ 的 subagent 输出
 git worktree prune     # 清理已解锁且不再使用的 worktree
 
 # settings.json 常见新增 key（key 名不要翻译）
@@ -171,7 +173,9 @@ git worktree prune     # 清理已解锁且不再使用的 worktree
 # language
 # enforceAvailableModels
 # sandbox.filesystem.disabled
+# sandbox.network.strictAllowlist
 # emojiCompletionEnabled
+# workflowSizeGuideline
 
 # permission rule 参数匹配示意（语法不要翻译）
 # Tool(param:value)
@@ -181,6 +185,7 @@ git worktree prune     # 清理已解锁且不再使用的 worktree
 
 # Auto Mode 严格 shell 分类示意（settings key 不要翻译）
 # "autoMode": { "classifyAllShell": true }
+# Team / Enterprise 管理员关闭 Auto Mode："permissions": { "disableAutoMode": "disable" }
 ```
 
 ---

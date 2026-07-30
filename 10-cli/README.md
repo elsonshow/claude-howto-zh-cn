@@ -86,7 +86,7 @@ cat error.log | claude -p "explain this error"
 | `-n, --name` | 给 session 起名 |
 | `-w, --worktree` | 在 worktree 中启动 |
 | `--model` | 指定模型 |
-| `--effort` | 指定思考强度；Opus 4.8 默认 `high`，也支持 `xhigh` / `max` |
+| `--effort` | 指定思考强度；Opus 5 默认 `high`，支持 `low` 到 `max` |
 | `--permission-mode` | 指定权限模式 |
 | `--permission-mode auto` | 直接以 Auto Mode 启动；替代已经移除的 `--enable-auto-mode` |
 | `--bare` | 以最小模式启动 |
@@ -95,6 +95,7 @@ cat error.log | claude -p "explain this error"
 | `--tmux` | 给 worktree / 多任务场景创建 tmux 会话 |
 | `--exclude-dynamic-system-prompt-sections` | 排除系统提示中的动态段落，帮助 prompt cache 更稳定命中 |
 | `--ax-screen-reader` | 使用适合 screen reader 的纯文本渲染模式（`v2.1.208+`） |
+| `--forward-subagent-text` | 在 stream-json 中转发 subagent 文本；`v2.1.219+` 包含深度 2+ 的嵌套 subagents，并按触发它的 `Agent` `tool_use` ID 关联 |
 
 ---
 
@@ -168,18 +169,20 @@ claude -p --append-subagent-system-prompt "Cite sources" "review this project"
 
 ### 这轮 CLI / 平台更新里值得知道的变化
 
-- **Sonnet 5**（`claude-sonnet-5`）提供原生 1M context window，并按订阅档位成为 Pro / Team Standard / Enterprise seats 的默认模型；Max、Team Premium、Enterprise pay-as-you-go 和 API 仍默认使用 Opus 4.8
-- Opus 主线已经切到 **Opus 4.8**
+- **Sonnet 5**（`claude-sonnet-5`）提供原生 1M context window，并按订阅档位成为 Pro / Team Standard / Enterprise seats 的默认模型
+- **Claude Opus 5**（`claude-opus-5`）提供 1M context window，并成为 Max、Team Premium、Enterprise pay-as-you-go、Anthropic API、Claude Platform on AWS、Bedrock 和 Vertex AI 的默认 Opus 模型；Microsoft Foundry 的 `opus` alias 仍解析为 Opus 4.6
 - 组织管理员设置默认模型时，`/model` 会标注 `Org default`（或 `Role default`，`v2.1.196+`）
 - `--append-subagent-system-prompt` 可在非交互 / print mode 中给每个 subagent 的 system prompt 追加内容（`v2.1.205+`）
-- Opus 4.8 默认 effort 是 `high`；`xhigh` 适用于 Opus 4.8 / 4.7，`max` 适用于 Opus 4.8 / 4.7 / 4.6 和 Sonnet 4.6
+- Opus 5 默认 effort 是 `high`，支持 `low` 到 `max`；Sonnet 5 与 Opus 4.8 也支持全部五档，Opus 4.7 默认 `xhigh`
 - `/model` 现在默认保存为后续 session 默认值；如果只想作用于当前 session，选中后按 `s`
-- Fast Mode 默认切到 Opus 4.8；`CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` 在 `v2.1.160` 起已经是 no-op
+- Fast Mode 从 `v2.1.219+` 起只适用于 Opus 5 和 Opus 4.8；Opus 4.6 / 4.7 不再是 Fast Mode 目标，`CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` 仍是 no-op
 - 新增 `/reload-skills` 和 `/workflows`，分别用于重扫 skills 和查看 dynamic workflows
 - 新增 `claude plugin init <name>`，可在 `.claude/skills` 中脚手架本地 plugin
 - 从 `v2.1.207` 起，Bedrock / Vertex AI / Microsoft Foundry 上受支持模型的 Auto Mode 不再需要 `CLAUDE_CODE_ENABLE_AUTO_MODE=1`；该变量仅为历史兼容而保留，当前不产生效果
 - `--enable-auto-mode` 已在 `v2.1.111` 移除；需要直接进入 Auto Mode 时使用 `--permission-mode auto`
-- `v2.1.212+` 可用 `claude auto-mode reset [--yes]` 恢复 Auto Mode 默认配置；管理员可通过 managed setting `disableAutoMode` 禁用该能力
+- Auto Mode 面向所有 plans，但仍受模型和 provider 资格限制；Team / Enterprise 默认可用，管理员可在 managed settings 中把 `permissions.disableAutoMode` 设为 `"disable"`
+- `v2.1.212+` 可用 `claude auto-mode reset [--yes]` 恢复 Auto Mode 默认配置
+- `workflowSizeGuideline` 控制 dynamic workflow 建议规模；默认 medium，目标少于 15 个 agents，它不是并发硬上限
 - `--max-budget-usd` 从 `v2.1.217+` 起达到预算上限时会停止已经运行的后台 subagents，并拒绝继续 spawn
 - `--settings` 读取的文件从 `v2.1.214+` 起不得超过 2 MiB
 - `--ax-screen-reader`、`CLAUDE_AX_SCREEN_READER=1` 或 `"axScreenReader": true` 可以启用纯文本 screen reader 渲染模式
@@ -198,6 +201,7 @@ claude -p --append-subagent-system-prompt "Cite sources" "review this project"
 - `/review <pr>` 在 `v2.1.186+` 起用于审查 GitHub PR，并复用 `/code-review medium` 的 review engine；当前本地 diff 仍用 `/code-review [effort]`
 - `claude mcp login <name>` / `claude mcp logout <name>` 可直接处理 MCP server 登录状态，`--no-browser` 适合 SSH 或 headless session
 - `!` bash 命令输出会自动发给 Claude 并触发回复；如果只想把输出放进上下文，把 `respondToBashCommands` 设为 `false`
+- Opus 5 的 cybersecurity classifier 命中后会在 Opus 4.8 上重跑；biology classifier 命中后直接拒绝，不走 fallback
 
 ### settings.json 里新增的几个 key
 
@@ -209,10 +213,12 @@ claude -p --append-subagent-system-prompt "Cite sources" "review this project"
 | `footerLinksRegexes` | 从 `v2.1.176+` 起可配置正则数组，把匹配到的链接显示成 footer badges |
 | `language` | 设置 Claude Code 偏好的回复语言和语音听写语言；从 `v2.1.176+` 起，自动生成的 session title 也会按这个语言固定 |
 | `respondToBashCommands` | 从 `v2.1.186+` 起控制 `!` bash 命令输出后是否自动让 Claude 回复；默认 `true`，设为 `false` 可回到只进上下文的旧行为 |
-| `disableAutoMode` | 在 managed settings 中禁用 Auto Mode（`v2.1.207+`） |
+| `permissions.disableAutoMode` | 在 managed settings 中设为 `"disable"`，关闭 Team / Enterprise 默认可用的 Auto Mode |
 | `axScreenReader` | 设为 `true` 后启用纯文本 screen reader 渲染模式（`v2.1.208+`） |
 | `sandbox.filesystem.disabled` | 跳过 filesystem isolation，但继续执行 network isolation；仅 user / managed settings 或 `--settings` 可设置（`v2.1.216+`） |
+| `sandbox.network.strictAllowlist` | sandboxed command 访问非 allowlist host 时直接拒绝，不弹权限询问（`v2.1.219+`） |
 | `emojiCompletionEnabled` | 控制 prompt 输入框里的 emoji shortcode 自动补全（`v2.1.217+`） |
+| `workflowSizeGuideline` | dynamic workflow 的建议规模；默认 medium，目标少于 15 个 agents（`v2.1.219+`） |
 
 示例：
 
@@ -473,12 +479,12 @@ claude ultrareview 1234 --json > review.json
 | `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` | 每个 session 的 WebSearch 调用上限，默认 200（`v2.1.212+`） |
 | `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` | 每个 session 的 subagent spawn 上限，默认 200；`/clear` 会重置预算（`v2.1.212+`） |
 | `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` | 同时运行的 subagents 上限，默认 20（`v2.1.217+`） |
-| `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` | 允许 subagent 嵌套 spawn 的最大深度；`v2.1.217+` 默认不允许嵌套 |
+| `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` | 允许 subagent 嵌套 spawn 的最大深度；`v2.1.219+` 默认 `3`，设为 `1` 可禁用嵌套 |
 | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` | MCP tool call 自动转后台的阈值，默认 `120000` 毫秒（2 分钟，`v2.1.212+`） |
 | `CLAUDE_AX_SCREEN_READER` | 设为 `1` 后启用纯文本 screen reader 渲染模式，等同于 `--ax-screen-reader` 或 `"axScreenReader": true` |
 | `CLAUDE_CODE_SAFE_MODE` | 设为 `1` 后以 safe mode 启动，禁用 CLAUDE.md、plugins、skills、hooks、MCP servers |
 | `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` | 设为 `1` 后隐藏内置 skills、workflows 和 commands |
-| `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` | `v2.1.160` 起已经是 no-op；如果仍想让 Opus 4.6 走 fast mode，先 `/model claude-opus-4-6[1m]`，再 `/fast on` |
+| `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` | `v2.1.160` 起已经是 no-op；`v2.1.219+` 的 Fast Mode 只适用于 Opus 5 和 Opus 4.8 |
 | `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN` | 设为 `1` 后，停留在普通终端滚动历史里，而不是 fullscreen alternate-screen 渲染 |
 | `CLAUDE_CODE_SESSION_ID` | 每个 Bash tool 子进程都会带上这个 session UUID，可用来和 hooks / telemetry 对日志 |
 | `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` | 在 OTEL 环境下重新打开 Anthropic 的会话质量问卷 |
