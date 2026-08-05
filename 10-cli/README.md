@@ -427,12 +427,13 @@ claude --agents "$(cat agents.json)" "review the auth module"
 
 - `/resume`（无参数时打开历史 session picker，并把选中项作为后台 session 恢复）
 - `/rename`
-- `/fork <directive>`（委派给继承完整对话的后台 subagent）
+- `/fork [prompt]`（复制成独立后台 session，之后不回传结果）
+- `/subtask <task>`（委派给继承对话的 forked subagent，完成后回传结果）
 - `/branch [name]`（切换到当前对话的副本，并保留原对话）
 - `claude -c`
 - `claude -r`
 
-`/fork` 与 `/branch` 当前不是 alias；不命名 session，前期感觉没问题，后期会越来越难管理。
+`/fork`、`/subtask` 与 `/branch` 当前不是 alias。`v2.1.212+` 中，`/fork` 与 `/subtask` 对调了旧角色；关闭 agent view 时，`/subtask` 不可用，`/fork` 保留 forked-subagent 行为。不命名 session，前期感觉没问题，后期会越来越难管理。
 
 ---
 

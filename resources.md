@@ -11,7 +11,7 @@
 
 如果你要把这个中文 fork 发布成独立仓库，也可以在保留来源说明的前提下替换这些资源。
 
-## 2026 年 7 月需要关注的新能力
+## 2026 年 8 月需要关注的新能力
 
 这轮同步后，中文读者如果只看资源索引，至少要知道这些新入口：
 
@@ -36,7 +36,14 @@
 | `claude plugin init <name>` | 在 `.claude/skills` 中脚手架本地 plugin；该目录下的 plugin 会自动加载 | [Plugins Guide](07-plugins/) |
 | `CLAUDE_CODE_ENABLE_AUTO_MODE` / `permissions.disableAutoMode` | 前者从 `v2.1.207` 起仅保留兼容性且不再生效；Team / Enterprise 管理员可把后者设为 `"disable"` | [Advanced Features](09-advanced-features/) |
 | `claude auto-mode reset [--yes]` | 恢复 Auto Mode 默认配置；`--yes` 跳过确认 | [CLI Guide](10-cli/) |
-| `/fork <directive>` / `/branch [name]` | 前者委派给继承对话的后台 subagent，后者切换到对话副本 | [Slash Commands](01-slash-commands/) |
+| `/fork [prompt]` / `/subtask <task>` / `/branch [name]` | 分别创建独立后台 session、委派会回传结果的 forked subagent、切换到对话副本 | [Slash Commands](01-slash-commands/) |
+| `/fewer-permission-prompts` | 分析 Bash / MCP 调用并建议 allowlist；旧资料中曾出现过错误命令名 | [Slash Commands](01-slash-commands/) |
+| `autoMemoryEnabled` / `CLAUDE_CODE_DISABLE_AUTO_MEMORY` | 控制默认开启的 auto memory | [Memory Guide](02-memory/) |
+| `claude mcp add --scope` / `add-json` | 选择 local、project、user 范围或从 JSON 添加 MCP server | [MCP Guide](05-mcp/) |
+| `fileCheckpointingEnabled` | 控制文件快照；最多保留最近 100 个 checkpoints | [Checkpoints Guide](08-checkpoints/) |
+| `outputStyle` / `statusLine` | 配置回答风格和终端底部状态栏 | [Advanced Features](09-advanced-features/) |
+| `switchModelsOnFlag` | 控制安全标记触发时是否自动切换模型 | [Advanced Features](09-advanced-features/) |
+| `anthropics/claude-plugins-community` | 需手动添加的 Anthropic 社区 plugin marketplace | [Plugins Guide](07-plugins/) |
 | `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION` / `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` | 限制每个 session 的 WebSearch 与 subagent spawn 次数，默认均为 200 | [CLI Guide](10-cli/) |
 | `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` | MCP tool call 自动转后台的阈值，默认 `120000` 毫秒 | [MCP Guide](05-mcp/) |
 | `--ax-screen-reader` / `CLAUDE_AX_SCREEN_READER` | 启用适合 screen reader 的纯文本渲染模式 | [CLI Guide](10-cli/) |

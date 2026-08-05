@@ -115,7 +115,7 @@ skills 的一个核心优点是按需加载，而不是一上来把所有内容�
 | 项目级 | `.claude/skills/<skill-name>/SKILL.md` | 团队共享 |
 | plugin 自带 | `<plugin>/skills/...` | 和 plugin 一起分发 |
 
-同名 skill 的优先级按 Enterprise > Personal > Project 理解；plugin 提供的 skill 带 namespace，避免和普通 skill 名称冲突。`skillOverrides` 不改变来源优先级，它只控制某个 skill 的可见性，见后文。
+同名 skill 的优先级按 **Enterprise > Project > Personal** 理解；项目 skill 默认覆盖个人同名 skill。plugin 提供的 skill 带 namespace，避免和普通 skill 名称冲突。`skillOverrides` 用来调整 skill 的可见性和调用行为，见后文。
 
 ---
 
@@ -346,7 +346,7 @@ export CLAUDE_CODE_DISABLE_BUNDLED_SKILLS=1
 - `"user-invocable-only"`：不向 Claude 展示，但仍允许用户从 `/` 菜单手动调用
 - `"off"`：不向 Claude 展示，也不出现在 `/` 菜单
 
-未出现在 `skillOverrides` 中的 skill 按 `"on"` 处理。plugin skills 不受这个设置影响，应通过 `/plugin` 管理。它也不会把 Project skill 的优先级抬到 Personal skill 之上。
+未出现在 `skillOverrides` 中的 skill 按 `"on"` 处理。plugin skills 不受这个设置影响，应通过 `/plugin` 管理。来源冲突仍遵循 Enterprise > Project > Personal。
 
 ---
 

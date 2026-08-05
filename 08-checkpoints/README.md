@@ -84,16 +84,19 @@ Claude Code 会自动创建 checkpoints，所以你不需要手动先“存档�
 
 - checkpoints 默认开启
 - 不需要再单独配置 `autoCheckpoint: true`
+- `fileCheckpointingEnabled`（`v2.1.119+`）控制是否在编辑前保存文件快照
+- `/config` 中对应 **Rewind code (checkpoints)**
 
-真正和 checkpoints 保留周期相关的，是：
+完整配置示例：
 
 ```json
 {
+  "fileCheckpointingEnabled": true,
   "cleanupPeriodDays": 30
 }
 ```
 
-也就是说，你更该关注的是“保留多久”，而不是“要不要开启”。
+`fileCheckpointingEnabled` 默认是 `true`；也可用 `CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING` 禁用文件 checkpoint。`cleanupPeriodDays` 默认是 `30`，控制保留天数。Claude Code 只保存最近 **100 个 checkpoints** 的文件快照；即使仍在保留期内，更老的快照也会被丢弃。
 
 ### `cleanupPeriodDays` 现在影响的范围更大了
 

@@ -79,6 +79,29 @@ claude mcp add --transport http notion https://mcp.notion.com/mcp
 claude mcp add --transport stdio myserver -- npx @myorg/mcp-server
 ```
 
+### 选择配置范围
+
+添加 server 时可用 `--scope`（短写 `-s`）决定配置保存位置；省略时默认为 `local`：
+
+| scope | 写法 | 保存位置 | 适用场景 |
+|-------|------|----------|----------|
+| Local | `--scope local` | 当前项目在 `~/.claude.json` 中的条目 | 只给自己在这个项目用 |
+| Project | `--scope project` | 仓库根目录 `.mcp.json` | 提交到 Git，团队共享，首次使用需批准 |
+| User | `--scope user` | `~/.claude.json` | 自己的所有项目共用 |
+
+```bash
+claude mcp add --scope project --transport http github https://api.github.com/mcp
+claude mcp add -s user --transport stdio memory -- npx @modelcontextprotocol/server-memory
+```
+
+脚本化安装时也可以直接传 JSON：
+
+```bash
+claude mcp add-json events-server '{"type":"stdio","command":"npx","args":["@modelcontextprotocol/server-events"]}'
+```
+
+在 `.mcp.json`、`~/.claude.json` 或 `add-json` 中，建议显式写 `type`。stdio server 使用 `"type": "stdio"`；远程 HTTP 配置也接受 `streamable-http` 作为 `http` 的 alias。
+
 ### 登录或登出 MCP server
 
 ```bash
@@ -104,6 +127,13 @@ CLAUDE_PROJECT_DIR=<仓库根目录绝对路径>
 ```bash
 export GITHUB_TOKEN="your_token"
 cp 05-mcp/github-mcp.json .mcp.json
+```
+
+数据库示例从当前 shell 的 `DATABASE_URL` 读取连接串，不要把用户名和密码直接写进仓库：
+
+```bash
+export DATABASE_URL='postgresql://user:password@localhost/mydb'
+cp 05-mcp/database-mcp.json .mcp.json
 ```
 
 如果你想一次挂多个服务：
@@ -186,6 +216,7 @@ server 名、protocol 和 resource path 都属于真实标识。中文说明可�
 MCP 配置是高风险文件，以下内容默认不要翻：
 
 - `mcpServers`
+- `type`，例如 `stdio`、`http`、`streamable-http`
 - server 名称，例如 `github`
 - `command`
 - `args`

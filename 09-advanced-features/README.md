@@ -497,11 +497,11 @@ permission modes 决定 Claude 在本地能做什么，以及什么时候会请�
 | `manual` | 日常安全使用；读取文件不提示，其他操作按规则询问 |
 | `acceptEdits` | 希望编辑流畅一些 |
 | `plan` | 只想分析，不想改 |
-| `dontAsk` | 非交互脚本 |
+| `dontAsk` | 只运行预先批准的工具，其他请求自动拒绝，不弹确认 |
 | `bypassPermissions` | 可信环境中的强自动化 |
-| `auto` | 有更高自动化诉求、且明确接受风险 |
+| `auto` | 所有动作都可执行，但会经过后台 safety classifier 检查 |
 
-从 `v2.1.200+` 起，CLI、`--help`、VS Code 和 JetBrains 中原来的交互 `default` 模式统一显示为 `manual`。兼容性没有被切断：`--permission-mode manual` 与 `--permission-mode default` 都能用，settings 中的 `"defaultMode": "manual"` 与 `"defaultMode": "default"` 也都能用。`v2.1.203+` 起，处于 Manual 时 footer 会显示灰色 `⏸` badge。
+从 `v2.1.200+` 起，CLI、`--help`、VS Code 和 JetBrains 中原来的交互 `default` 模式统一显示为 `manual`。兼容性没有被切断：`--permission-mode manual` 与 `--permission-mode default` 都能用，settings 中也兼容旧值；新配置应写规范形式 `"permissions": {"defaultMode": "manual"}`。settings key 是 `permissions.defaultMode`，不存在 `permissions.mode`。`v2.1.203+` 起，处于 Manual 时 footer 会显示灰色 `⏸` badge。
 
 从 `v2.1.160` 起，即使处在 `acceptEdits`，Claude Code 在写入 shell 启动文件和可能执行命令的构建配置前仍会提示确认。例如 `.zshenv`、`.zlogin`、`.bash_login`、`~/.config/git/`、`.npmrc`、`.yarnrc*`、`bunfig.toml`、`.bazelrc`、`.pre-commit-config.yaml`、`.devcontainer/`。
 
@@ -657,12 +657,54 @@ session 管理能力在任务复杂后会非常重要。
 
 - `/resume`：无参数时打开历史 session picker，并将选中的 session 作为后台 session 恢复（`v2.1.212+`）
 - `/rename`
-- `/fork <directive>`：启动继承完整对话的后台 subagent，当前对话继续进行
+- `/fork [prompt]`：复制当前对话为独立后台 session；新旧 session 之后各自推进，不回传结果（`v2.1.212+`）
+- `/subtask <task>`：启动继承完整对话的 forked subagent，完成后把结果回传当前对话（`v2.1.212+`）
 - `/branch [name]`：切换到当前对话的副本，原对话保留
 - `claude -c`
 - `claude -r "session-name"`
 
-`/fork` 只在 `v2.1.77` 到 `v2.1.161` 之间曾是 `/branch` 的 alias；当前版本里两者行为不同。如果你不命名 session，后期会越来越难管理。
+`/fork` 只在 `v2.1.77` 到 `v2.1.161` 之间曾是 `/branch` 的 alias；从 `v2.1.161` 到 `v2.1.211`，它执行的是如今 `/subtask` 承担的 forked-subagent 行为。关闭 agent view 时，`/subtask` 不可用，`/fork` 会保留旧行为。如果你不命名 session，后期会越来越难管理。
+
+---
+
+## Output Styles（输出风格）
+
+Output Styles 改变 Claude 每轮回答的角色、语气和默认格式，不是项目知识库。项目约定仍应写进 `CLAUDE.md`，任务流程则更适合 skill。
+
+内建风格包括：
+
+- **Default**：默认的软件工程工作方式
+- **Proactive**：更主动执行并做合理假设，但不会改变 permission mode
+- **Explanatory**：在步骤间解释实现选择和代码模式
+- **Learning**：协作式学习，并留下少量 `TODO(human)` 让你参与实现
+
+从 `/config` 的 **Output style** 选择，或直接设置：
+
+```json
+{
+  "outputStyle": "Explanatory"
+}
+```
+
+独立的 `/output-style` 已在 `v2.1.91` 移除（`v2.1.73` 起弃用）。更改 system prompt 后，应在新 session 或 `/clear` 后使用。自定义风格放在 `~/.claude/output-styles/` 或项目 `.claude/output-styles/`；如果只是改变表达方式但仍要保留编码指令，在 frontmatter 写 `keep-coding-instructions: true`。
+
+---
+
+## Status Line（状态栏）
+
+`/statusline` 可配置终端底部状态栏。Claude Code 会把 session、model、cost、context、repo 和 worktree 等字段组成 JSON，从 stdin 传给你的 command：
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 0
+  }
+}
+```
+
+脚本可读取 `model.id`、`effort.level`、`context_window.used_percentage`、`cost.total_cost_usd`、`workspace.project_dir` 等字段。项目里的 status-line command 需要 workspace trust；脚本还会收到 `COLUMNS` 和 `LINES`，可按终端尺寸调整输出。
 
 ---
 
@@ -915,6 +957,14 @@ sandboxing 的核心不是“更麻烦”，而是“更安全地控制 Claude �
 ### Opus 5 的 safety-classifier fallback
 
 这和主模型过载时使用的 `fallbackModel` 不是同一机制。`v2.1.219+` 中，Opus 5 请求被 cybersecurity classifier 标记时会改用 Opus 4.8 重跑；被 biology classifier 标记时直接拒绝，不会切换 fallback。做渗透测试、CTF、安全审查或生物相关代码时，需要把这种模型变化或拒绝算进验证预期。
+
+`switchModelsOnFlag`（默认 `true`）控制被标记时是否自动切换。设为 `false` 后，Claude Code 会暂停并让你选择切换模型或修改 prompt；`/config` 中显示为 **Switch models when a message is flagged**。
+
+```json
+{
+  "switchModelsOnFlag": false
+}
+```
 
 ---
 

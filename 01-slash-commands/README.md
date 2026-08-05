@@ -37,6 +37,7 @@ Claude Code 里的 slash commands 大致分四类：
 | `/clear` | 清空当前会话 |
 | `/compact [instructions]` | 按可选指令压缩对话；`v2.1.216+` 起压缩失败会在界面明确报错，不再静默无反应 |
 | `/config` | 查看或编辑设置 |
+| `/statusline` | 配置终端底部的自定义状态栏 |
 | `/context` | 看上下文使用情况；`v2.1.216+` 起超过 context window 上限时会显示明确警告 |
 | `/doctor` | 诊断安装、配置和 plugin 健康状态；`v2.1.178+` 起界面改成 flat tree，状态图标更清楚 |
 | `/feedback` / `/bug` | 提交反馈；`v2.1.178+` 起 `/bug` 必须填写描述后才能提交 |
@@ -52,7 +53,7 @@ Claude Code 里的 slash commands 大致分四类：
 | `/cd <path>` | 切换当前 session 的工作目录，并尽量保留 prompt cache |
 | `/focus` | 切换 focus view，减少长任务时的视觉干扰 |
 | `/goal <目标>` | 给当前 session 注册一个持续追踪的完成目标 |
-| `/less-permission-prompts` | 分析常见 Bash / MCP 调用，帮你生成更合理的 allowlist |
+| `/fewer-permission-prompts` | 分析常见 Bash / MCP 调用，帮你生成更合理的 allowlist |
 | `/deep-research <topic>` | 深入研究指定主题；`v2.1.218+` 起只会在用户显式调用时运行 |
 | `/code-review [effort]` | 审查当前 diff 的正确性缺陷；可传入 `/code-review high` 这类 effort 参数；`v2.1.215+` 起仅显式调用，`v2.1.218+` 起在后台 subagent 中运行 |
 | `/dataviz` | 图表和 dashboard 设计指导，并附带可运行的调色板校验器（`v2.1.198+`） |
@@ -64,7 +65,8 @@ Claude Code 里的 slash commands 大致分四类：
 | `/rewind` | 回退到 checkpoint |
 | `/undo` | `/rewind` 的别名 |
 | `/resume` | 恢复以前的 session；无参数时会打开历史 session picker，并把选中的 session 作为后台 session 恢复（`v2.1.212+`） |
-| `/fork <directive>` | 启动一个继承完整对话的后台 subagent 执行 directive，当前对话可以继续工作 |
+| `/fork [prompt]` | 把当前对话复制成一个独立后台 session；两边从此各自推进，结果不会回传当前对话（`v2.1.212+`） |
+| `/subtask <task>` | 启动继承完整对话的 forked subagent；完成后把结果回传当前对话（`v2.1.212+`） |
 | `/branch [name]` | 切换到当前对话的副本并保留原对话，之后可用 `/resume` 返回 |
 | `/reload-skills` | 重新扫描 skill 目录，不需要重启当前 session |
 | `/workflows` | 查看正在运行和已完成的 dynamic workflows |
@@ -80,7 +82,9 @@ Claude Code 里的 slash commands 大致分四类：
 
 `/cd <path>` 是 `v2.1.169+` 新增的实用入口。以前中途换目录往往会让 prompt cache 变冷，下一轮更慢也更贵；现在需要在同一个 session 里从前端目录切到后端目录时，优先用 `/cd`，不要为了换目录手动重开一轮。
 
-`/fork` 和 `/branch` 现在不是别名。只有 `v2.1.77` 到 `v2.1.161` 之间的版本曾把 `/fork` 当作 `/branch` 的 alias；当前版本里，前者把任务委派给后台 subagent，后者让你本人切换到对话副本。
+`/fork`、`/subtask` 和 `/branch` 现在是三种不同操作：`/fork` 创建独立后台 session，`/subtask` 委派一个会回传结果的 forked subagent，`/branch` 则让你本人切换到对话副本。`/fork` 只有在 `v2.1.77` 到 `v2.1.161` 之间曾是 `/branch` 的 alias；从 `v2.1.161` 到 `v2.1.211`，它执行的是如今 `/subtask` 承担的行为。关闭 agent view 时，`/subtask` 不可用，`/fork` 会保留旧的 forked-subagent 行为。
+
+> 独立的 `/output-style` 已在 `v2.1.91` 移除（`v2.1.73` 起弃用）。现在请从 `/config` 的 Output style 选项切换，或设置 `outputStyle`。
 
 > 截至 2026 年 5 月，上游内建命令已经到了 **60+**，并且部分命令会继续改名或调整默认行为。这里保留的是中国小白最该先掌握的一批。
 
@@ -196,7 +200,7 @@ cp 01-slash-commands/optimize.md .claude/commands/
 - `/undo` 新增，作为 `/rewind` 的别名
 - `/proactive` 新增，作为 `/loop` 的别名
 - `/ultrareview` 新增，用云端多代理做综合代码审查
-- `/less-permission-prompts` 新增，会分析常见 Bash / MCP 调用并帮你减少重复权限提示
+- `/fewer-permission-prompts` 新增，会分析常见 Bash / MCP 调用并帮你减少重复权限提示
 - Claude Opus 5（`claude-opus-5`、1M context）现在是默认 Opus 模型，默认 effort 为 `high`，支持 `low` 到 `max`
 - `/fast` 从 `v2.1.219+` 起只适用于 Opus 5 和 Opus 4.8；Opus 4.6 / 4.7 不再是 Fast Mode 目标
 - `ultracode` 不是模型 effort level；它会发送 `xhigh` 并让 Claude 编排 dynamic workflows
@@ -218,7 +222,7 @@ cp 01-slash-commands/optimize.md .claude/commands/
 - `/review <pr>` 在 `v2.1.186+` 起不再按“已废弃”理解；它用于审查 GitHub PR，并复用 `/code-review medium` 的 review engine。要审查当前本地工作区 diff，继续用 `/code-review [effort]`
 - `/dataviz` 在 `v2.1.198+` 成为 bundled skill，用于图表、dashboard 和调色板设计
 - `${CLAUDE_PROJECT_DIR}` 在 `v2.1.196+` 可用于 command / skill prompt，表示项目根目录绝对路径
-- `v2.1.212+` 中，`/fork <directive>` 会启动继承当前对话的后台 subagent，`/branch [name]` 则切换到当前对话的副本；两者不再是 alias
+- `v2.1.212+` 中，`/fork [prompt]` 创建独立后台 session，`/subtask <task>` 启动会回传结果的 forked subagent，`/branch [name]` 则切换到当前对话副本
 - `/resume` 无参数时会打开历史 session picker，其中也包括已从 Agent View 可见列表移除的 session；选中后会作为后台 session 恢复
 
 ---

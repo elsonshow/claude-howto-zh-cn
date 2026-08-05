@@ -21,7 +21,7 @@
 | Skills | bundled skills + 示例 | 多个 | 适合进阶 | [03-skills/](03-skills/) |
 | Subagents | 6 个内建 | 多个 | 适合进阶 | [04-subagents/](04-subagents/) |
 | MCP | 1 个内建生态入口 + 示例 | 多个 | 适合集成场景 | [05-mcp/](05-mcp/) |
-| Hooks | 31 个事件 | 9 | 适合自动化 | [06-hooks/](06-hooks/) |
+| Hooks | 31 个事件 | 11 | 适合自动化 | [06-hooks/](06-hooks/) |
 | Plugins | - | 3 | 适合团队级方案 | [07-plugins/](07-plugins/) |
 | Checkpoints | 内建 | 示例文档 | 新手必学 | [08-checkpoints/](08-checkpoints/) |
 | Advanced Features | 多项 | 示例文档 | 高阶再学 | [09-advanced-features/](09-advanced-features/) |
@@ -58,13 +58,14 @@ slash commands 是用户在 Claude Code 里主动输入的快捷操作，例如 
 | `/undo` | `/rewind` 的别名 |
 | `/ultraplan` | 把计划起草交给浏览器里的云端会话 |
 | `/ultrareview` | 云端多代理代码审查 |
-| `/less-permission-prompts` | 分析调用记录并建议 allowlist |
+| `/fewer-permission-prompts` | 分析调用记录并建议 allowlist |
 | `/reload-skills` | 重新扫描 skill 目录，不需要重启 session |
 | `/workflows` | 查看正在运行和已完成的 dynamic workflows |
 | `/usage` | 查看 plan 用量、限流状态和成本；`v2.1.149+` 起成本视图会按 skills、subagents、plugins、MCP server 等类别拆分，`v2.1.174+` 的 VSCode Account & usage 视图还会显示 cache miss、long-context cost、subagents 以及 per-skill / per-agent / per-plugin / per-MCP 归因 |
 | `/usage-credits` | 配置额外用量额度；`/extra-usage` 仍可作为 alias（别名）使用 |
 | `/review <pr>` | 审查 GitHub PR；`v2.1.186+` 起复用 `/code-review medium` 的 review engine，本地 diff 仍用 `/code-review` |
-| `/fork <directive>` | 启动继承完整对话的后台 subagent，当前对话继续进行 |
+| `/fork [prompt]` | 复制当前对话为独立后台 session，不回传结果 |
+| `/subtask <task>` | 启动继承对话的 forked subagent，完成后回传结果 |
 | `/branch [name]` | 切换到当前对话的副本并保留原对话 |
 
 ### 仓库里的示例命令
@@ -93,9 +94,9 @@ permission modes 决定 Claude Code 在使用工具时需要多大授权。
 | `manual` | 大多数风险操作前询问 | 日常交互；`v2.1.200+` 从 `default` 改名，旧名仍是 alias |
 | `acceptEdits` | 自动接受文件编辑，其他操作仍可能询问 | 较信任的本地编辑 |
 | `plan` | 只读分析，不做修改 | 方案设计、代码阅读 |
-| `dontAsk` | 跳过需要额外授权的动作 | 非交互脚本 |
+| `dontAsk` | 只运行预先批准的工具，其余自动拒绝 | 无法交互且已明确 allowlist 的脚本 |
 | `bypassPermissions` | 跳过权限检查 | 可信、受控的自动化环境 |
-| `auto` | 根据分类器自动决定 | 高自动化流程（需要谨慎） |
+| `auto` | 所有动作经过后台 safety classifier 检查 | 高自动化流程（需要谨慎） |
 
 中国用户在刚上手时，优先理解 `manual`、`acceptEdits`、`plan`、`dontAsk` 这四个就足够了。旧教程里的 `default` 仍能执行，但新文档优先写 `manual`。
 
@@ -337,7 +338,7 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `/undo`
 - `/proactive`
 - `/ultrareview`
-- `/less-permission-prompts`
+- `/fewer-permission-prompts`
 - `/usage-credits`
 - `/team-onboarding`
 - `/ultraplan`
@@ -393,7 +394,10 @@ memory 是 Claude Code 用来长期加载规则和上下文的机制。
 - `CLAUDE_CODE_ENABLE_AUTO_MODE`（从 `v2.1.207` 起仅保留兼容性，不再产生效果）
 - `permissions.disableAutoMode`（managed settings 中设为 `"disable"` 可关闭 Auto Mode）
 - `claude auto-mode reset [--yes]`
-- `/fork <directive>` 与 `/branch [name]` 的不同行为
+- `/fork [prompt]`、`/subtask <task>` 与 `/branch [name]` 的不同行为
+- `outputStyle` / `/config` Output style 与 `/statusline`
+- `fileCheckpointingEnabled`、`CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING` 与最近 100 个 checkpoints 上限
+- `claude mcp add --scope` / `-s`、`claude mcp add-json` 与 `streamable-http`
 - `CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`
 - `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`
 - `CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`

@@ -329,11 +329,14 @@ hooks 通常通过 `stdin` 接收 JSON 输入。
 - `allow`
 - `deny`
 - `ask`
+- `defer`
 - `updatedInput`
 - `additionalContext`
 - `hookSpecificOutput.updatedToolOutput`
 
-如果你只是在做简单 shell 检查，先把“成功返回 0，失败返回非 0”跑通就够了。
+shell hook 的退出码不是普通脚本里的“任意非零都算阻断”：`0` 表示成功；**只有 `exit 2` 才会按事件语义阻断**，并且阻断原因必须写到 `stderr`。其他非零退出码只是非阻断错误，例如 `PreToolUse` 中用 `exit 1` 不会阻止工具调用。`PostToolUse` 已发生在工具执行之后，`exit 2` 只能把 stderr 反馈给 Claude，不能撤销已经完成的操作。
+
+`PreToolUse` 的 `permissionDecision` 可返回 `allow`、`deny`、`ask` 或 `defer`。`defer` 用于把工具调用留待稍后恢复，并会忽略 `permissionDecisionReason`、`updatedInput` 和 `additionalContext`。多个 hook 意见冲突时，优先级是 `deny` > `defer` > `ask` > `allow`；permission rules 中的 deny / ask 仍会继续参与判断。
 
 ### hooks 现在也能感知当前 effort level
 
@@ -408,7 +411,7 @@ hooks 通常通过 `stdin` 接收 JSON 输入。
 
 - 从 `stdin` 读 JSON 输入
 - 用 `file_path`、`command`、`user_prompt` 这类字段取值
-- 需要阻止或修改行为时，返回 Claude Code 认可的 stdout JSON
+- 需要阻止或修改行为时，返回 Claude Code 认可的 stdout JSON；简单阻断则向 stderr 输出理由并 `exit 2`
 
 如果你还在按“第一个位置参数就是文件路径”来写，很容易和新版本示例脱节。
 

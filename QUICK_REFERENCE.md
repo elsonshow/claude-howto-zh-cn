@@ -63,6 +63,8 @@ export DATABASE_URL="postgresql://..."
 
 # 项目级 MCP 配置
 cp 05-mcp/github-mcp.json .mcp.json
+claude mcp add --scope project --transport http github https://api.github.com/mcp
+claude mcp add-json events-server '{"type":"stdio","command":"npx","args":["@modelcontextprotocol/server-events"]}'
 
 # CLI 登录 / 登出 MCP server
 claude mcp login github
@@ -96,6 +98,8 @@ claude plugin init my-plugin
 
 ```bash
 # checkpoints 默认自动创建
+# fileCheckpointingEnabled 默认 true；只保留最近 100 个 checkpoints 的文件快照
+# CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING 可关闭文件快照
 # v2.1.191+ 起 /rewind 可以跨过 /clear 回到更早 checkpoint
 /rewind
 ```
@@ -127,6 +131,8 @@ claude plugin init my-plugin
 /plugin              # marketplace 浏览界面可用搜索栏过滤 plugin
 ultracode            # 触发 dynamic workflows 的关键词，裸词 workflow 不再触发
 /config thinking=false  # 直接设置单个配置项
+/config                 # Output style 在这里切换；/output-style 已移除
+/statusline             # 配置底部状态栏 command
 !npm test            # v2.1.186+ 起输出会自动发给 Claude 并触发回复
 !cat src/index.ts    # v2.1.193+ 起 ! bash mode 支持路径自动补全
 claude auto-mode reset        # 恢复 Auto Mode 默认配置并请求确认
@@ -149,9 +155,9 @@ export CLAUDE_CODE_RETRY_WATCHDOG=1
 claude --permission-mode manual
 claude --permission-mode acceptEdits
 claude --permission-mode plan
-claude --permission-mode dontAsk
+claude --permission-mode dontAsk  # 未预先批准的工具自动拒绝
 claude --permission-mode bypassPermissions
-claude --permission-mode auto  # 替代已移除的 --enable-auto-mode
+claude --permission-mode auto  # 所有动作经过后台 safety classifier；替代已移除的 --enable-auto-mode
 claude --safe-mode
 claude --fallback-model sonnet
 claude --ax-screen-reader
@@ -159,7 +165,8 @@ claude --ax-screen-reader
 # session 常用命令
 /resume                 # 无参数时打开历史 session picker
 /rename "session-name"
-/fork 检查 flaky tests  # 委派给继承完整对话的后台 subagent
+/fork 尝试 OAuth 方案   # 复制成独立后台 session，不回传结果
+/subtask 检查 flaky tests  # forked subagent 完成后回传结果
 /branch try-oauth       # 切换到对话副本，原对话保留
 claude -c
 claude -r "session-name"
@@ -168,6 +175,7 @@ claude -p --output-format stream-json --forward-subagent-text "query"  # 包含�
 git worktree prune     # 清理已解锁且不再使用的 worktree
 
 # settings.json 常见新增 key（key 名不要翻译）
+# outputStyle / statusLine / switchModelsOnFlag
 # wheelScrollAccelerationEnabled
 # footerLinksRegexes
 # language

@@ -367,6 +367,15 @@ marketplace entry 还支持这些可选字段：
 
 `first-party-plugins` 和 `healthcare` 从 `v2.1.205+` 起是官方保留的 marketplace 名称，自定义 marketplace 不要占用。
 
+Anthropic 官方 marketplace `anthropics/claude-plugins-official` 会在首次交互启动时自动注册。另有经过自动校验和安全筛查的社区 marketplace `anthropics/claude-plugins-community`，需要手动添加：
+
+```text
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install <plugin-name>@claude-community
+```
+
+社区目录中的第三方 plugin 会固定到具体 commit SHA，但仍应在安装前核对代码、权限和外部服务依赖；“进入社区 marketplace”不等同于由 Anthropic 维护。
+
 ### 2. `/plugin` marketplace 页面支持搜索
 
 从 `v2.1.172+` 起，`/plugin` 里的 marketplace 浏览界面有搜索栏，可以按 plugin 名称或关键词快速过滤。

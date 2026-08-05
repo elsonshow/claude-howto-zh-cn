@@ -20,19 +20,18 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-07-30
-- **本轮参考范围**：`97fc961` -> `343d6f0`
+- **最近同步日期**：2026-08-05
+- **本轮参考范围**：`343d6f0` -> `b9a973b`
 - **本次同步内容**：
-  - 同步 Claude Code `v2.1.220`：subagent 嵌套从 `v2.1.219` 起默认深度为 3；设置 `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` 才会禁用嵌套
-  - 加入 Claude Opus 5（`claude-opus-5`、1M context、默认 effort `high`），并修正 `/fast` 只适用于 Opus 5 和 Opus 4.8
-  - 补充 `/deep-research` 仅显式调用、`/code-review` 后台运行、`context: fork` 默认后台及 frontmatter boolean 新写法
-  - hooks 增至 31 个事件，新增 `DirectoryAdded`；project agent frontmatter hooks 只有在 workspace trust 通过后才运行
-  - 修正 Auto Mode 的 plan、组织策略与模型 / provider 资格，并加入 `workflowSizeGuideline`、`sandbox.network.strictAllowlist` 和 classifier 新行为
-  - 补充 MCP HTTP 错误、配置空白字符、`mcp_server_errors` 与 `--forward-subagent-text` 的嵌套输出说明
-  - 上游撤回此前合入的 Vexilo 社区资源，本仓库同步从当前资源索引移除；旧同步记录保留为历史
-  - 扩展本地化校验，阻止旧的“嵌套默认关闭”、30 个 hooks、Opus 4.8 默认模型等口径回归
-  - 保留 `SKILL.md` frontmatter key、CLI flags、路径、slash command 和 skill / plugin / subagent 名称原文
-  - 继续保持根目录中文主线，不把上游英文 README 覆盖到中文首页
+  - 吸收上游 Claude Code `v2.1.220-r2` accuracy pass，逐项复核 258 个变更文件，不机械复制英文 README 或其他语言目录
+  - 纠正 `/fork [prompt]`、`/subtask <task>`、`/branch [name]` 的会话边界和结果回传语义，并将误写的 permission prompt 命令更正为 `/fewer-permission-prompts`
+  - 修复可执行示例：command frontmatter、MCP `type` 与环境变量、Hook stdin JSON、pre-commit 命令门控、阻断用 `stderr + exit 2`、agent tool 大小写和 `permissions.defaultMode`
+  - 补齐 auto memory、CLAUDE.md 200 行建议、skill 优先级、`AGENTS.md`、checkpoint、MCP scope、Output Styles、Status Line 与 plugin community marketplace
+  - 更新 `config-examples.json` 的规范 permission mode 和 Opus 5 配置，并将 context tracker 默认窗口改为 1M（Haiku 4.5 仍需改为 200k）
+  - 扩展本地化校验，阻止旧命令、硬编码数据库凭证、错误 Hook 退出码、无效 frontmatter 和旧 session 语义回归
+  - 修正 Pages 与反馈入口归属、文档链接检查配置及 Ruff 扫描范围，确保网站和用户反馈留在中文 fork、死链门禁可运行、CI 确实检查全部 15 个 Python 文件
+  - 保留文件名、路径、frontmatter key、JSON/YAML key、CLI flags、环境变量、slash command、skill / subagent / plugin 名称原文
+  - 继续保持 `Claude Code 中文全面上手指南` 为根目录中文主线
 
 ---
 

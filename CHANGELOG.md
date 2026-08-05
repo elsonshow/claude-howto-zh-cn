@@ -2,6 +2,25 @@
 
 > 本文件保留上游版本信息的时间顺序，但用中文补充阅读说明，方便中文用户快速判断“这个仓库最近同步了什么”。
 
+## 中文版同步 — 2026-08-05
+
+### 上游审阅
+
+- 核对上游范围：`343d6f0` → `b9a973b`
+- 上游这轮是 Claude Code `v2.1.220-r2` accuracy pass，不升级版本号，重点纠正命令、session、Memory、skills、MCP、hooks、checkpoints、plugins 和 settings 示例
+- 关键修复包括 `/fork` / `/subtask` 角色、`/fewer-permission-prompts`、Hook `stderr + exit 2`、MCP `type` / `${DATABASE_URL}`、skill 优先级和 canonical `permissions.defaultMode`
+
+### 中文 fork 处理
+
+- 审阅 258 个上游变更文件，只本土化影响中文主线和可执行性的改动；不复制英文根 README 或多语言 metadata
+- 修复 command、skill、MCP JSON、Hook scripts、context tracker、plugin agents 与 `config-examples.json`
+- 更新 01-10 教程、功能总表、速查卡、概念总览、资源索引和 Index
+- 补充 auto memory、CLAUDE.md 200 行建议、`AGENTS.md`、checkpoint 100 个上限、MCP scopes、Output Styles、Status Line 与 community marketplace
+- 扩展本地化校验，阻止旧命令、旧 session 语义、硬编码凭证、错误 Hook 退出码与无效 frontmatter 回归
+- 修复 pre-commit 对非 commit Bash 命令误跑测试、SessionEnd 提前退出的问题，新增 Hook 回归测试并清零 ShellCheck 警告
+- 将 Pages 的源码链接、绝对路径检查基准与反馈入口留在中文 fork，修复链接检查 timeout 类型与模板空链接，并修正 Ruff 扫描零文件的配置盲点；真实 format、lint、Bandit 与 mypy 检查均通过
+- 不改变 `Claude Code 中文全面上手指南` 默认入口
+
 ## 中文版同步 — 2026-07-30
 
 ### 上游审阅
@@ -58,7 +77,7 @@
 - 上游这轮重点：
   - 教程覆盖更新到 Claude Code `v2.1.212`，修正 Memory、session 分支、subagent、MCP、Auto Mode 和 accessibility 行为
   - CLAUDE.md 文件按范围拼接，不是严格覆盖链；import 最大深度为 4 hops
-  - `/fork <directive>`、`/branch [name]` 与无参数 `/resume` 的行为已更新
+  - 这批 session 行为后来由 `v2.1.220-r2` accuracy pass 纠正为 `/fork [prompt]`、`/subtask <task>`、`/branch [name]` 三类边界
   - 新增 subagent 输出扫描与 spawn 上限、WebSearch 上限、MCP 自动转后台阈值
   - Auto Mode provider opt-in 自 `v2.1.207` 起不再需要，并新增 `claude auto-mode reset` 与 screen reader mode
 
@@ -512,7 +531,7 @@
 - 核对上游范围：`9c224ff` → `cf92e8e`
 - 上游这轮重点：
   - 同步 Claude Code `v2.1.110` / `v2.1.112`
-  - 新增 `/tui`、`/focus`、`/recap`、`/undo`、`/proactive`、`/ultrareview`、`/less-permission-prompts`
+  - 新增 `/tui`、`/focus`、`/recap`、`/undo`、`/proactive`、`/ultrareview`、`/fewer-permission-prompts`
   - `09-advanced-features` 补充 TUI、session recap、push notifications、Auto Mode 新访问方式
   - CLI / docs 切到 Opus 4.7，并引入 `xhigh` effort
   - plugins 文档新增 background monitors 说明

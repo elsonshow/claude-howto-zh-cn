@@ -48,7 +48,7 @@
       "config": {
         "model": "claude-sonnet-5",
         "permissions": {
-          "defaultMode": "default"
+          "defaultMode": "manual"
         },
         "env": {
           "CLAUDE_CODE_EFFORT_LEVEL": "high"
@@ -60,9 +60,9 @@
       "name": "生产部署",
       "description": "适用于带安全检查的生产操作",
       "config": {
-        "model": "claude-opus-4-8",
+        "model": "claude-opus-5",
         "permissions": {
-          "defaultMode": "default",
+          "defaultMode": "manual",
           "deny": [
             "Bash(git push --force*)",
             "Bash(rm -rf*)"
@@ -106,7 +106,7 @@
       "name": "安全审计",
       "description": "面向安全分析的只读配置",
       "config": {
-        "model": "claude-opus-4-8",
+        "model": "claude-opus-5",
         "permissions": {
           "defaultMode": "plan"
         },
@@ -145,7 +145,7 @@
       "config": {
         "model": "claude-sonnet-5",
         "permissions": {
-          "defaultMode": "default"
+          "defaultMode": "manual"
         },
         "env": {
           "CLAUDE_CODE_EFFORT_LEVEL": "high"
@@ -156,9 +156,9 @@
       "name": "大型重构",
       "description": "适用于大型重构：编辑前备份，编辑后运行相关测试",
       "config": {
-        "model": "claude-opus-4-8",
+        "model": "claude-opus-5",
         "permissions": {
-          "defaultMode": "default",
+          "defaultMode": "manual",
           "allow": [
             "Bash(npm test -- --findRelatedTests *)"
           ]

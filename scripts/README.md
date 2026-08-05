@@ -157,7 +157,7 @@ python scripts/build_epub.py
 ### 快速开始
 
 ```bash
-# 生成英文站点到 ./site/
+# 生成根目录中文站点到 ./site/
 uv run scripts/build_website.py
 
 # 本地预览
@@ -173,6 +173,9 @@ usage: build_website.py [-h] [--root ROOT] [--output OUTPUT]
                         [--lang {en,vi,zh,ja,uk}] [--repo-url REPO_URL]
                         [--branch BRANCH] [--verbose]
 ```
+
+默认生成的“查看源码”和非 Markdown 文件链接指向中文仓库
+`lhfer/claude-howto-zh-cn`；维护其他 fork 时可通过 `--repo-url` 覆盖。
 
 ### GitHub Pages 部署
 

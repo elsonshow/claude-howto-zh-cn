@@ -221,6 +221,18 @@ def validate_shell_scripts(root: Path) -> list[str]:
         if result.returncode != 0:
             details = result.stderr.strip() or "bash -n failed"
             errors.append(f"{path}: invalid shell syntax - {details}")
+
+    session_end = root / "06-hooks/session-end.sh"
+    if session_end.is_file():
+        executable_lines = [
+            line.strip()
+            for line in read_text(session_end).splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        ]
+        if not executable_lines or executable_lines[-1] != "exit 0":
+            errors.append(
+                f"{session_end}: SessionEnd success exit must be the final command"
+            )
     return errors
 
 
@@ -420,7 +432,8 @@ V2_1_212_REQUIRED_SNIPPETS = {
         "CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS",
     ],
     Path("01-slash-commands/README.md"): [
-        "/fork <directive>",
+        "/fork [prompt]",
+        "/subtask <task>",
         "/branch [name]",
         "v2.1.212",
     ],
@@ -503,7 +516,7 @@ V2_1_217_REQUIRED_SNIPPETS = {
     Path("02-memory/README.md"): [
         "GUI editor",
         "`modified` 字段",
-        "控制在几百行内\uff0c越短越好",
+        "200 行以内",
     ],
     Path("03-skills/README.md"): [
         "v2.1.215+` 起只会在用户显式调用时运行",
@@ -512,7 +525,7 @@ V2_1_217_REQUIRED_SNIPPETS = {
         "name: brand-voice",
         "user-invocable: false",
     ],
-    Path("03-skills/claude-md/SKILL.md"): ["控制在几百行内\uff0c越短越好"],
+    Path("03-skills/claude-md/SKILL.md"): ["200 行以内"],
     Path("04-subagents/README.md"): [
         "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS",
         "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH",
@@ -574,9 +587,9 @@ V2_1_217_FORBIDDEN_SNIPPETS = {
 }
 
 V2_1_220_REQUIRED_SNIPPETS = {
-    Path("README.md"): ["v2.1.220", "97fc961", "343d6f0"],
+    Path("README.md"): ["v2.1.220-r2", "343d6f0", "b9a973b"],
     Path("UPSTREAM.md"): [
-        "343d6f0f992de4b5fadd10583388efde7cf39e71",
+        "b9a973bf32bc28bdccb106012397e10235779bc3",
         "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1",
         "DirectoryAdded",
         "workflowSizeGuideline",
@@ -682,6 +695,207 @@ V2_1_220_FORBIDDEN_SNIPPETS = {
         "Opus 主线已经切到 **Opus 4.8**",
         "默认不允许嵌套",
         "让 Opus 4.6 走 fast mode",
+    ],
+}
+
+V2_1_220_R2_REQUIRED_SNIPPETS = {
+    Path("README.md"): ["2026-08-05", "343d6f0", "b9a973b"],
+    Path("UPSTREAM.md"): [
+        "b9a973bf32bc28bdccb106012397e10235779bc3",
+        "v2.1.220-r2",
+    ],
+    Path("CHANGELOG.md"): ["2026-08-05", "v2.1.220-r2", "b9a973b"],
+    Path("INDEX.md"): ["v2.1.220-r2", "/fork", "/subtask"],
+    Path("01-slash-commands/README.md"): [
+        "/fewer-permission-prompts",
+        "/fork [prompt]",
+        "/subtask <task>",
+        "/output-style",
+        "outputStyle",
+    ],
+    Path("01-slash-commands/doc-refactor.md"): ["name: doc-refactor"],
+    Path("01-slash-commands/setup-ci-cd.md"): ["name: setup-ci-cd"],
+    Path("01-slash-commands/unit-test-expand.md"): ["name: unit-test-expand"],
+    Path("02-memory/README.md"): [
+        "autoMemoryEnabled",
+        "CLAUDE_CODE_DISABLE_AUTO_MEMORY",
+        "200 行以内",
+        "AGENTS.md",
+    ],
+    Path("02-memory/directory-api-CLAUDE.md"): ["用于补充根目录"],
+    Path("03-skills/README.md"): ["Enterprise > Project > Personal"],
+    Path("03-skills/claude-md/SKILL.md"): ["AGENTS.md", "200 行以内"],
+    Path("03-skills/refactor/SKILL.md"): ["name: refactor"],
+    Path("04-subagents/README.md"): ["`color`", "`cyan`"],
+    Path("05-mcp/README.md"): [
+        "--scope local",
+        "--scope project",
+        "--scope user",
+        "claude mcp add-json",
+        "streamable-http",
+    ],
+    Path("05-mcp/database-mcp.json"): [
+        '"type": "stdio"',
+        '"DATABASE_URL": "${DATABASE_URL}"',
+    ],
+    Path("05-mcp/filesystem-mcp.json"): ['"type": "stdio"'],
+    Path("05-mcp/github-mcp.json"): ['"type": "stdio"'],
+    Path("05-mcp/multi-mcp.json"): ['"type": "stdio"'],
+    Path("06-hooks/README.md"): [
+        "`exit 2`",
+        "`stderr`",
+        "`defer`",
+        "deny` > `defer` > `ask` > `allow",
+    ],
+    Path("06-hooks/dependency-check.sh"): [
+        "INPUT=$(cat)",
+        '"file_path"',
+    ],
+    Path("06-hooks/pre-commit.sh"): [
+        ".tool_input.command",
+        "git's actual subcommand is commit",
+        "exit 2",
+        ">&2",
+    ],
+    Path("06-hooks/session-end.sh"): ["exit 0"],
+    Path("06-hooks/context-tracker.py"): ["CONTEXT_LIMIT = 1000000"],
+    Path("06-hooks/context-tracker-tiktoken.py"): ["CONTEXT_LIMIT = 1000000"],
+    Path("07-plugins/README.md"): [
+        "anthropics/claude-plugins-community",
+        "<plugin-name>@claude-community",
+    ],
+    Path("07-plugins/devops-automation/agents/alert-analyzer.md"): [
+        "tools: Read, Grep, Bash"
+    ],
+    Path("07-plugins/devops-automation/agents/deployment-specialist.md"): [
+        "tools: Read, Write, Bash, Grep"
+    ],
+    Path("07-plugins/devops-automation/agents/incident-commander.md"): [
+        "tools: Read, Write, Bash, Grep"
+    ],
+    Path("07-plugins/documentation/agents/api-documenter.md"): [
+        "tools: Read, Write, Grep"
+    ],
+    Path("07-plugins/documentation/agents/code-commentator.md"): [
+        "tools: Read, Write, Edit"
+    ],
+    Path("07-plugins/documentation/agents/example-generator.md"): [
+        "tools: Read, Write"
+    ],
+    Path("07-plugins/pr-review/agents/performance-analyzer.md"): [
+        "tools: Read, Grep, Bash"
+    ],
+    Path("07-plugins/pr-review/agents/security-reviewer.md"): [
+        "tools: Read, Grep, Bash"
+    ],
+    Path("07-plugins/pr-review/agents/test-checker.md"): ["tools: Read, Bash, Grep"],
+    Path("08-checkpoints/README.md"): [
+        "fileCheckpointingEnabled",
+        "CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING",
+        "100 个 checkpoints",
+    ],
+    Path("09-advanced-features/README.md"): [
+        "permissions.defaultMode",
+        "switchModelsOnFlag",
+        "Output Styles",
+        "Status Line",
+        "outputStyle",
+        "statusLine",
+        "/subtask <task>",
+    ],
+    Path("09-advanced-features/config-examples.json"): [
+        '"defaultMode": "manual"',
+        '"model": "claude-opus-5"',
+    ],
+    Path("CATALOG.md"): [
+        "/fewer-permission-prompts",
+        "/subtask <task>",
+        "11 | 适合自动化",
+    ],
+    Path("QUICK_REFERENCE.md"): [
+        "/subtask 检查 flaky tests",
+        "fileCheckpointingEnabled",
+        "claude mcp add-json",
+    ],
+    Path("claude_concepts_guide.md"): [
+        "/subtask <task>",
+        "autoMemoryEnabled",
+        "fileCheckpointingEnabled",
+    ],
+    Path("resources.md"): [
+        "/fewer-permission-prompts",
+        "anthropics/claude-plugins-community",
+        "switchModelsOnFlag",
+    ],
+    Path("10-cli/README.md"): ["/fork [prompt]", "/subtask <task>"],
+    Path("scripts/build_website.py"): [
+        'REPO_URL = "https://github.com/lhfer/claude-howto-zh-cn"',
+    ],
+    Path("scripts/pyproject.toml"): [
+        'include = ["**/*.py"]',
+        '"PLR0917"',
+    ],
+    Path(".github/markdown-link-check-config.json"): [
+        "https://github.com/lhfer/claude-howto-zh-cn/blob/main/",
+        '"timeout": "10s"',
+    ],
+    Path(".github/ISSUE_TEMPLATE/config.yml"): [
+        "Claude Code 官方文档",
+        "查看 Anthropic 官方示例与实践",
+    ],
+}
+
+V2_1_220_R2_FORBIDDEN_SNIPPETS = {
+    Path("01-slash-commands/README.md"): [
+        "/less-permission-prompts",
+        "/fork <directive>",
+    ],
+    Path("01-slash-commands/doc-refactor.md"): [
+        "name: Documentation Refactor",
+        "tags:",
+    ],
+    Path("01-slash-commands/setup-ci-cd.md"): [
+        "name: Setup CI/CD Pipeline",
+        "tags:",
+    ],
+    Path("01-slash-commands/unit-test-expand.md"): [
+        "name: Expand Unit Tests",
+        "tags:",
+    ],
+    Path("02-memory/README.md"): ["控制在几百行内", "目录下的内容会覆盖"],
+    Path("02-memory/directory-api-CLAUDE.md"): ["用于覆盖根目录"],
+    Path("03-skills/README.md"): ["Enterprise > Personal > Project"],
+    Path("03-skills/refactor/SKILL.md"): ["name: code-refactor"],
+    Path("05-mcp/database-mcp.json"): [
+        "postgresql://user:pass@localhost/mydb",
+    ],
+    Path("06-hooks/README.md"): ["成功返回 0\uff0c失败返回非 0"],
+    Path("06-hooks/dependency-check.sh"): ["FILE=$1", "PostToolUse:Write"],
+    Path("06-hooks/pre-commit.sh"): ["exit 1"],
+    Path("06-hooks/context-tracker.py"): ["CONTEXT_LIMIT = 128000"],
+    Path("06-hooks/context-tracker-tiktoken.py"): ["CONTEXT_LIMIT = 128000"],
+    Path("09-advanced-features/README.md"): [
+        "/fork <directive>",
+        '"permissions": {"mode"',
+    ],
+    Path("09-advanced-features/config-examples.json"): [
+        '"defaultMode": "default"',
+        '"model": "claude-opus-4-8"',
+    ],
+    Path("CATALOG.md"): ["/less-permission-prompts", "/fork <directive>"],
+    Path("QUICK_REFERENCE.md"): [
+        "/fork 检查 flaky tests",
+        "委派给继承完整对话的后台 subagent",
+    ],
+    Path("claude_concepts_guide.md"): ["/fork <directive>"],
+    Path("resources.md"): ["/fork <directive>"],
+    Path("10-cli/README.md"): ["/fork <directive>"],
+    Path("scripts/build_website.py"): [
+        'REPO_URL = "https://github.com/luongnv89/claude-howto"',
+    ],
+    Path("scripts/pyproject.toml"): ['include = ["scripts/**/*.py"]'],
+    Path(".github/ISSUE_TEMPLATE/config.yml"): [
+        "https://github.com/luongnv89/claude-howto/discussions",
     ],
 }
 
@@ -906,6 +1120,7 @@ def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
         ("v2.1.212", V2_1_212_REQUIRED_SNIPPETS),
         ("v2.1.217", V2_1_217_REQUIRED_SNIPPETS),
         ("v2.1.220", V2_1_220_REQUIRED_SNIPPETS),
+        ("v2.1.220-r2", V2_1_220_R2_REQUIRED_SNIPPETS),
     ):
         for relative_path, snippets in required_snippets.items():
             path = root / relative_path
@@ -950,6 +1165,17 @@ def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
         content = read_text(path)
         errors.extend(
             f"{relative_path}: stale v2.1.220 content '{snippet}'"
+            for snippet in snippets
+            if snippet in content
+        )
+
+    for relative_path, snippets in V2_1_220_R2_FORBIDDEN_SNIPPETS.items():
+        path = root / relative_path
+        if not path.is_file():
+            continue
+        content = read_text(path)
+        errors.extend(
+            f"{relative_path}: stale v2.1.220-r2 content '{snippet}'"
             for snippet in snippets
             if snippet in content
         )

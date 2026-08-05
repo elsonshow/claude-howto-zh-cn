@@ -6,7 +6,7 @@
 
 用户主动输入的快捷命令，适合显式触发某个动作。
 
-`/fork <directive>` 会启动继承完整对话的后台 subagent；`/branch [name]` 会让你切换到当前对话的副本并保留原对话。它们当前不是 alias。无参数 `/resume` 会打开历史 session picker，并将选中的 session 作为后台 session 恢复。
+`/fork [prompt]` 会复制当前对话为独立后台 session，结果不回传；`/subtask <task>` 会启动继承对话的 forked subagent，并在完成后回传结果；`/branch [name]` 则让你本人切换到对话副本。三者当前不是 alias。关闭 agent view 时，`/subtask` 不可用，`/fork` 保留旧的 forked-subagent 行为。无参数 `/resume` 会打开历史 session picker。
 
 ## 2. Memory（记忆）
 
@@ -14,9 +14,13 @@ Memory 包含两套互补机制：人维护的 `CLAUDE.md` 指令，以及 Claud
 
 `@path/to/file` 可以从 CLAUDE.md 导入外部文档，递归最大深度为 4 hops；相对路径以包含 import 的文件为基准。
 
+auto memory 默认开启，可通过 `autoMemoryEnabled`、`/memory` 或 `CLAUDE_CODE_DISABLE_AUTO_MEMORY` 控制。单个 `CLAUDE.md` 当前建议目标控制在 200 行以内；import 不节省上下文，按路径内容应放到 `.claude/rules/*.md`。Claude Code 不会自动读取 `AGENTS.md`，需要时从 `CLAUDE.md` 导入或使用 symlink；subagent 定义仍放 `.claude/agents/`。
+
 ## 3. Skills（技能）
 
 可复用、可自动触发的能力，适合沉淀稳定工作流。
+
+同名 skill 的来源优先级是 Enterprise > Project > Personal；plugin skills 使用 namespace。`skillOverrides` 调整可见性和调用行为。
 
 截至 `v2.1.220`，特别值得关注这些 bundled skills、plugin 和排障入口：
 
@@ -46,6 +50,8 @@ Memory 包含两套互补机制：人维护的 `CLAUDE.md` 指令，以及 Claud
 
 project agent 的 frontmatter hooks 只有在 agent 文件所在 workspace 通过 trust 后才运行；agent `name` 不能包含 `:`，因为该字符保留给 plugin namespace。
 
+agent frontmatter 的 `color` 可写 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`。
+
 从 `v2.1.178+` 起，嵌套 `.claude/agents/` 里的同名 agent 会按“离当前工作目录最近者优先”加载；workflow 和 output-style 定义也遵循这个规则。
 
 从 `v2.1.198+` 起，subagents 默认在后台运行，built-in `Explore` 会继承 session 模型（上限 Opus），extended thinking 也会继承。`CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS=1` 可禁用 built-in Explore / Plan，`--append-subagent-system-prompt` 可在 print mode 中追加统一提示。
@@ -68,6 +74,8 @@ Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 tea
 
 从 `v2.1.219+` 起，`claude mcp list` 和 `/mcp` 会显示连接失败的 HTTP 状态与错误文本；配置值首尾空白会报警，headless stream-json init event 会通过 `mcp_server_errors` 暴露无效 `--mcp-config` server 的错误。
 
+新增 MCP 时用 `--scope local|project|user`（短写 `-s`）控制保存范围，也可用 `claude mcp add-json`。JSON 中应显式保留 `type`；`streamable-http` 是 `http` 的 alias，凭证应从环境变量注入。
+
 ## 6. Hooks（钩子）
 
 在特定事件上自动执行动作的机制。
@@ -86,6 +94,8 @@ Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 tea
 
 从 `v2.1.219+` 起共有 31 个 hook 事件；新增的 `DirectoryAdded` 会在 `/add-dir` 或 SDK `register_repo_root` 注册新工作目录后触发。`MessageDisplay` 和 `DirectoryAdded` 都是事件名，不能翻译。
 
+shell hook 要阻断工具调用，必须把理由写到 stderr 并 `exit 2`；`exit 1` 是非阻断错误。`PreToolUse.permissionDecision` 支持 `allow`、`deny`、`ask`、`defer`，冲突优先级为 deny > defer > ask > allow。
+
 ## 7. Plugins（插件）
 
 把 commands、skills、MCP、hooks、subagents 打包成整套方案。
@@ -93,6 +103,8 @@ Agent Teams 的 teammate mode 也新增了 `--teammate-mode iterm2`，可把 tea
 从 `v2.1.187+` 起，`/plugin` 会提示 unused plugins；从 `v2.1.195+` 起，plugin 的 `plugin.json` `name` 和 marketplace entry name 不一致时，enable / disable 仍能正确工作。
 
 marketplace entry 还支持 `renames`、`displayName`、`defaultEnabled`；`first-party-plugins` 和 `healthcare` 是官方保留的 marketplace 名称。
+
+社区 marketplace 是 `anthropics/claude-plugins-community`，先用 `/plugin marketplace add` 添加，再以 `<plugin-name>@claude-community` 安装。第三方条目虽固定 commit SHA 并经过自动筛查，仍需自行审查权限和依赖。
 
 ## 8. Checkpoints（检查点）
 
@@ -103,6 +115,8 @@ marketplace entry 还支持 `renames`、`displayName`、`defaultEnabled`；`firs
 从 `v2.1.216+` 起，`/rewind` 遇到 symlink 或 hard link 路径会跳过，不再沿链接恢复或删除真实目标，并会报告跳过数量。
 
 `Summarize up to here` 可以压缩所选位置之前的对话，与 `Summarize from here` 组成双向定点压缩。
+
+`fileCheckpointingEnabled` 默认 `true`，`CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING` 可禁用文件快照；`cleanupPeriodDays` 控制保留天数，但文件快照最多只保留最近 100 个 checkpoints。
 
 ## 9. CLI（命令行）
 
@@ -137,6 +151,8 @@ Claude Code 的核心使用入口，也是自动化、脚本化和 CI/CD 的关�
 `respondToBashCommands` 控制 `!` bash 命令输出后是否自动让 Claude 回复；默认 `true`，设为 `false` 可回到只把输出放进上下文的旧行为。
 
 交互 permission mode 从 `v2.1.200+` 起显示为 `manual`，旧 `default` 仍是 alias。`askUserQuestionTimeout`、`enableArtifact`、`CLAUDE_ENABLE_STREAM_WATCHDOG`、Sonnet 5 的 `claude-sonnet-5` 和默认 Opus 模型 `claude-opus-5` 都已进入当前口径。Opus 5 是 1M context，默认 effort 为 `high`；`/fast` 只适用于 Opus 5 和 Opus 4.8。
+
+Output Styles 通过 `/config` 或 `outputStyle` 设置；`/output-style` 已移除。`/statusline` 和 `statusLine` 可配置底部状态栏。`switchModelsOnFlag: false` 会在安全标记触发时暂停，让用户决定是否切换模型。
 
 从 `v2.1.193+` 起，`!` bash mode 支持 live file-path autocomplete。`autoMode.classifyAllShell` 可以让所有 Bash / PowerShell 命令都过 Auto Mode 分类器，`claude_code.assistant_response` 可把模型回复文本写进 OpenTelemetry log event。
 

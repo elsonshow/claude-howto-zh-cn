@@ -49,6 +49,7 @@ Claude Code 的 memory 主要依赖文件系统中的 `CLAUDE.md` 体系。你�
 - `/init` 的增强交互模式，推荐写法从 `CLAUDE_CODE_NEW_INIT=true` 逐步统一到了 `CLAUDE_CODE_NEW_INIT=1`
 - `CLAUDE.local.md` 现在已经是官方文档里明确支持的个人项目记忆，不再只是“可能还能用的旧特性”
 - auto memory 在会话开始时会加载 `MEMORY.md` 的前 200 行，**或者前 25KB**，以先到者为准
+- auto memory 默认开启，可用 `autoMemoryEnabled`、`/memory` 或 `CLAUDE_CODE_DISABLE_AUTO_MEMORY` 控制
 - subagents 也可以拥有自己的 auto memory，适合长期复杂项目
 - 旧教程里常见的 `# ...` inline memory 快捷写法已经停用；现在请改用 `/memory` 或直接用自然语言让 Claude 记住
 
@@ -110,6 +111,11 @@ Claude 会根据你的描述，把内容写进合适的 `CLAUDE.md`。
 - import 可以递归，但最多允许 **4 hops**。
 - 第一次导入外部位置时会弹出 approval dialog，确认来源后再继续。
 - Markdown code span 和 code block 里的 `@path` 只是示例，不会被执行为 import。
+- import 只是在文件层面拆分内容，加载时仍会占用上下文；真正想按任务减小加载量，应使用带 `paths` frontmatter 的 `.claude/rules/*.md` 或按需 skill。
+
+### 已有 `AGENTS.md` 怎么办
+
+`AGENTS.md` 是跨工具共享项目上下文的约定，不是 Claude Code 的 subagent 定义文件。Claude Code 不会自动读取它；需要复用时，在 `CLAUDE.md` 中写 `@AGENTS.md`，或把 `CLAUDE.md` 做成指向它的 symlink。真正的 subagent 定义仍放在 `.claude/agents/`。
 
 ---
 
@@ -147,7 +153,7 @@ Claude 会根据你的描述，把内容写进合适的 `CLAUDE.md`。
 
 ### 目录级 memory
 
-适合大型项目或 monorepo，在局部目录下放更细粒度规则。
+适合大型项目或 monorepo，在局部目录下放更细粒度规则。目录中的 `CLAUDE.md` 会在访问该目录时补充根目录规则；多个文件会拼接，不是由子目录整份覆盖根目录。
 
 ---
 
@@ -229,6 +235,18 @@ claude --add-dir /path/to/other/project
 ---
 
 ## 关于 auto memory，再多记两件事
+
+### 0. 默认开启，但可以明确控制
+
+auto memory 默认开启。可在 settings 中设置：
+
+```json
+{
+  "autoMemoryEnabled": false
+}
+```
+
+也可以在当前 session 用 `/memory` 切换。环境变量 `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1` 会关闭 auto memory；设为 `0` 则会强制开启，即使 `--bare` 或 `autoMemoryEnabled: false` 原本会关闭它。这里的 key 和环境变量都不能翻译。
 
 ### 1. 启动时不是整份都加载
 
@@ -318,7 +336,9 @@ Claude Code 不会把整个 auto memory 目录一次性全塞进上下文。最�
 
 ### 1. 以为 memory 越长越好
 
-不是。memory 要优先放高价值、长期稳定、对 Claude 行为影响大的规则。单个文件控制在几百行内，越短越好；官方没有“必须少于 100 行”或“最多 500 行”这类固定数字。
+不是。memory 要优先放高价值、长期稳定、对 Claude 行为影响大的规则。当前官方建议把单个 `CLAUDE.md` 目标控制在 **200 行以内**；更长的文件仍会完整加载，但指令遵循度会下降。多步骤流程移到 skill，路径规则移到 `.claude/rules/*.md`，长参考资料放到 skill 的 `references/`。
+
+对 Opus 5 和 Fable 5，不要机械堆叠“完成前再检查一次”这类泛化提醒，以免反复验证消耗回合；但项目真正依赖的验收条件仍应明确保留，例如“集成测试需要 Docker”。
 
 ### 2. 把项目规则和个人偏好全混在一起
 

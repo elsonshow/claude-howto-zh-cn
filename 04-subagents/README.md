@@ -124,6 +124,7 @@ model: inherit
 - `memory`
 - `isolation`
 - `maxTurns`
+- `color`
 
 如果你是做中文本地化，这些字段要保真；可以翻译的是下面真正给人看的 system prompt 正文。
 
@@ -134,6 +135,8 @@ project agent frontmatter 里的 `hooks` 只有在 agent 文件所在目录通�
 `background: true` 的含义也发生了变化：从 `v2.1.198+` 起，subagents 默认就在后台运行；显式写 `true` 是强制它始终后台运行，并阻止 inline execution。
 
 `effort` 可写 `low`、`medium`、`high`、`xhigh` 或 `max`，实际可用范围取决于模型。`permissionMode` 才是覆盖 subagent 权限模式的 frontmatter 字段；从 `v2.1.212+` 起，Task tool 调用参数里的 `mode` 已弃用并会被忽略，未写 `permissionMode` 时 subagent 继承父 session 的权限模式。
+
+`color` 控制任务列表和 transcript 中的 subagent 显示色，可写 `red`、`blue`、`green`、`yellow`、`purple`、`orange`、`pink` 或 `cyan`。这些枚举值是可执行标识，不要翻译。
 
 ---
 

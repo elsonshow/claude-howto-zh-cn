@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`343d6f0f992de4b5fadd10583388efde7cf39e71`
+- 最近检查到的上游 commit：`b9a973bf32bc28bdccb106012397e10235779bc3`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -62,6 +62,26 @@ uv run python scripts/validate_localization.py
 
 ## 最近一次同步记录
 
+### 上游同步 — 2026-08-05
+
+- Reviewed upstream range: `343d6f0` → `b9a973b`
+- 重点上游变化：
+  - 上游发布 Claude Code `v2.1.220-r2` accuracy pass；版本号不变，集中修正教程事实与可执行示例
+  - `/fork [prompt]` 现在创建独立后台 session，`/subtask <task>` 才是会回传结果的 forked subagent；真实命令是 `/fewer-permission-prompts`
+  - Hook 阻断需要向 stderr 输出原因并 `exit 2`；`dependency-check.sh` 应从 stdin JSON 读取 `file_path`
+  - MCP 示例需保留 `type`，数据库凭证改由 `${DATABASE_URL}` 注入；新增 scope、`add-json` 与 `streamable-http` 说明
+  - Memory、skills、checkpoints、plugins、permission modes、Output Styles、Status Line 和安全 fallback 配置完成准确性修订
+- Chinese fork actions:
+  - 全量审阅上游 258 个变更文件，只吸收会影响中文主线、示例运行和当前事实的改动；不机械复制 metadata、多语言页脚或英文根 README
+  - 修正 command / skill frontmatter、4 份 MCP JSON、Hook scripts、context tracker、9 个 plugin agents 和 `config-examples.json`
+  - 把事实修订写入 01-10 核心教程、Catalog、Quick Reference、概念总览、资源索引和 Index
+  - 保留文件名、路径、frontmatter key、JSON/YAML key、CLI flags、环境变量、slash command、skill / subagent / plugin 名称原文
+  - 扩展 `scripts/validate_localization.py`，锁定 `v2.1.220-r2` 关键行为并禁止旧错误回归
+  - 修复 `pre-commit.sh` 对所有 Bash 调用误跑测试、`session-end.sh` 提前退出的问题，新增 6 项 Hook 回归测试并通过 ShellCheck
+  - 修复网站生成器与链接检查的仓库归属、链接检查 timeout 类型及模板空链接，移除指向上游 Discussions 的反馈入口；默认指向 `lhfer/claude-howto-zh-cn`
+  - 修正 Ruff include 范围并清零 15 个 Python 文件的实际 format、lint、Bandit 与 mypy 检查
+  - 根目录继续以 `Claude Code 中文全面上手指南` 为默认入口，只维护 `origin/main`，不向 upstream 写入
+
 ### 上游同步 — 2026-07-30
 
 - Reviewed upstream range: `97fc961` → `343d6f0`
@@ -109,12 +129,12 @@ uv run python scripts/validate_localization.py
 - 重点上游变化：
   - 教程覆盖更新到 Claude Code `v2.1.212`，修正已经停用的 `#` memory shortcut 说明
   - CLAUDE.md 改为按 Managed、User、Project、Local 范围拼接理解；auto memory 和 `.claude/rules/*.md` 属于独立机制，import 最大深度为 4 hops
-  - `/fork <directive>` 现在委派给继承完整对话的后台 subagent，`/branch [name]` 切换到对话副本；无参数 `/resume` 增加历史 session picker
+  - 这批 session 变化后来在 `v2.1.220-r2` accuracy pass 中纠正：`/fork [prompt]` 创建独立后台 session，`/subtask <task>` 才委派会回传结果的 forked subagent，`/branch [name]` 切换到对话副本
   - subagent 输出在 `v2.1.210+` 增加 instruction-shaped text 扫描，`v2.1.212+` 默认限制每 session 200 次 spawn
   - MCP tool call 超过 2 分钟自动转后台；Auto Mode provider opt-in 在 `v2.1.207+` 已移除，并新增 reset 与 screen reader 入口
 - Chinese fork actions:
   - 将行为变化本土化写入 slash commands、Memory、subagents、MCP、Advanced Features、CLI、Catalog、Quick Reference、概念总览、资源索引和 Index，不复制上游英文根 README
-  - 保留 `/fork <directive>`、`/branch [name]`、`managed-settings.d/`、`permissionMode`、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`、`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`、`disableAutoMode`、`--ax-screen-reader` 等标识原文
+  - 保留 `/fork [prompt]`、`/subtask <task>`、`/branch [name]`、`managed-settings.d/`、`permissionMode`、`CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION`、`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS`、`disableAutoMode`、`--ax-screen-reader` 等标识原文
   - 删除当前教程中的“8 层覆盖链”、`/fork` 兼容别名和 `CLAUDE_CODE_ENABLE_AUTO_MODE=1` 仍需 opt-in 等过时说法
   - 上游 `ja/`、`vi/`、`uk/`、`zh/` 目录仅作为差异参考，不引入本中文主线；示例页脚的版本元数据变化通过本记录吸收，不改写无对应页脚的中文示例
   - 扩展 `scripts/validate_localization.py`，覆盖 `v2.1.212` 关键字段并阻止旧表述回归
@@ -517,7 +537,7 @@ uv run python scripts/validate_localization.py
 - Reviewed upstream range: `9c224ff` → `cf92e8e`
 - 重点上游变化：
   - 上游同步到 Claude Code `v2.1.110` / `v2.1.112`
-  - 新增或明确 `/tui`、`/focus`、`/recap`、`/undo`、`/proactive`、`/ultrareview`、`/less-permission-prompts`
+  - 新增或明确 `/tui`、`/focus`、`/recap`、`/undo`、`/proactive`、`/ultrareview`、`/fewer-permission-prompts`
   - advanced features 补充了 TUI、session recap、push notifications、Auto Mode 新访问方式
   - CLI / docs 切到 Opus 4.7，并引入 `xhigh` effort
   - plugins 章节新增 background monitors 说明
