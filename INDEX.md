@@ -32,7 +32,7 @@
 
 ## 当前版本重点
 
-本仓库已按 Claude Code `v2.1.220-r2` accuracy pass 更新中文主线。除 `v2.1.220` 已有的 Claude Opus 5（`claude-opus-5`）、subagent 默认深度为 3、31 个 hook 事件等内容外，本轮重点纠正 `/fork` / `/subtask`、`/fewer-permission-prompts`、Hook `exit 2`、MCP scope、auto memory、checkpoint、Output Styles 与 Status Line，并同步修复可执行示例。
+本仓库已跟进 Claude Code `v2.1.220-r2` accuracy pass 及 `4f3fa85` 后续修复。除 Claude Opus 5（`claude-opus-5`）、subagent 默认深度为 3、`/fork` / `/subtask`、MCP scope 等内容外，当前还将中文 EPUB 改为 CI 中使用本地 `mmdc` 严格构建，并明确 5 种 hook 类型与 31 个 hook 事件属于不同分类轴。
 
 ## 资源与脚本
 

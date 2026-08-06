@@ -275,7 +275,7 @@ hooks 最大的价值，是把“你本来每次都要手动做的检查”变�
 
 如果你是新手，不需要一上来把所有事件都学完。
 
-> 截至 `v2.1.219+`，上游共有 **31 个 hook 事件、5 种 hook 类型**。如果你还在参考旧资料里的 25、28、29 或 30 个事件，优先以当前版本为准。`MessageDisplay` 会在 assistant message text 显示过程中触发；新增的 `DirectoryAdded` 会在 `/add-dir` 或 SDK `register_repo_root` 注册新工作目录后触发。
+> 截至 `v2.1.219+`，上游共有 **31 个 hook 事件、5 种 hook 类型**。类型（`command`、`http`、`mcp_tool`、`prompt`、`agent`）决定 hook 如何运行，事件决定它何时运行，两者不是同一个分类轴。如果你还在参考旧资料里的 25、28、29 或 30 个事件，优先以当前版本为准。`MessageDisplay` 会在 assistant message text 显示过程中触发；新增的 `DirectoryAdded` 会在 `/add-dir` 或 SDK `register_repo_root` 注册新工作目录后触发。
 
 ---
 
@@ -608,7 +608,7 @@ open local-progress/index.html
 
 ### 1. shell 差异
 
-很多示例默认更偏 Unix / macOS / Linux 风格。  
+很多示例默认更偏 Unix / macOS / Linux 风格。
 Windows 用户请先确认你当前用的是：
 
 - PowerShell

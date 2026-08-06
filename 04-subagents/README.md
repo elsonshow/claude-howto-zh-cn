@@ -204,7 +204,7 @@ cp 04-subagents/code-reviewer.md .claude/agents/
 - `subagents`：主 Claude 委派一个边界清晰的子任务，等它把结果带回来
 - `Agent Teams`：多个 Claude Code 实例协作，彼此有独立上下文窗口，还能直接通信
 
-对绝大多数中国小白用户来说，先掌握 subagents 就足够了。  
+对绝大多数中国小白用户来说，先掌握 subagents 就足够了。
 `Agent Teams` 依然是实验性能力，更适合复杂协作场景，细节放在 [09-advanced-features](../09-advanced-features/) 里看。
 
 ### Agent Teams 的 iTerm2 显示模式

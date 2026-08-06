@@ -587,7 +587,7 @@ V2_1_217_FORBIDDEN_SNIPPETS = {
 }
 
 V2_1_220_REQUIRED_SNIPPETS = {
-    Path("README.md"): ["v2.1.220-r2", "343d6f0", "b9a973b"],
+    Path("README.md"): ["v2.1.220-r2", "b9a973b"],
     Path("UPSTREAM.md"): [
         "b9a973bf32bc28bdccb106012397e10235779bc3",
         "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1",
@@ -699,7 +699,7 @@ V2_1_220_FORBIDDEN_SNIPPETS = {
 }
 
 V2_1_220_R2_REQUIRED_SNIPPETS = {
-    Path("README.md"): ["2026-08-05", "343d6f0", "b9a973b"],
+    Path("README.md"): ["v2.1.220-r2"],
     Path("UPSTREAM.md"): [
         "b9a973bf32bc28bdccb106012397e10235779bc3",
         "v2.1.220-r2",
@@ -897,6 +897,97 @@ V2_1_220_R2_FORBIDDEN_SNIPPETS = {
     Path(".github/ISSUE_TEMPLATE/config.yml"): [
         "https://github.com/luongnv89/claude-howto/discussions",
     ],
+}
+
+V2_1_220_FOLLOWUP_REQUIRED_SNIPPETS = {
+    Path("README.md"): ["2026-08-06", "b9a973b", "4f3fa85"],
+    Path("UPSTREAM.md"): [
+        "4f3fa85d7ed0f0f77f0d8bba3f0b40ff10b2063b",
+        "Reviewed upstream range: `b9a973b` → `4f3fa85`",
+        "--lang zh",
+    ],
+    Path("CHANGELOG.md"): ["2026-08-06", "b9a973b", "4f3fa85"],
+    Path("INDEX.md"): ["4f3fa85", "本地 `mmdc`", "31 个 hook 事件"],
+    Path("CLAUDE.md"): ["--lang zh", "EPUB 构建 jobs", "arm64"],
+    Path("06-hooks/README.md"): [
+        "`command`、`http`、`mcp_tool`、`prompt`、`agent`",
+        "两者不是同一个分类轴",
+    ],
+    Path("scripts/build_epub.py"): [
+        'mmdc_path: str = "mmdc"',
+        '"--puppeteer-config"',
+        "subprocess.run(",
+        "mmdc produced no output",
+    ],
+    Path("scripts/README.md"): [
+        "--mmdc-path",
+        "--puppeteer-config",
+        "EPUB 构建 jobs",
+        "arm64",
+    ],
+    Path(".github/workflows/test.yml"): [
+        "Install mmdc (Mermaid CLI)",
+        "--lang zh",
+        "if-no-files-found: error",
+        "needs: [pytest, lint, security, type-check]",
+        "codecov/codecov-action@v5",
+    ],
+    Path(".github/workflows/ci.yml"): [
+        "Install mmdc (Mermaid CLI)",
+        "--lang zh",
+        "--puppeteer-config",
+        "if-no-files-found: error",
+        "codecov/codecov-action@v5",
+    ],
+    Path(".github/workflows/release.yml"): [
+        "Install mmdc (Mermaid CLI)",
+        "--lang zh",
+        "--puppeteer-config",
+        "test -s claude-howto-guide.epub",
+    ],
+    Path(".github/workflows/docs-check.yml"): ["actions/setup-python@v7"],
+    Path(".pre-commit-config.yaml"): [
+        "rev: v0.15.10",
+        "args: [-c, scripts/pyproject.toml]",
+    ],
+    Path("scripts/pyproject.toml"): [
+        'include = ["**/*.py"]',
+        '"tests/*.py"',
+        '"PLR0917"',
+        "[tool.mypy]",
+        "ignore_missing_imports = true",
+    ],
+    Path("scripts/requirements-dev.txt"): ["ruff>=0.15.10", "mypy>=1.8.0"],
+    Path(".cspell.json"): ['"httpx"'],
+}
+
+V2_1_220_FOLLOWUP_FORBIDDEN_SNIPPETS = {
+    Path("scripts/build_epub.py"): [
+        "Kroki.io",
+        "import httpx",
+        "from tenacity",
+        '"--timeout"',
+        '"--max-concurrent"',
+    ],
+    Path("scripts/README.md"): ["Kroki.io", "--timeout", "--max-concurrent"],
+    Path("scripts/requirements.txt"): ["httpx", "tenacity"],
+    Path("scripts/pyproject.toml"): [
+        '"httpx"',
+        '"tenacity"',
+        '"scripts/tests/*.py"',
+        '"B113"',
+    ],
+    Path(".cspell.json"): ['"tenacity"'],
+    Path(".pre-commit-config.yaml"): [
+        "rev: v0.8.2",
+        "args: [-c, pyproject.toml]",
+    ],
+    Path(".github/workflows/test.yml"): [
+        "continue-on-error: true",
+        "codecov/codecov-action@v3",
+    ],
+    Path(".github/workflows/ci.yml"): ["codecov/codecov-action@v3"],
+    Path(".github/workflows/docs-check.yml"): ["actions/setup-python@v4"],
 }
 
 
@@ -1121,6 +1212,7 @@ def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
         ("v2.1.217", V2_1_217_REQUIRED_SNIPPETS),
         ("v2.1.220", V2_1_220_REQUIRED_SNIPPETS),
         ("v2.1.220-r2", V2_1_220_R2_REQUIRED_SNIPPETS),
+        ("v2.1.220-followup", V2_1_220_FOLLOWUP_REQUIRED_SNIPPETS),
     ):
         for relative_path, snippets in required_snippets.items():
             path = root / relative_path
@@ -1176,6 +1268,17 @@ def validate_curriculum_consistency(root: Path) -> list[str]:  # noqa: PLR0912
         content = read_text(path)
         errors.extend(
             f"{relative_path}: stale v2.1.220-r2 content '{snippet}'"
+            for snippet in snippets
+            if snippet in content
+        )
+
+    for relative_path, snippets in V2_1_220_FOLLOWUP_FORBIDDEN_SNIPPETS.items():
+        path = root / relative_path
+        if not path.is_file():
+            continue
+        content = read_text(path)
+        errors.extend(
+            f"{relative_path}: stale v2.1.220 follow-up content '{snippet}'"
             for snippet in snippets
             if snippet in content
         )

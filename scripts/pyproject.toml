@@ -9,10 +9,8 @@ dependencies = [
     "ebooklib",
     "markdown",
     "beautifulsoup4",
-    "httpx",
     "pyyaml",
     "pillow",
-    "tenacity",
     "jinja2",
 ]
 
@@ -45,6 +43,7 @@ exclude = ["tests", "tests.*"]
 [tool.ruff]
 target-version = "py310"
 line-length = 88
+# Patterns are relative to this scripts/pyproject.toml file.
 include = ["**/*.py"]
 exclude = [
     ".git",
@@ -91,7 +90,7 @@ force-single-line = false
 combine-as-imports = true
 
 [tool.ruff.lint.per-file-ignores]
-"scripts/tests/*.py" = ["S101", "PLR2004"]
+"tests/*.py" = ["S101", "PLR2004"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -100,9 +99,22 @@ skip-magic-trailing-comma = false
 docstring-code-format = true
 
 # =============================================================================
+# Mypy Configuration
+# =============================================================================
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+no_implicit_optional = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["build_epub", "scripts.build_epub"]
+ignore_errors = true
+
+# =============================================================================
 # Bandit Configuration
 # =============================================================================
 [tool.bandit]
 targets = ["scripts"]
 exclude_dirs = ["scripts/tests", ".venv", "__pycache__"]
-skips = ["B101", "B113", "B404", "B603", "B607"]  # B113: httpx timeout false positive; B404/B603/B607: local subprocess validation in validate_localization.py
+skips = ["B101", "B404", "B603", "B607"]  # B404/B603/B607: repo-local subprocess validation and mmdc execution

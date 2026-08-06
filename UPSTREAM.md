@@ -5,7 +5,7 @@
 - 上游仓库：[`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)
 - 上游分支：`main`
 - 本地化基线 commit：`0ca8c37c81918458e063739425c4740ca92c2db2`
-- 最近检查到的上游 commit：`b9a973bf32bc28bdccb106012397e10235779bc3`
+- 最近检查到的上游 commit：`4f3fa85d7ed0f0f77f0d8bba3f0b40ff10b2063b`
 - 上游许可证：[MIT License](LICENSE)
 
 ## 本仓库性质
@@ -28,16 +28,16 @@
 
 ## 本地化原则
 
-1. **兼容性优先**  
+1. **兼容性优先**
    任何会影响 Claude Code 运行、加载或复制执行的标识，默认不翻。
 
-2. **中文表达优先**  
+2. **中文表达优先**
    给人看的说明文字、学习路径、FAQ、对比表、导语等内容，以中文重写为主。
 
-3. **术语保真**  
+3. **术语保真**
    `skills`、`CLI`、`hooks`、`MCP`、`subagents` 这类高频术语保留英文，首次出现补中文解释。
 
-4. **持续同步**  
+4. **持续同步**
    本仓库默认采用“跟进上游版本 -> 判定受影响文件 -> 更新中文内容 -> 记录处理结果”的维护方式。
 
 ## 推荐同步流程
@@ -62,9 +62,29 @@ uv run python scripts/validate_localization.py
 
 ## 最近一次同步记录
 
+### 上游同步 — 2026-08-06
+
+- Reviewed upstream range: `b9a973b` → `4f3fa85`
+- 重点上游变化：
+  - EPUB 构建从 pre-commit 完全移到 CI，并为上游维护的语言增加矩阵构建；原因是本地 `mmdc` 依赖的 Chromium 在 arm64 没有可用构建
+  - 文档把已经失效的 Kroki/httpx、网络重试、`--timeout` 与 `--max-concurrent` 说明改为本地 `mmdc`、`--mmdc-path`、`--lang` 和 `--puppeteer-config`
+  - 修正 Ruff include / per-file-ignores 相对 `scripts/pyproject.toml` 的解析范围，将 pre-commit Ruff 升至 `v0.15.10`，并兼容 Ruff 0.16 稳定启用的 `PLR0917`
+  - 删除已经不再使用的 `httpx` 与 `tenacity`，修正多语言根层文档逃逸到英文目录的相对链接，并区分 5 种 hook 类型与 31 个 hook 事件
+- Chinese fork actions:
+  - 发现中文 fork 仍保留旧 Kroki EPUB 实现，因此把本地 `mmdc` 渲染连同行为测试一起移植，而不是只删除依赖；保留中文封面、元数据、目录标题、图片嵌入和根目录主线
+  - 中文 fork 不维护上游 `ja/vi/uk/zh` 目录，未复制无效语言矩阵；CI 只构建根目录中文版本，并显式传入 `--lang zh` 与 Chromium sandbox 配置
+  - EPUB 不再进入 pre-commit，主 CI、自动化测试与标签发布统一使用严格门禁；`mmdc` 缺失、超时、解析失败或未产出图片都会让构建失败
+  - 移除 `httpx`、`tenacity`，同步 Ruff 版本下限，修正 Ruff tests pattern、Bandit 配置路径与废弃的 `B113` 抑制
+  - 去掉 workflow 中 lint、Bandit、mypy 的 `continue-on-error`，让检查结果真实影响提交状态
+  - 修复 actionlint 发现的 runner 兼容性问题：按官方推荐升级到 `codecov-action@v5` 与 `setup-python@v7`
+  - 在中文 Hooks 教程中明确“类型决定如何运行、事件决定何时运行”，不机械复制上游英文入口
+  - 更新本地化回归护栏，禁止 Kroki、旧 CLI flags、死依赖与静默 CI 放行重新出现
+  - 根目录继续以 `Claude Code 中文全面上手指南` 为默认入口，只维护 `origin/main`，不向 upstream 写入
+
 ### 上游同步 — 2026-08-05
 
 - Reviewed upstream range: `343d6f0` → `b9a973b`
+- Upstream head: `b9a973bf32bc28bdccb106012397e10235779bc3`
 - 重点上游变化：
   - 上游发布 Claude Code `v2.1.220-r2` accuracy pass；版本号不变，集中修正教程事实与可执行示例
   - `/fork [prompt]` 现在创建独立后台 session，`/subtask <task>` 才是会回传结果的 forked subagent；真实命令是 `/fewer-permission-prompts`

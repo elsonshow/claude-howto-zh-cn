@@ -5,7 +5,7 @@
 
 # Checkpoints 与 Rewind 指南
 
-checkpoints 是 Claude Code 新手最值得尽早掌握的安全机制之一。  
+checkpoints 是 Claude Code 新手最值得尽早掌握的安全机制之一。
 它的意义很简单：**敢试，因为随时能回退。**
 
 ---
@@ -63,7 +63,7 @@ checkpoints 是 Claude Code 新手最值得尽早掌握的安全机制之一。
 5. **Summarize up to here**：压缩所选位置之前的对话，保留这一点之后的消息；它和上一项组成双向、定点的上下文压缩
 6. **Never mind**：取消
 
-> 新版行为里还有一个很实用的小细节：  
+> 新版行为里还有一个很实用的小细节：
 > 你在做 **Restore conversation** 或 **Summarize from here** 后，被选中位置的原始 prompt 会回到输入框里，方便你重新发送或改写。
 
 > 从 `v2.1.191+` 起，`/clear` 不再是 `/rewind` 的硬边界。也就是说，即使你已经清空过当前对话，仍可以用 `/rewind` 回到 `/clear` 之前创建的 checkpoint，找回更早的代码或上下文。
@@ -168,7 +168,7 @@ Claude Code 会自动创建 checkpoints，所以你不需要手动先“存档�
 
 ## 中国用户特别注意
 
-如果你在本地化或改写示例文档时做大范围文本替换，checkpoints 也非常有用。  
+如果你在本地化或改写示例文档时做大范围文本替换，checkpoints 也非常有用。
 因为这类修改很容易“看起来都对，实际把命令名或字段名翻坏”，有 checkpoint 会安全很多。
 
 ## checkpoints 和 Git 怎么配合

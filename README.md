@@ -20,16 +20,17 @@
 
 ## 最近同步
 
-- **最近同步日期**：2026-08-05
-- **本轮参考范围**：`343d6f0` -> `b9a973b`
+- **最近同步日期**：2026-08-06
+- **本轮参考范围**：`b9a973b` -> `4f3fa85`
 - **本次同步内容**：
-  - 吸收上游 Claude Code `v2.1.220-r2` accuracy pass，逐项复核 258 个变更文件，不机械复制英文 README 或其他语言目录
-  - 纠正 `/fork [prompt]`、`/subtask <task>`、`/branch [name]` 的会话边界和结果回传语义，并将误写的 permission prompt 命令更正为 `/fewer-permission-prompts`
-  - 修复可执行示例：command frontmatter、MCP `type` 与环境变量、Hook stdin JSON、pre-commit 命令门控、阻断用 `stderr + exit 2`、agent tool 大小写和 `permissions.defaultMode`
-  - 补齐 auto memory、CLAUDE.md 200 行建议、skill 优先级、`AGENTS.md`、checkpoint、MCP scope、Output Styles、Status Line 与 plugin community marketplace
-  - 更新 `config-examples.json` 的规范 permission mode 和 Opus 5 配置，并将 context tracker 默认窗口改为 1M（Haiku 4.5 仍需改为 200k）
-  - 扩展本地化校验，阻止旧命令、硬编码数据库凭证、错误 Hook 退出码、无效 frontmatter 和旧 session 语义回归
-  - 修正 Pages 与反馈入口归属、文档链接检查配置及 Ruff 扫描范围，确保网站和用户反馈留在中文 fork、死链门禁可运行、CI 确实检查全部 15 个 Python 文件
+  - 跟进上游 `v2.1.220-r2` accuracy review 的后续修复，审阅 EPUB CI、Ruff、依赖清理、Hook 分类与多语言相对链接变化
+  - 将中文 EPUB 的 Mermaid 渲染从 Kroki/httpx 切换为本地 `mmdc`，保留中文封面、元数据、章节标题和根目录内容结构
+  - EPUB 构建移出 pre-commit，所有 GitHub Actions 构建路径统一安装 `mmdc` 并使用 `--lang zh` 强制构建；任一图表失败都会阻止通过
+  - 删除不再使用的 `httpx`、`tenacity`，统一 Ruff `v0.15.10+`，修正 Bandit 配置路径和 tests 的 Ruff 相对路径
+  - 取消 lint、Bandit 与 mypy 的静默放行，避免“workflow 绿色但检查其实失败”
+  - 升级失去当前 runner 支持的 `codecov-action@v3` 与 `setup-python@v4`，并通过 actionlint 校验全部 workflow
+  - 明确 5 种 hook 类型决定“如何运行”，31 个 hook 事件决定“何时运行”，两者不是同一分类轴
+  - 上游其他语言目录继续只作参考，不重新引入中文 fork 已移除的 `ja/vi/uk/zh` 树
   - 保留文件名、路径、frontmatter key、JSON/YAML key、CLI flags、环境变量、slash command、skill / subagent / plugin 名称原文
   - 继续保持 `Claude Code 中文全面上手指南` 为根目录中文主线
 
@@ -235,28 +236,28 @@ cp -r 03-skills/code-review-specialist ~/.claude/skills/
 
 ## 常见问题
 
-**这是官方项目吗？**  
+**这是官方项目吗？**
 不是。这是基于上游社区项目做的中文本土化 fork，来源与同步策略见 [UPSTREAM.md](UPSTREAM.md)。
 
-**我能直接复制里面的命令和配置吗？**  
+**我能直接复制里面的命令和配置吗？**
 大多数可以，但前提是你不要改坏关键标识。像 frontmatter key、JSON key、CLI flags、环境变量名这些不能为了中文化而改掉。
 
-**为什么有些术语不翻译？**  
+**为什么有些术语不翻译？**
 因为很多术语一旦翻译，会让你在真实使用 Claude Code、搜索官方文档、复制命令时更容易混淆。这个项目遵循“术语保真，解释中文化”的原则。
 
-**中国用户最容易卡在哪？**  
+**中国用户最容易卡在哪？**
 常见是：GitHub 访问、Token 权限、`npm` / `npx` / `uv` / Python 环境、Windows 和 WSL 差异、以及把示例里可执行字段误翻译。
 
-**能离线看吗？**  
+**能离线看吗？**
 可以。运行：
 
 ```bash
-uv run scripts/build_epub.py
+uv run scripts/build_epub.py --lang zh
 ```
 
-会生成 EPUB 电子书。脚本说明见 [scripts/README.md](scripts/README.md)。
+本机需要可用的 `mmdc`；命令会生成中文 EPUB 电子书。安装方式与 arm64 限制见 [scripts/README.md](scripts/README.md)。
 
-**之后怎么跟上游同步？**  
+**之后怎么跟上游同步？**
 请先看 [UPSTREAM.md](UPSTREAM.md)。本仓库默认按“持续同步上游、中文侧增量跟进”的方式维护。
 
 ---
