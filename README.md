@@ -27,7 +27,7 @@
   - 将中文 EPUB 的 Mermaid 渲染从 Kroki/httpx 切换为本地 `mmdc`，保留中文封面、元数据、章节标题和根目录内容结构
   - EPUB 构建移出 pre-commit，所有 GitHub Actions 构建路径统一安装 `mmdc` 并使用 `--lang zh` 强制构建；任一图表失败都会阻止通过
   - 删除不再使用的 `httpx`、`tenacity`，统一 Ruff `v0.15.10+`，修正 Bandit 配置路径和 tests 的 Ruff 相对路径
-  - 取消 lint、Bandit 与 mypy 的静默放行，避免“workflow 绿色但检查其实失败”
+  - 取消 Ruff、Bandit、mypy 与 Markdown lint 的静默放行，并补充适合中文长行和 HTML 图片头的规则配置，避免“workflow 绿色但检查其实失败”
   - 升级失去当前 runner 支持的 `codecov-action@v3` 与 `setup-python@v4`，并通过 actionlint 校验全部 workflow
   - 明确 5 种 hook 类型决定“如何运行”，31 个 hook 事件决定“何时运行”，两者不是同一分类轴
   - 上游其他语言目录继续只作参考，不重新引入中文 fork 已移除的 `ja/vi/uk/zh` 树

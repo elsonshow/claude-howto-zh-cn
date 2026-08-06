@@ -945,11 +945,19 @@ V2_1_220_FOLLOWUP_REQUIRED_SNIPPETS = {
         "--puppeteer-config",
         "test -s claude-howto-guide.epub",
     ],
-    Path(".github/workflows/docs-check.yml"): ["actions/setup-python@v7"],
+    Path(".github/workflows/docs-check.yml"): [
+        "actions/setup-python@v7",
+        "node-version: '24'",
+        "markdownlint-cli@0.49.1",
+        "--config .markdownlint.json",
+    ],
     Path(".pre-commit-config.yaml"): [
         "rev: v0.15.10",
         "args: [-c, scripts/pyproject.toml]",
+        "markdownlint-cli@0.49.1",
+        ".markdownlint.json",
     ],
+    Path(".markdownlint.json"): ['"default": false', '"MD009": true'],
     Path("scripts/pyproject.toml"): [
         'include = ["**/*.py"]',
         '"tests/*.py"',
@@ -987,7 +995,11 @@ V2_1_220_FOLLOWUP_FORBIDDEN_SNIPPETS = {
         "codecov/codecov-action@v3",
     ],
     Path(".github/workflows/ci.yml"): ["codecov/codecov-action@v3"],
-    Path(".github/workflows/docs-check.yml"): ["actions/setup-python@v4"],
+    Path(".github/workflows/docs-check.yml"): [
+        "actions/setup-python@v4",
+        "continue-on-error: true",
+        "node-version: '18'",
+    ],
 }
 
 

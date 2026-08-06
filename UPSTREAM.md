@@ -75,7 +75,7 @@ uv run python scripts/validate_localization.py
   - 中文 fork 不维护上游 `ja/vi/uk/zh` 目录，未复制无效语言矩阵；CI 只构建根目录中文版本，并显式传入 `--lang zh` 与 Chromium sandbox 配置
   - EPUB 不再进入 pre-commit，主 CI、自动化测试与标签发布统一使用严格门禁；`mmdc` 缺失、超时、解析失败或未产出图片都会让构建失败
   - 移除 `httpx`、`tenacity`，同步 Ruff 版本下限，修正 Ruff tests pattern、Bandit 配置路径与废弃的 `B113` 抑制
-  - 去掉 workflow 中 lint、Bandit、mypy 的 `continue-on-error`，让检查结果真实影响提交状态
+  - 去掉 workflow 中 Ruff、Bandit、mypy 与 Markdown lint 的 `continue-on-error`；Markdown lint 使用面向本仓库既有中文排版的显式规则，失败会真实影响提交状态
   - 修复 actionlint 发现的 runner 兼容性问题：按官方推荐升级到 `codecov-action@v5` 与 `setup-python@v7`
   - 在中文 Hooks 教程中明确“类型决定如何运行、事件决定何时运行”，不机械复制上游英文入口
   - 更新本地化回归护栏，禁止 Kroki、旧 CLI flags、死依赖与静默 CI 放行重新出现

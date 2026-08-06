@@ -8,6 +8,7 @@ on:
       - '.github/workflows/docs-check.yml'
       - '.cspell.json'
       - '.github/markdown-link-check-config.json'
+      - '.markdownlint.json'
   pull_request:
     branches: [main]
     paths:
@@ -16,6 +17,7 @@ on:
       - 'LICENSE'
       - '.cspell.json'
       - '.github/markdown-link-check-config.json'
+      - '.markdownlint.json'
 
 # Cancel in-progress runs for the same branch
 concurrency:
@@ -33,14 +35,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '24'
 
       - name: Install markdownlint-cli
-        run: npm install -g markdownlint-cli
+        run: npm install -g markdownlint-cli@0.49.1
 
       - name: Run Markdown Linter
-        run: markdownlint '**/*.md' --ignore node_modules --ignore .venv
-        continue-on-error: true
+        run: markdownlint '**/*.md' --ignore node_modules --ignore .venv --config .markdownlint.json
 
   link-check:
     name: Check Links

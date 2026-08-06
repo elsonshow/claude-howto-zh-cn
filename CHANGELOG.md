@@ -15,7 +15,7 @@
 - EPUB 从 pre-commit 移到 GitHub Actions；主 CI、自动化测试与标签发布统一安装 `mmdc`，以 `--lang zh` 构建根目录中文版本，并在 Mermaid 失败时严格失败
 - 不复制上游已无对应源码的多语言构建矩阵，也不重新引入 `ja/vi/uk/zh` 目录
 - 删除 `httpx`、`tenacity`，统一 Ruff `v0.15.10+`，修正 tests pattern、Bandit 配置路径与 `B113` 抑制
-- 取消 lint、Bandit、mypy 的 `continue-on-error`，避免失败检查被 workflow 静默吞掉
+- 取消 Ruff、Bandit、mypy 与 Markdown lint 的 `continue-on-error`；新增显式 `.markdownlint.json`，让失败检查不再被 workflow 静默吞掉
 - 按 action 官方兼容说明升级 `codecov-action@v5` 与 `setup-python@v7`，消除旧 Node runner action
 - 更新脚本文档、Hooks 分类说明和本地化回归护栏，不改变 `Claude Code 中文全面上手指南` 默认入口
 

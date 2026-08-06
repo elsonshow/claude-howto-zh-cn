@@ -57,6 +57,14 @@ repos:
 
   - repo: local
     hooks:
+      - id: markdown-lint
+        name: markdown-lint
+        language: node
+        entry: markdownlint
+        args: [--ignore, node_modules, --ignore, .venv, --config, .markdownlint.json]
+        types: [markdown]
+        additional_dependencies: ["markdownlint-cli@0.49.1"]
+
       - id: markdown-rendering
         name: markdown-rendering
         language: system
